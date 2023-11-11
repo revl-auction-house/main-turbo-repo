@@ -1,13 +1,13 @@
-import { UInt64 } from "o1js";
 import { Balances } from "./balances";
+import { NFT } from "./NFT";
 
 export default {
   modules: {
     Balances,
+    NFT,
   },
   config: {
-    Balances: {
-      totalSupply: UInt64.from(10000),
-    },
+    Balances: {},
+    NFT: {},
   },
 };
