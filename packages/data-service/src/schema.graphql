@@ -1,0 +1,59 @@
+type NFT {
+  collectionAddress(findCollection: String!): String!
+  idx: Int!
+  owner(findOwner: String!): String!
+  dataHash: String!
+  locked: Boolean
+  data: String
+  name: String!
+  imgUrl: String
+}
+
+type Collection {
+  address: String!
+  name: String!
+  description: String
+  nfts: [NFT]!
+}
+
+# type EnglishBid {
+#   auction: EnglishAuction!
+#   value: Int!
+#   timestamp: DateTime
+#   address: String!
+# }
+
+type EnglishAuction {
+  id: Int!
+  creator(findCreator: String!): String!
+  winner: String
+  ended: Boolean
+  nft: NFT
+  startTime: Int
+  endTime: Int
+  maxBidder: String
+  maxBid: Int
+  bidCount: Int
+  #   bids: [EnglishBid]
+}
+
+type Query {
+  nfts(owner: String, collection: String): [NFT]!
+  nft(collection: String!, idx: Int!): NFT!
+}
+
+type Mutation {
+  createCollection(
+    address: String!
+    name: String!
+    description: String
+  ): Collection!
+
+  createNFT(
+    collection: String!
+    owner: String!
+    dataHash: String!
+    name: String!
+    imgUrl: String
+  ): NFT!
+}
