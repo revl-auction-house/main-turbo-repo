@@ -49,6 +49,43 @@
   }
 }
 
+.bgGradient {
+  background: linear-gradient(109deg, #363062 0%, #4846A3 100%);
+}
+
+.swiper-container {
+  width: 100%;
+  padding: 20px;
+  margin: auto;
+  overflow: hidden;
+}
+
+.swiper-slide {
+  width: 250px;
+  margin-right: 20px;
+}
+
+.card {
+  height: 250px;
+  /* Adjust the height of the cards */
+  background-color: #eaeaea;
+  /* Set a background color */
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease-in-out;
+}
+
+.card:hover {
+  border: 2px solid #ffffff;
+  /* White border on hover */
+  transform: scale(1.03);
+  /* Increase the size of the active card */
+}
+
 @layer base {
   * {
     @apply border-border;

@@ -20,6 +20,13 @@ module.exports = {
     },
     extend: {
       colors: {
+        'activeNav': '#FF6B00',
+        'buttonColor': '#00B2FF',
+        'voilet': '#65639D',
+        'voiletBg': '#4b3575',
+        'blackBg': '#0D0D0D',
+        'heading': '#E4E4E4',
+        'sub': '#C8C8C8',
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
