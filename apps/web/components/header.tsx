@@ -6,7 +6,7 @@ import truncateMiddle from "truncate-middle";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Chain } from "./chain";
 import { Separator } from "./ui/separator";
-import { Search } from "./ui/searchBox";
+import { Search } from "./ui/Home/searchBox";
 
 export interface HeaderProps {
   loading: boolean;
@@ -29,12 +29,13 @@ export default function Header({
     <>
       <nav className="border-gray-200 bg-slate-950">
         <div className="flex flex-wrap items-center justify-between max-w-screen-xl p-4 mx-auto">
-          <a href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
+          <a href="https://flowbite.com/" className="flex items-center space-x-3 rtl:space-x-reverse">
+
             <span className="self-center text-2xl font-semibold text-white whitespace-nowrap">Logo</span>
           </a>
           <div className="flex space-x-3 md:order-2 md:space-x-0 rtl:space-x-reverse">
             <button type="button"
-              className="px-4 py-2 text-sm font-medium text-center text-white rounded-lg shadow-lg bg-buttonColor shadow-cyan-500/50 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Connect
+              className="px-6 py-4 text-2xl font-medium text-center text-white shadow-lg rounded-[20px] bg-buttonColor shadow-cyan-500/50 hover:bg-blue-800 ">Connect
               Wallet</button>
             <button data-collapse-toggle="navbar-cta" type="button"
               className="inline-flex items-center justify-center w-10 h-10 p-2 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
@@ -49,7 +50,7 @@ export default function Header({
 
           <div className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-cta">
             <ul
-              className="flex flex-col p-4 mt-4 font-medium bg-transparent rounded-lg md:p-0 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+              className="flex flex-col p-4 mt-4 text-xl font-medium bg-transparent rounded-lg md:p-0 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0">
               <li>
                 <a href="#" className="block px-3 py-2 mb-1 rounded md:p-0 text-activeNav md:bg-transparent "
                   aria-current="page">Live Auctions</a>
@@ -74,7 +75,7 @@ export default function Header({
           </div>
         </div>
       </nav>
-      <Search />     
+      <Search />
     </>
   );
 }

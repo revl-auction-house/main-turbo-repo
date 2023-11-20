@@ -20,6 +20,7 @@ export function LiveAuctionCard() {
                     className="w-full   hover:text-black text-white border border-[#00B2FF] bg-[#00B2FF] hover:bg-white  font-medium rounded-2xl text-2xl px-5 py-2.5 text-center ">Place
                     Bid</button>
             </div>
+
         </div>
     );
 }
