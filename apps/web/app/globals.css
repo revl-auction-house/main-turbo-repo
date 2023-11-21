@@ -49,10 +49,6 @@
   }
 }
 
-.bgGradient {
-  background: linear-gradient(109deg, #363062 0%, #4846A3 100%);
-}
-
 .swiper-container {
   width: 100%;
   padding: 20px;
@@ -67,9 +63,7 @@
 
 .card {
   height: 250px;
-  /* Adjust the height of the cards */
   background-color: #eaeaea;
-  /* Set a background color */
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
@@ -81,15 +75,65 @@
 
 .card:hover {
   border: 2px solid #ffffff;
-  /* White border on hover */
   transform: scale(1.03);
-  /* Increase the size of the active card */
+}
+
+.bgGradient {
+  background: linear-gradient(109deg, #363062 0%, #4846A3 100%);
+}
+
+.bidders {
+  background: linear-gradient(180deg, #504F4F 22.22%, #969696 77.78%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-align: center;
+  font-family: Poppins;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+
+}
+
+
+/* Most engaged live swiper */
+.swiper {
+  width: 100%;
+  height: 100%;
+}
+
+.swiper-button-next {
+  padding: 35px;
+  background-color: #c8c8c887;
+  border-radius: 50px;
+  backdrop-filter: blur(3px);
+}
+
+.swiper-button-prev {
+  padding: 35px;
+  background-color: #c8c8c887;
+  border-radius: 50px;
+  backdrop-filter: blur(3px);
+}
+
+.swiper-button-next:after {
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.swiper-button-prev:after {
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
 }
 
 @layer base {
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }

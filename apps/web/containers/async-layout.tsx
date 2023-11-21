@@ -1,4 +1,5 @@
 import Header from "@/components/header";
+import { Footer } from "@/components/ui/Home/footer";
 import { Toaster } from "@/components/ui/toaster";
 import { useBalancesStore, useObserveBalance } from "@/lib/stores/balances";
 import { useChainStore, usePollBlockHeight } from "@/lib/stores/chain";
@@ -42,6 +43,7 @@ export default function AsyncLayout({ children }: { children: ReactNode }) {
       />
       {children}
       <Toaster />
+      <Footer />
     </>
   );
 }

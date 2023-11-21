@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { Card } from "./card";
 
 export function Banner() {
@@ -10,14 +9,12 @@ export function Banner() {
                         className="text-white bg-[#4C4678]  border-gray-200 focus:ring-4 font-medium rounded-[18px] text-sm px-5 py-2 text-center inline-flex items-center  me-2 mb-2">
                         <div className="w-2.5 h-2.5 bg-white rounded-full me-4"></div>
                         Trending
-                        <img src="/img/Trending.png" className="w-10 ms-1.5 h-9" alt="" srcset="" />
+                        <img src="/img/Trending.png" className="w-10 ms-1.5 h-9" alt="" />
                     </div>
                 </div>
                 <div className="swiper-container ">
                     <div className="swiper-wrapper">
-                        <div className="swiper-slide">
                             <Card />
-                        </div>
                     </div>
                 </div>
             </div>
