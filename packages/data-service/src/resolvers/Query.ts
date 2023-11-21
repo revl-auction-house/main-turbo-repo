@@ -1,24 +1,25 @@
 import { DataSource } from "../dataSource";
+import { QueryResolvers, Nft } from "./resolvers-types";
 
-const Query = {
+const Query: QueryResolvers = {
   nfts: async (
-    _parent: any,
-    { owner, collection }: { owner?: string; collection?: string },
+    parent,
+    { owner, collection, skip = 0, count = 10 },
     { dataSource }: { dataSource: DataSource }
-  ) => {
+  ): Promise<Nft[]> => {
     if (owner) {
-      return dataSource.getNFTsByOwner(0, 10, owner);
+      return dataSource.getNFTsByOwner(skip!, count!, owner);
     } else if (collection) {
-      return dataSource.getNFTsByCollection(0, 10, collection);
+      return dataSource.getNFTsByCollection(skip!, count!, collection);
     } else {
-      return dataSource.getNFTs(0, 10);
+      return dataSource.getNFTs(skip!, count!);
     }
   },
   nft: async (
-    _parent: any,
-    { collection, idx }: { collection: string; idx: number },
+    parent,
+    { collection, idx },
     { dataSource }: { dataSource: DataSource }
-  ) => {
+  ): Promise<Nft> => {
     return dataSource.getNFT(collection, idx);
   },
 };

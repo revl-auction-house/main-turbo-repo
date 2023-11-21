@@ -1,7 +1,7 @@
 type NFT {
-  collectionAddress(findCollection: String!): String!
+  collectionAddress: String!
   idx: Int!
-  owner(findOwner: String!): String!
+  owner: String!
   dataHash: String!
   locked: Boolean
   data: String
@@ -13,7 +13,7 @@ type Collection {
   address: String!
   name: String!
   description: String
-  nfts: [NFT]!
+  nfts: [NFT!]!
 }
 
 # type EnglishBid {
@@ -38,22 +38,6 @@ type EnglishAuction {
 }
 
 type Query {
-  nfts(owner: String, collection: String): [NFT]!
+  nfts(owner: String, collection: String, skip: Int, count: Int): [NFT]!
   nft(collection: String!, idx: Int!): NFT!
-}
-
-type Mutation {
-  createCollection(
-    address: String!
-    name: String!
-    description: String
-  ): Collection!
-
-  createNFT(
-    collection: String!
-    owner: String!
-    dataHash: String!
-    name: String!
-    imgUrl: String
-  ): NFT!
 }

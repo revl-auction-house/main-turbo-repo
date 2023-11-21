@@ -1,3 +1,4 @@
 import { DataSource } from "./dataSource";
+import { LocalDataSource } from "./localDataSource";
 
-export type { DataSource };
+export { type DataSource, LocalDataSource };
