@@ -1,12 +1,12 @@
 import { Button } from "@/components/ui/button";
 import protokit from "@/public/protokit-zinc.svg";
 import Image from "next/image";
+import Link from 'next/link';
 // @ts-ignore
 import truncateMiddle from "truncate-middle";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Chain } from "./chain";
 import { Separator } from "./ui/separator";
-import { Search } from "./ui/Home/searchBox";
 
 export interface HeaderProps {
   loading: boolean;
@@ -27,12 +27,12 @@ export default function Header({
 }: HeaderProps) {
   return (
     <>
-      <nav className="border-gray-200 bg-slate-950">
+      <nav className="border-gray-200 bg-[#060606]">
         <div className="flex flex-wrap items-center justify-between max-w-screen-xl p-4 mx-auto">
-          <a href="https://flowbite.com/" className="flex items-center space-x-3 rtl:space-x-reverse">
+          <Link href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
 
             <span className="self-center text-2xl font-semibold text-white whitespace-nowrap">Logo</span>
-          </a>
+          </Link>
           <div className="flex space-x-3 md:order-2 md:space-x-0 rtl:space-x-reverse">
             <button type="button"
               className="px-6 py-4 text-2xl font-medium text-center text-white shadow-lg rounded-[20px] bg-buttonColor shadow-cyan-500/50 hover:bg-blue-800 ">Connect
@@ -52,9 +52,10 @@ export default function Header({
             <ul
               className="flex flex-col p-4 mt-4 text-xl font-medium bg-transparent rounded-lg md:p-0 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0">
               <li>
-                <a href="#" className="block px-3 py-2 mb-1 rounded md:p-0 text-activeNav md:bg-transparent "
-                  aria-current="page">Live Auctions</a>
-                <div className="h-0.5 w-7 bg-activeNav mx-3 md:m-auto"></div>
+                <Link href="/"
+                  className="block px-3 py-2 text-white rounded md:p-0 hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700">Live
+                  Auctions</Link>
+
               </li>
               <li>
                 <a href="#"
@@ -62,9 +63,10 @@ export default function Header({
                   Auction</a>
               </li>
               <li>
-                <a href="#"
-                  className="block px-3 py-2 text-white rounded md:p-0 hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 ">My
-                  Bids</a>
+                <Link href="/mybids" className="block px-3 py-2 mb-1 rounded md:p-0 text-activeNav md:bg-transparent"
+                  aria-current="page">My
+                  Bids</Link>
+                <div className="h-0.5 w-7 bg-activeNav mx-3 md:m-auto"></div>
               </li>
               <li>
                 <a href="#"
@@ -75,7 +77,6 @@ export default function Header({
           </div>
         </div>
       </nav>
-      <Search />
     </>
   );
 }
