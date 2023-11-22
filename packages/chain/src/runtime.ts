@@ -1,4 +1,4 @@
-import { Balances } from "./balances";
+import { Balances } from "./Balances";
 import { NFT } from "./NFT";
 
 export default {

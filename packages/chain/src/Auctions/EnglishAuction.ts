@@ -3,7 +3,7 @@ import { StateMap, assert } from "@proto-kit/protocol";
 import { Bool, Encoding, Poseidon, PublicKey, Struct, UInt64 } from "o1js";
 import { inject } from "tsyringe";
 import { NFT, NFTKey } from "../NFT";
-import { Balances } from "../balances";
+import { Balances } from "../Balances";
 import { AuctionModule, BaseAuctionData } from "./Auction";
 
 export class Bids extends Struct({
