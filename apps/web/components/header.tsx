@@ -69,9 +69,9 @@ export default function Header({
                 <div className="h-0.5 w-7 bg-activeNav mx-3 md:m-auto"></div>
               </li>
               <li>
-                <a href="#"
+                <Link href="/mynfts"
                   className="block px-3 py-2 text-white rounded md:p-0 hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 ">My
-                  NFTs</a>
+                  NFTs</Link>
               </li>
             </ul>
           </div>
