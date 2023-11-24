@@ -6,6 +6,7 @@ export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: 
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
 export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
 export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
+export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -16,6 +17,28 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export type Auction = {
+  __typename?: 'Auction';
+  creator: Scalars['String']['output'];
+  endTime?: Maybe<Scalars['String']['output']>;
+  ended: Scalars['Boolean']['output'];
+  id: Scalars['ID']['output'];
+  nft: Nft;
+  startTime: Scalars['String']['output'];
+  type: AuctionType;
+  winner?: Maybe<Scalars['String']['output']>;
+};
+
+export type AuctionType = DutchAuction | EnglishAuction;
+
+export type Bid = {
+  __typename?: 'Bid';
+  amount: Scalars['Int']['output'];
+  auction: Auction;
+  bidder: Scalars['String']['output'];
+  timestamp: Scalars['Int']['output'];
+};
+
 export type Collection = {
   __typename?: 'Collection';
   address: Scalars['String']['output'];
@@ -24,23 +47,19 @@ export type Collection = {
   nfts: Array<Nft>;
 };
 
-export type EnglishAuction = {
-  __typename?: 'EnglishAuction';
-  bidCount?: Maybe<Scalars['Int']['output']>;
-  creator: Scalars['String']['output'];
-  endTime?: Maybe<Scalars['Int']['output']>;
-  ended?: Maybe<Scalars['Boolean']['output']>;
-  id: Scalars['Int']['output'];
-  maxBid?: Maybe<Scalars['Int']['output']>;
-  maxBidder?: Maybe<Scalars['String']['output']>;
-  nft?: Maybe<Nft>;
-  startTime?: Maybe<Scalars['Int']['output']>;
-  winner?: Maybe<Scalars['String']['output']>;
+export type DutchAuction = {
+  __typename?: 'DutchAuction';
+  decayRate: Scalars['Int']['output'];
+  minPrice: Scalars['Int']['output'];
+  startPrice: Scalars['Int']['output'];
 };
 
-
-export type EnglishAuctionCreatorArgs = {
-  findCreator: Scalars['String']['input'];
+export type EnglishAuction = {
+  __typename?: 'EnglishAuction';
+  bidCount: Scalars['Int']['output'];
+  bids: Array<Maybe<Bid>>;
+  maxBid: Scalars['Int']['output'];
+  maxBidder: Scalars['String']['output'];
 };
 
 export type Nft = {
@@ -50,15 +69,39 @@ export type Nft = {
   dataHash: Scalars['String']['output'];
   idx: Scalars['Int']['output'];
   imgUrl?: Maybe<Scalars['String']['output']>;
-  locked?: Maybe<Scalars['Boolean']['output']>;
+  locked: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
   owner: Scalars['String']['output'];
 };
 
 export type Query = {
   __typename?: 'Query';
+  auctions: Array<Auction>;
+  collection: Collection;
+  collections: Array<Collection>;
   nft: Nft;
-  nfts: Array<Maybe<Nft>>;
+  nfts: Array<Nft>;
+  topBids: Array<Bid>;
+  userBids: Array<Bid>;
+};
+
+
+export type QueryAuctionsArgs = {
+  count?: InputMaybe<Scalars['Int']['input']>;
+  creator?: InputMaybe<Scalars['String']['input']>;
+  live?: InputMaybe<Scalars['Boolean']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryCollectionArgs = {
+  address: Scalars['String']['input'];
+};
+
+
+export type QueryCollectionsArgs = {
+  count?: InputMaybe<Scalars['Int']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -72,6 +115,19 @@ export type QueryNftsArgs = {
   collection?: InputMaybe<Scalars['String']['input']>;
   count?: InputMaybe<Scalars['Int']['input']>;
   owner?: InputMaybe<Scalars['String']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryTopBidsArgs = {
+  count?: InputMaybe<Scalars['Int']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryUserBidsArgs = {
+  address: Scalars['String']['input'];
+  count?: InputMaybe<Scalars['Int']['input']>;
   skip?: InputMaybe<Scalars['Int']['input']>;
 };
 
@@ -142,13 +198,22 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
   info: GraphQLResolveInfo
 ) => TResult | Promise<TResult>;
 
+/** Mapping of union types */
+export type ResolversUnionTypes<RefType extends Record<string, unknown>> = {
+  AuctionType: ( DutchAuction ) | ( EnglishAuction );
+};
 
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
+  Auction: ResolverTypeWrapper<Omit<Auction, 'type'> & { type: ResolversTypes['AuctionType'] }>;
+  AuctionType: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['AuctionType']>;
+  Bid: ResolverTypeWrapper<Bid>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   Collection: ResolverTypeWrapper<Collection>;
+  DutchAuction: ResolverTypeWrapper<DutchAuction>;
   EnglishAuction: ResolverTypeWrapper<EnglishAuction>;
+  ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   NFT: ResolverTypeWrapper<Nft>;
   Query: ResolverTypeWrapper<{}>;
@@ -157,13 +222,42 @@ export type ResolversTypes = {
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
+  Auction: Omit<Auction, 'type'> & { type: ResolversParentTypes['AuctionType'] };
+  AuctionType: ResolversUnionTypes<ResolversParentTypes>['AuctionType'];
+  Bid: Bid;
   Boolean: Scalars['Boolean']['output'];
   Collection: Collection;
+  DutchAuction: DutchAuction;
   EnglishAuction: EnglishAuction;
+  ID: Scalars['ID']['output'];
   Int: Scalars['Int']['output'];
   NFT: Nft;
   Query: {};
   String: Scalars['String']['output'];
+};
+
+export type AuctionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Auction'] = ResolversParentTypes['Auction']> = {
+  creator?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  endTime?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  ended?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  nft?: Resolver<ResolversTypes['NFT'], ParentType, ContextType>;
+  startTime?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['AuctionType'], ParentType, ContextType>;
+  winner?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type AuctionTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['AuctionType'] = ResolversParentTypes['AuctionType']> = {
+  __resolveType: TypeResolveFn<'DutchAuction' | 'EnglishAuction', ParentType, ContextType>;
+};
+
+export type BidResolvers<ContextType = any, ParentType extends ResolversParentTypes['Bid'] = ResolversParentTypes['Bid']> = {
+  amount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  auction?: Resolver<ResolversTypes['Auction'], ParentType, ContextType>;
+  bidder?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  timestamp?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type CollectionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Collection'] = ResolversParentTypes['Collection']> = {
@@ -174,17 +268,18 @@ export type CollectionResolvers<ContextType = any, ParentType extends ResolversP
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type DutchAuctionResolvers<ContextType = any, ParentType extends ResolversParentTypes['DutchAuction'] = ResolversParentTypes['DutchAuction']> = {
+  decayRate?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  minPrice?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  startPrice?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type EnglishAuctionResolvers<ContextType = any, ParentType extends ResolversParentTypes['EnglishAuction'] = ResolversParentTypes['EnglishAuction']> = {
-  bidCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  creator?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<EnglishAuctionCreatorArgs, 'findCreator'>>;
-  endTime?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  ended?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  maxBid?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  maxBidder?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  nft?: Resolver<Maybe<ResolversTypes['NFT']>, ParentType, ContextType>;
-  startTime?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  winner?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  bidCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  bids?: Resolver<Array<Maybe<ResolversTypes['Bid']>>, ParentType, ContextType>;
+  maxBid?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  maxBidder?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -194,19 +289,28 @@ export type NftResolvers<ContextType = any, ParentType extends ResolversParentTy
   dataHash?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   idx?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   imgUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  locked?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  locked?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   owner?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  auctions?: Resolver<Array<ResolversTypes['Auction']>, ParentType, ContextType, Partial<QueryAuctionsArgs>>;
+  collection?: Resolver<ResolversTypes['Collection'], ParentType, ContextType, RequireFields<QueryCollectionArgs, 'address'>>;
+  collections?: Resolver<Array<ResolversTypes['Collection']>, ParentType, ContextType, Partial<QueryCollectionsArgs>>;
   nft?: Resolver<ResolversTypes['NFT'], ParentType, ContextType, RequireFields<QueryNftArgs, 'collection' | 'idx'>>;
-  nfts?: Resolver<Array<Maybe<ResolversTypes['NFT']>>, ParentType, ContextType, Partial<QueryNftsArgs>>;
+  nfts?: Resolver<Array<ResolversTypes['NFT']>, ParentType, ContextType, Partial<QueryNftsArgs>>;
+  topBids?: Resolver<Array<ResolversTypes['Bid']>, ParentType, ContextType, Partial<QueryTopBidsArgs>>;
+  userBids?: Resolver<Array<ResolversTypes['Bid']>, ParentType, ContextType, RequireFields<QueryUserBidsArgs, 'address'>>;
 };
 
 export type Resolvers<ContextType = any> = {
+  Auction?: AuctionResolvers<ContextType>;
+  AuctionType?: AuctionTypeResolvers<ContextType>;
+  Bid?: BidResolvers<ContextType>;
   Collection?: CollectionResolvers<ContextType>;
+  DutchAuction?: DutchAuctionResolvers<ContextType>;
   EnglishAuction?: EnglishAuctionResolvers<ContextType>;
   NFT?: NftResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;

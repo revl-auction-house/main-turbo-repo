@@ -3,7 +3,7 @@ type NFT {
   idx: Int!
   owner: String!
   dataHash: String!
-  locked: Boolean
+  locked: Boolean!
   data: String
   name: String!
   imgUrl: String
@@ -16,28 +16,41 @@ type Collection {
   nfts: [NFT!]!
 }
 
-# type EnglishBid {
-#   auction: EnglishAuction!
-#   value: Int!
-#   timestamp: DateTime
-#   address: String!
-# }
-
-type EnglishAuction {
-  id: Int!
-  creator(findCreator: String!): String!
+union AuctionType = EnglishAuction | DutchAuction
+type Auction {
+  id: ID!
+  nft: NFT!
+  creator: String!
   winner: String
-  ended: Boolean
-  nft: NFT
-  startTime: Int
-  endTime: Int
-  maxBidder: String
-  maxBid: Int
-  bidCount: Int
-  #   bids: [EnglishBid]
+  startTime: String!
+  endTime: String
+  ended: Boolean!
+  type: AuctionType!
+}
+type EnglishAuction {
+  maxBidder: String!
+  maxBid: Int!
+  bidCount: Int!
+  bids: [Bid]!
+}
+type Bid {
+  auction: Auction!
+  bidder: String!
+  amount: Int!
+  timestamp: Int!
+}
+type DutchAuction {
+  startPrice: Int!
+  decayRate: Int!
+  minPrice: Int!
 }
 
 type Query {
-  nfts(owner: String, collection: String, skip: Int, count: Int): [NFT]!
+  nfts(owner: String, collection: String, skip: Int, count: Int): [NFT!]!
   nft(collection: String!, idx: Int!): NFT!
+  collections(skip: Int, count: Int): [Collection!]!
+  collection(address: String!): Collection!
+  auctions(creator: String, live: Boolean, skip: Int, count: Int): [Auction!]!
+  topBids(skip: Int, count: Int): [Bid!]!
+  userBids(address: String!, skip: Int, count: Int): [Bid!]!
 }
