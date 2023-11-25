@@ -30,7 +30,6 @@ export default function Header({
       <nav className="border-gray-200 bg-[#060606]">
         <div className="flex flex-wrap items-center justify-between max-w-screen-xl p-4 mx-auto">
           <Link href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
-
             <span className="self-center text-2xl font-semibold text-white whitespace-nowrap">Logo</span>
           </Link>
           <div className="flex space-x-3 md:order-2 md:space-x-0 rtl:space-x-reverse">
@@ -50,28 +49,39 @@ export default function Header({
 
           <div className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-cta">
             <ul
-              className="flex flex-col p-4 mt-4 text-xl font-medium bg-transparent rounded-lg md:p-0 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0">
-              <li>
+              className="flex flex-col items-center p-4 mt-4 text-xl font-medium bg-transparent rounded-lg md:p-0 md:space-x-8 rtl:space-x-reverse md:flex-row md:items-start md:mt-0 md:border-0">
+              <li className="w-fit">
                 <Link href="/"
-                  className="block px-3 py-2 text-white rounded md:p-0 hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700">Live
-                  Auctions</Link>
+                  className="block px-3 py-2 text-center rounded text-activeNav md:p-0 hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700">Live Auction</Link>
+                <svg className="-mt-2" xmlns="http://www.w3.org/2000/svg" width="162" height="22" viewBox="0 0 162 22" fill="none">
+                  <path d="M161 0.181641V10.1816C161 15.1522 156.971 19.1816 152 19.1816H10C5.02943 19.1816 1 15.1522 1 10.1816V2.02035" stroke="url(#paint0_linear_429_125)" stroke-width="0.7" />
+                  <rect x="64" y="17.1816" width="35" height="4" rx="2" fill="#FF6B00" />
+                  <defs>
+                    <linearGradient id="paint0_linear_429_125" x1="81" y1="0.181641" x2="81" y2="19.1816" gradientUnits="userSpaceOnUse">
+                      <stop />
+                      <stop offset="1" stop-color="#FF6B00" stop-opacity="0.31" />
+                    </linearGradient>
+                  </defs>
+                </svg>
 
               </li>
               <li>
-                <a href="#"
-                  className="block px-3 py-2 text-white rounded md:p-0 hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 ">My
-                  Auction</a>
+                <Link href="/myauction"
+                  className="block px-3 py-2 text-white rounded md:p-0 hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 ">
+                  My Auction
+                </Link>
               </li>
-              <li>
-                <Link href="/mybids" className="block px-3 py-2 mb-1 rounded md:p-0 text-activeNav md:bg-transparent"
-                  aria-current="page">My
-                  Bids</Link>
-                <div className="h-0.5 w-7 bg-activeNav mx-3 md:m-auto"></div>
+              <li className="w-fit">
+                <Link href="/mybids"
+                  className="block px-3 py-2 text-white rounded md:p-0 hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700">
+                  My Bids
+                </Link>
               </li>
-              <li>
-                <Link href="/mynfts"
-                  className="block px-3 py-2 text-white rounded md:p-0 hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 ">My
-                  NFTs</Link>
+              <li className="w-fit">
+                <Link href="mynfts"
+                  className="block px-3 py-2 text-white rounded md:p-0 hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700">
+                  My NFTS
+                </Link>
               </li>
             </ul>
           </div>
