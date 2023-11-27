@@ -57,8 +57,13 @@ const EnglishAuction: EnglishAuctionResolvers<{ dataSource: DataSource }> = {
 
 const AuctionType: AuctionTypeResolvers = {
   __resolveType: (data, obj, info) => {
-    console.log("resolve AuctionType: ", data, obj, info);
-    return obj.__typename;
+    console.log("resolve AuctionType: ", data, data.__typename);
+    if ("maxBidder" in data) {
+      return "EnglishAuction";
+    } else if ("decayRate" in data) {
+      return "DutchAuction";
+    }
+    return null;
   },
 };
 

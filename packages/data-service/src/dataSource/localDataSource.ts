@@ -127,7 +127,7 @@ export class LocalDataSource implements DataSource {
     if (live) {
       auctions = auctions.filter((auction) => auction?.ended === false);
     }
-    console.log("local DB | getAuctions: ", auctions);
+    console.log("local DB | getAuctions: ", auctions.length);
     return auctions.slice(skip, skip + count);
   }
 

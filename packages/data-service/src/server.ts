@@ -5,7 +5,7 @@ import resolvers from "./resolvers";
 import { DataSource, LocalDataSource } from "./dataSource";
 
 const typeDefs = readFileSync("./src/schema.graphql", "utf8");
-console.log("resolvers: ", resolvers);
+// console.log("resolvers: ", resolvers);
 const schema = createSchema({ typeDefs, resolvers });
 const dataSource: DataSource = new LocalDataSource();
 const yoga = createYoga({ schema, context: { dataSource } });
