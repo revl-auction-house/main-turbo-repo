@@ -22,12 +22,13 @@ type Auction {
   nft: NFT!
   creator: String!
   winner: String
-  startTime: String!
-  endTime: String
+  startTime: Int!
+  endTime: Int
   ended: Boolean!
   type: AuctionType!
 }
 type EnglishAuction {
+  id: ID!
   maxBidder: String!
   maxBid: Int!
   bidCount: Int!
@@ -40,6 +41,7 @@ type Bid {
   timestamp: Int!
 }
 type DutchAuction {
+  id: ID!
   startPrice: Int!
   decayRate: Int!
   minPrice: Int!
@@ -51,6 +53,7 @@ type Query {
   collections(skip: Int, count: Int): [Collection!]!
   collection(address: String!): Collection!
   auctions(creator: String, live: Boolean, skip: Int, count: Int): [Auction!]!
-  topBids(skip: Int, count: Int): [Bid!]!
+  auction(id: String): Auction!
+  topBids(skip: Int, count: Int): [Bid!]! # TODO use subscriptions
   userBids(address: String!, skip: Int, count: Int): [Bid!]!
 }

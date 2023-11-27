@@ -20,11 +20,11 @@ export type Scalars = {
 export type Auction = {
   __typename?: 'Auction';
   creator: Scalars['String']['output'];
-  endTime?: Maybe<Scalars['String']['output']>;
+  endTime?: Maybe<Scalars['Int']['output']>;
   ended: Scalars['Boolean']['output'];
   id: Scalars['ID']['output'];
   nft: Nft;
-  startTime: Scalars['String']['output'];
+  startTime: Scalars['Int']['output'];
   type: AuctionType;
   winner?: Maybe<Scalars['String']['output']>;
 };
@@ -50,6 +50,7 @@ export type Collection = {
 export type DutchAuction = {
   __typename?: 'DutchAuction';
   decayRate: Scalars['Int']['output'];
+  id: Scalars['ID']['output'];
   minPrice: Scalars['Int']['output'];
   startPrice: Scalars['Int']['output'];
 };
@@ -58,6 +59,7 @@ export type EnglishAuction = {
   __typename?: 'EnglishAuction';
   bidCount: Scalars['Int']['output'];
   bids: Array<Maybe<Bid>>;
+  id: Scalars['ID']['output'];
   maxBid: Scalars['Int']['output'];
   maxBidder: Scalars['String']['output'];
 };
@@ -238,11 +240,11 @@ export type ResolversParentTypes = {
 
 export type AuctionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Auction'] = ResolversParentTypes['Auction']> = {
   creator?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  endTime?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  endTime?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   ended?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   nft?: Resolver<ResolversTypes['NFT'], ParentType, ContextType>;
-  startTime?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  startTime?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   type?: Resolver<ResolversTypes['AuctionType'], ParentType, ContextType>;
   winner?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -270,6 +272,7 @@ export type CollectionResolvers<ContextType = any, ParentType extends ResolversP
 
 export type DutchAuctionResolvers<ContextType = any, ParentType extends ResolversParentTypes['DutchAuction'] = ResolversParentTypes['DutchAuction']> = {
   decayRate?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   minPrice?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   startPrice?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -278,6 +281,7 @@ export type DutchAuctionResolvers<ContextType = any, ParentType extends Resolver
 export type EnglishAuctionResolvers<ContextType = any, ParentType extends ResolversParentTypes['EnglishAuction'] = ResolversParentTypes['EnglishAuction']> = {
   bidCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   bids?: Resolver<Array<Maybe<ResolversTypes['Bid']>>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   maxBid?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   maxBidder?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
