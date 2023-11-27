@@ -79,7 +79,7 @@ export class LocalDataSource implements DataSource {
       })
   > {
     await this.readFile();
-    console.log("local DB | getAuction: ", id);
+    // console.log("local DB | getAuction: ", id);
     const aucData = this.data.auctions[id];
     const nft =
       this.data.collections[aucData.collectionAddress]?.nfts[aucData.nftIdx];
@@ -127,7 +127,7 @@ export class LocalDataSource implements DataSource {
     if (live) {
       auctions = auctions.filter((auction) => auction?.ended === false);
     }
-    console.log("local DB | getAuctions: ", auctions.length);
+    // console.log("local DB | getAuctions: ", auctions.length);
     return auctions.slice(skip, skip + count);
   }
 

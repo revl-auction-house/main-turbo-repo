@@ -15,7 +15,7 @@ const Query: QueryResolvers<{ dataSource: DataSource }> = {
     { owner, collection, skip, count },
     { dataSource }
   ): Promise<Nft[]> => {
-    console.log("resolver | nftss");
+    // console.log("resolver | nftss");
     if (owner) {
       return dataSource.getNFTsByOwner(skip!, count!, owner);
     } else if (collection) {
@@ -25,7 +25,7 @@ const Query: QueryResolvers<{ dataSource: DataSource }> = {
     }
   },
   nft: async (parent, { collection, idx }, { dataSource }): Promise<Nft> => {
-    console.log("resolver | nft: ", parent);
+    // console.log("resolver | nft: ", parent);
     return dataSource.getNFT(collection, idx);
   },
   collections: async (
@@ -33,7 +33,7 @@ const Query: QueryResolvers<{ dataSource: DataSource }> = {
     { skip = 0, count = 5 },
     { dataSource }
   ): Promise<Collection[]> => {
-    console.log("collections: ", skip, count);
+    // console.log("collections: ", skip, count);
     return dataSource.getCollections(skip!, count!);
   },
   collection: async (_, { address }, { dataSource }): Promise<Collection> => {
@@ -44,7 +44,7 @@ const Query: QueryResolvers<{ dataSource: DataSource }> = {
     { creator, live = true, skip = 0, count = 10 },
     { dataSource }
   ): Promise<any[]> => {
-    console.log("query resolver | auctions: ", creator, live, skip, count);
+    // console.log("query resolver | auctions: ", creator, live, skip, count);
     return dataSource.getAuctions(creator!, live!, skip!, count!);
   },
 };
@@ -57,7 +57,7 @@ const EnglishAuction: EnglishAuctionResolvers<{ dataSource: DataSource }> = {
 
 const AuctionType: AuctionTypeResolvers = {
   __resolveType: (data, obj, info) => {
-    console.log("resolve AuctionType: ", data, data.__typename);
+    // console.log("resolve AuctionType: ", data, data.__typename);
     if ("maxBidder" in data) {
       return "EnglishAuction";
     } else if ("decayRate" in data) {
