@@ -71,21 +71,30 @@ export class LocalDataSource implements DataSource {
     return Object.values(this.data.collections).slice(skip, skip + count);
   }
 
-  public async getBidsByAuctionId(id: string) {
+  public async getBidsByAuctionId(id: string, skip = 0, count = 10) {
     await this.readFile();
     return this.data.bids
       .filter((bid) => bid.auctionId === id)
+      .slice(skip, skip + count)
       .map((bid) => {
         return { ...bid, timestamp: bid.timestamp.toString() };
       });
   }
-  public async getBidsByBidder(address: string) {
+  public async getBidsByBidder(address: string, skip = 0, count = 10) {
     await this.readFile();
     return this.data.bids
       .filter((bid) => bid.bidder === address)
+      .slice(skip, skip + count)
       .map((bid) => {
         return { ...bid, timestamp: bid.timestamp.toString() };
       });
+  }
+  public async getTopBids(skip = 0, count = 10) {
+    await this.readFile();
+    const sortedBids = this.data.bids.sort((a, b) => b.amount - a.amount);
+    return sortedBids.slice(skip, skip + count).map((bid) => {
+      return { ...bid, timestamp: bid.timestamp.toString() };
+    });
   }
 
   public async getAuction(id: string): Promise<

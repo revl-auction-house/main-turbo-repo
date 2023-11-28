@@ -49,9 +49,20 @@ const Query: QueryResolvers<{ dataSource: DataSource }> = {
     // console.log("query resolver | auctions: ", creator, live, skip, count);
     return dataSource.getAuctions(creator!, live!, skip!, count!);
   },
-  userBids: async (_, { address }, { dataSource }): Promise<any[]> => {
+  userBids: async (
+    _,
+    { address, skip = 0, count = 10 },
+    { dataSource }
+  ): Promise<any[]> => {
     // console.log("userBids | resolver");
-    return dataSource.getBidsByBidder(address);
+    return dataSource.getBidsByBidder(address, skip!, count!);
+  },
+  topBids: async (
+    _,
+    { skip = 0, count = 10 },
+    { dataSource }
+  ): Promise<any[]> => {
+    return dataSource.getTopBids(skip!, count!);
   },
 };
 
