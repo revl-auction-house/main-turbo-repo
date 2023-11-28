@@ -7,6 +7,8 @@ import {
   AuctionType,
   AuctionTypeResolvers,
   EnglishAuctionResolvers,
+  Bid,
+  BidResolvers,
 } from "./resolvers-types";
 
 const Query: QueryResolvers<{ dataSource: DataSource }> = {
@@ -47,12 +49,25 @@ const Query: QueryResolvers<{ dataSource: DataSource }> = {
     // console.log("query resolver | auctions: ", creator, live, skip, count);
     return dataSource.getAuctions(creator!, live!, skip!, count!);
   },
+  userBids: async (_, { address }, { dataSource }): Promise<any[]> => {
+    // console.log("userBids | resolver");
+    return dataSource.getBidsByBidder(address);
+  },
+};
+
+const Bid: BidResolvers<{ dataSource: DataSource }> = {
+  auction: async (parent: any, _, { dataSource }): Promise<any> => {
+    // console.log("Bid | resolver", parent);
+    if ("auctionId" in parent) {
+      return await dataSource.getAuction(parent.auctionId);
+    }
+  },
 };
 
 const EnglishAuction: EnglishAuctionResolvers<{ dataSource: DataSource }> = {
-  // bids: async (parent, _, { dataSource }) => {
-  //   return dataSource.getBidsByAuctionId(parent.id) as Promise<Bid[]>;
-  // },
+  bids: async (parent, _, { dataSource }) => {
+    return dataSource.getBidsByAuctionId(parent.id) as Promise<Bid[]>;
+  },
 };
 
 const AuctionType: AuctionTypeResolvers = {
@@ -67,4 +82,4 @@ const AuctionType: AuctionTypeResolvers = {
   },
 };
 
-export { Query, EnglishAuction, AuctionType };
+export { Query, Bid, EnglishAuction, AuctionType };

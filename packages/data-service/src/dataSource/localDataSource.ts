@@ -7,7 +7,6 @@ import {
   Auction,
   EnglishAuction,
   DutchAuction,
-  Bid,
 } from "../resolvers/resolvers-types";
 
 const readFile = util.promisify(fs.readFile);
@@ -70,6 +69,23 @@ export class LocalDataSource implements DataSource {
   public async getCollections(skip = 0, count = 10): Promise<Collection[]> {
     await this.readFile();
     return Object.values(this.data.collections).slice(skip, skip + count);
+  }
+
+  public async getBidsByAuctionId(id: string) {
+    await this.readFile();
+    return this.data.bids
+      .filter((bid) => bid.auctionId === id)
+      .map((bid) => {
+        return { ...bid, timestamp: bid.timestamp.toString() };
+      });
+  }
+  public async getBidsByBidder(address: string) {
+    await this.readFile();
+    return this.data.bids
+      .filter((bid) => bid.bidder === address)
+      .map((bid) => {
+        return { ...bid, timestamp: bid.timestamp.toString() };
+      });
   }
 
   public async getAuction(id: string): Promise<

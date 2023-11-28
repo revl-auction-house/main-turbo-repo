@@ -38,7 +38,7 @@ type Bid {
   auction: Auction!
   bidder: String!
   amount: Int!
-  timestamp: Int!
+  timestamp: String!
 }
 type DutchAuction {
   id: ID!

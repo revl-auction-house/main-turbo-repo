@@ -45,6 +45,6 @@ export interface DataSource {
       })
   >;
 
-  // getBidsByAuctionId: (id: string) => Promise<Omit<Bid, "auction">[]>;
-  // getBidsByBidder: (address: string) => Promise<Omit<Bid, "auction">[]>;
+  getBidsByAuctionId: (id: string) => Promise<Omit<Bid, "auction">[]>;
+  getBidsByBidder: (address: string) => Promise<Omit<Bid, "auction">[]>;
 }
