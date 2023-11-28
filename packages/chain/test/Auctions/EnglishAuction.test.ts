@@ -15,7 +15,7 @@ import {
   EnglishAuctionModule,
 } from "../../src/Auctions/EnglishAuction";
 import { log } from "@proto-kit/common";
-import { Balances } from "../../src/balances";
+import { Balances } from "../../src/Balances";
 
 log.setLevel("ERROR");
 

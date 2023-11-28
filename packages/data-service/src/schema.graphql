@@ -1,0 +1,59 @@
+type NFT {
+  collectionAddress: String!
+  idx: Int!
+  owner: String!
+  dataHash: String!
+  locked: Boolean!
+  data: String
+  name: String!
+  imgUrl: String
+}
+
+type Collection {
+  address: String!
+  name: String!
+  description: String
+  nfts: [NFT!]!
+}
+
+union AuctionType = EnglishAuction | DutchAuction
+type Auction {
+  id: ID!
+  nft: NFT!
+  creator: String!
+  winner: String
+  startTime: Int!
+  endTime: Int
+  ended: Boolean!
+  type: AuctionType!
+}
+type EnglishAuction {
+  id: ID!
+  maxBidder: String!
+  maxBid: Int!
+  bidCount: Int!
+  bids: [Bid]!
+}
+type Bid {
+  auction: Auction!
+  bidder: String!
+  amount: Int!
+  timestamp: Int!
+}
+type DutchAuction {
+  id: ID!
+  startPrice: Int!
+  decayRate: Int!
+  minPrice: Int!
+}
+
+type Query {
+  nfts(owner: String, collection: String, skip: Int, count: Int): [NFT!]!
+  nft(collection: String!, idx: Int!): NFT!
+  collections(skip: Int, count: Int): [Collection!]!
+  collection(address: String!): Collection!
+  auctions(creator: String, live: Boolean, skip: Int, count: Int): [Auction!]!
+  auction(id: String): Auction!
+  topBids(skip: Int, count: Int): [Bid!]! # TODO use subscriptions
+  userBids(address: String!, skip: Int, count: Int): [Bid!]!
+}

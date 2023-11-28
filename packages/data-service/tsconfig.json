@@ -1,5 +1,4 @@
 {
-  "extends": "tsconfig/chain.json",
   "compilerOptions": {
     "outDir": "./dist",
     "strictNullChecks": true,
@@ -17,8 +16,5 @@
     "alwaysStrict": true,
     "declarationMap": true,
     "strictFunctionTypes": true
-  },
-  "files": ["node_modules/jest-expect-message/types/index.d.ts"],
-  "include": ["./src/**/*", "test/**/*"],
-  "exclude": ["jest.config.cjs"]
+  }
 }
