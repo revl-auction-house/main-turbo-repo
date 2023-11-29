@@ -7,7 +7,6 @@ import {
   Auction,
   EnglishAuction,
   DutchAuction,
-  Bid,
 } from "../resolvers/resolvers-types";
 
 const readFile = util.promisify(fs.readFile);
@@ -72,6 +71,32 @@ export class LocalDataSource implements DataSource {
     return Object.values(this.data.collections).slice(skip, skip + count);
   }
 
+  public async getBidsByAuctionId(id: string, skip = 0, count = 10) {
+    await this.readFile();
+    return this.data.bids
+      .filter((bid) => bid.auctionId === id)
+      .slice(skip, skip + count)
+      .map((bid) => {
+        return { ...bid, timestamp: bid.timestamp.toString() };
+      });
+  }
+  public async getBidsByBidder(address: string, skip = 0, count = 10) {
+    await this.readFile();
+    return this.data.bids
+      .filter((bid) => bid.bidder === address)
+      .slice(skip, skip + count)
+      .map((bid) => {
+        return { ...bid, timestamp: bid.timestamp.toString() };
+      });
+  }
+  public async getTopBids(skip = 0, count = 10) {
+    await this.readFile();
+    const sortedBids = this.data.bids.sort((a, b) => b.amount - a.amount);
+    return sortedBids.slice(skip, skip + count).map((bid) => {
+      return { ...bid, timestamp: bid.timestamp.toString() };
+    });
+  }
+
   public async getAuction(id: string): Promise<
     | undefined
     | (Omit<Auction, "type"> & {
@@ -79,7 +104,7 @@ export class LocalDataSource implements DataSource {
       })
   > {
     await this.readFile();
-    console.log("local DB | getAuction: ", id);
+    // console.log("local DB | getAuction: ", id);
     const aucData = this.data.auctions[id];
     const nft =
       this.data.collections[aucData.collectionAddress]?.nfts[aucData.nftIdx];
@@ -127,7 +152,7 @@ export class LocalDataSource implements DataSource {
     if (live) {
       auctions = auctions.filter((auction) => auction?.ended === false);
     }
-    console.log("local DB | getAuctions: ", auctions.length);
+    // console.log("local DB | getAuctions: ", auctions.length);
     return auctions.slice(skip, skip + count);
   }
 

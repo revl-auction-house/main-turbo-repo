@@ -36,7 +36,7 @@ export type Bid = {
   amount: Scalars['Int']['output'];
   auction: Auction;
   bidder: Scalars['String']['output'];
-  timestamp: Scalars['Int']['output'];
+  timestamp: Scalars['String']['output'];
 };
 
 export type Collection = {
@@ -78,6 +78,7 @@ export type Nft = {
 
 export type Query = {
   __typename?: 'Query';
+  auction: Auction;
   auctions: Array<Auction>;
   collection: Collection;
   collections: Array<Collection>;
@@ -85,6 +86,11 @@ export type Query = {
   nfts: Array<Nft>;
   topBids: Array<Bid>;
   userBids: Array<Bid>;
+};
+
+
+export type QueryAuctionArgs = {
+  id?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -258,7 +264,7 @@ export type BidResolvers<ContextType = any, ParentType extends ResolversParentTy
   amount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   auction?: Resolver<ResolversTypes['Auction'], ParentType, ContextType>;
   bidder?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  timestamp?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  timestamp?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -300,6 +306,7 @@ export type NftResolvers<ContextType = any, ParentType extends ResolversParentTy
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  auction?: Resolver<ResolversTypes['Auction'], ParentType, ContextType, Partial<QueryAuctionArgs>>;
   auctions?: Resolver<Array<ResolversTypes['Auction']>, ParentType, ContextType, Partial<QueryAuctionsArgs>>;
   collection?: Resolver<ResolversTypes['Collection'], ParentType, ContextType, RequireFields<QueryCollectionArgs, 'address'>>;
   collections?: Resolver<Array<ResolversTypes['Collection']>, ParentType, ContextType, Partial<QueryCollectionsArgs>>;
