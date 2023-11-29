@@ -1,19 +1,21 @@
 import {
   NFT,
   Balances,
-  EnglishAuction,
-  DutchAuction,
+  EnglishAuctionModule,
+  DutchAuctionModule,
 } from "@reevl/protokit-runtimes";
 
 export default {
   modules: {
     Balances,
     NFT,
-    EnglishAuction,
-    DutchAuction,
+    EnglishAuctionModule,
+    DutchAuctionModule,
   },
   config: {
     Balances: {},
     NFT: {},
+    EnglishAuctionModule: {},
+    DutchAuctionModule: {},
   },
 };
