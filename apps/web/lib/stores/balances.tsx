@@ -36,14 +36,17 @@ export const useBalancesStore = create<
         state.loading = true;
       });
 
-      const balance = await client.query.runtime.Balances.balances.get(
-        PublicKey.fromBase58(address),
-      );
-
-      set((state) => {
-        state.loading = false;
-        state.balances[address] = balance?.toString() ?? "0";
-      });
+      try {
+        const balance = await client.query.runtime.Balances.balances.get(
+          PublicKey.fromBase58(address),
+        );
+        set((state) => {
+          state.loading = false;
+          state.balances[address] = balance?.toString() ?? "0";
+        });
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      };      
     },
     async faucet(client: Client, address: string) {
       const balances = client.runtime.resolve("Balances");

@@ -2,8 +2,9 @@
 import "./globals.css";
 import { Inter as FontSans } from "next/font/google";
 import { cn } from "@/lib/utils";
-
 import AsyncLayoutDynamic from "@/containers/async-layout-dynamic";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 export const fontSans = FontSans({
   subsets: ["latin"],

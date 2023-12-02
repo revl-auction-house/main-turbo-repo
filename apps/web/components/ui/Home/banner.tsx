@@ -1,6 +1,27 @@
+import React, { useState } from "react";
+import Slider from "react-slick";
 import { Card } from "./card";
 
+const arr: number[] = [0, 1, 2, 3, 4, 5, 6, 7]
 export function Banner() {
+    const [currentSlide, setCurrentSlide] = useState(0);
+
+    const settings = {
+        infinite: false,
+        slidesToShow: 5,
+        afterChange: (current: any) => {
+            setCurrentSlide(current);
+        },
+    };
+
+    const isMiddleCard = (index: number) => {
+        if (index == (currentSlide + 1) || index == (currentSlide + 2) || index == (currentSlide + 3)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     return (
         <div className="pt-24 bgGradient">
             <div>
@@ -14,14 +35,18 @@ export function Banner() {
                 </div>
                 <div className="swiper-container ">
                     <div className="swiper-wrapper">
-                            <Card />
+                        <Slider {...settings}>
+                            {arr.map((item: any, index: number) => (
+                                <Card key={index} status={isMiddleCard(index)} inde={index} />
+                            ))}
+                        </Slider>
                     </div>
                 </div>
             </div>
             <div className="grid max-w-screen-xl px-4 py-8 mx-auto lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12">
                 <div className="mr-auto place-self-center lg:col-span-6">
                     <div className="relative mb-5 w-fit rounded-2xl border-2 border-[#605D96] overflow-hidden">
-                        <div className="absolute  h-full bg-[#605D96] " style={{width: '80%'}}></div>
+                        <div className="absolute  h-full bg-[#605D96] " style={{ width: '80%' }}></div>
                         <p className="relative z-10 m-4 text-base font-medium text-heading">Time left - 10:06 min</p>
                     </div>
                     <h1 className="max-w-2xl mb-4 text-4xl font-normal leading-normal tracking-tight text-heading md:text-5xl ">

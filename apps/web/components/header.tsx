@@ -25,6 +25,8 @@ export default function Header({
   balanceLoading,
   blockHeight,
 }: HeaderProps) {
+
+  console.log(balance, "balance", wallet, "wallet", loading, "loading", balanceLoading, "balanceLoading", blockHeight, "blockHeight")
   return (
     <>
       <nav className="border-gray-200 bg-[#060606]">
@@ -33,9 +35,15 @@ export default function Header({
             <span className="self-center text-2xl font-semibold text-white whitespace-nowrap">Logo</span>
           </Link>
           <div className="flex space-x-3 md:order-2 md:space-x-0 rtl:space-x-reverse">
-            <button type="button"
-              className="px-6 py-4 text-2xl font-medium text-center text-white shadow-lg rounded-[20px] bg-buttonColor shadow-cyan-500/50 hover:bg-blue-800 ">Connect
-              Wallet</button>
+            <div>
+              <button type="button"
+                className="px-6 py-4 text-2xl font-medium text-center text-white shadow-lg rounded-[20px] bg-buttonColor shadow-cyan-500/50 hover:bg-blue-800 "
+                onClick={onConnectWallet}
+              >
+                {wallet ? truncateMiddle(wallet, 4, 4, "...") : "Connect wallet"}
+              </button>
+              <span>20</span>
+            </div>
             <button data-collapse-toggle="navbar-cta" type="button"
               className="inline-flex items-center justify-center w-10 h-10 p-2 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
               aria-controls="navbar-cta" aria-expanded="false">
@@ -78,7 +86,7 @@ export default function Header({
                 </Link>
               </li>
               <li className="w-fit">
-                <Link href="mynfts"
+                <Link href="/mynfts"
                   className="block px-3 py-2 text-white rounded md:p-0 hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700">
                   My NFTS
                 </Link>

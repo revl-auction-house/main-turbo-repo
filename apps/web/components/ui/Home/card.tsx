@@ -1,10 +1,23 @@
-import Image from "next/image";
+import Image, { ImageProps } from "next/image";
 
-export function Card() {
+interface CardProps {
+  status: Boolean;
+  inde: Number;
+}
+
+export function Card({ status, inde }: CardProps) {
+  let width = status ? 250 : 170;
   return (
-    <div className="swiper-slide">
+    <div className="swiper-slide" style={{ width: width }}>
       <div className="card">
-        <Image className="object-cover w-full h-full" src="/img/slider-1.jpg" width={100} height={100} alt="" srcset="" />
+        <Image
+          className="object-cover w-full h-full"
+          src="/img/stone.png"
+          width={width}
+          height={200}
+          alt=""
+          srcSet=""
+        />
       </div>
     </div>
   );

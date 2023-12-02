@@ -57,12 +57,12 @@
 }
 
 .swiper-slide {
-  width: 250px;
+  max-width: 200px;
   margin-right: 20px;
 }
 
 .card {
-  height: 250px;
+  height: 200px;
   background-color: #eaeaea;
   border-radius: 10px;
   overflow: hidden;
@@ -93,9 +93,16 @@
   font-style: normal;
   font-weight: 600;
   line-height: normal;
-
 }
 
+.slick-center .carousel-item {
+  transform: scale(1.2); /* Adjust the scaling factor as needed */
+  transition: transform 0.5s; /* Adjust the transition duration as needed */
+}
+
+.carousel-item {
+  transition: transform 0.5s; /* Adjust the transition duration as needed */
+}
 
 /* Most engaged live swiper */
 .swiper {
@@ -103,31 +110,36 @@
   height: 100%;
 }
 
-.swiper-button-next {
-  padding: 35px;
-  background-color: #c8c8c887;
-  border-radius: 50px;
-  backdrop-filter: blur(3px);
+/* .slick-next {
+  padding: 35px !important;
+  background-color: #c8c8c887 !important;
+  border-radius: 50px !important;
+  backdrop-filter: blur(3px) !important;
 }
 
-.swiper-button-prev {
-  padding: 35px;
-  background-color: #c8c8c887;
-  border-radius: 50px;
-  backdrop-filter: blur(3px);
+.slick-prev {
+  padding: 35px !important;
+  background-color: #c8c8c887 !important;
+  border-radius: 50px !important;
+  backdrop-filter: blur(3px) !important;
+  z-index: 1000;
 }
 
-.swiper-button-next:after {
-  color: white;
-  font-size: 18px;
-  font-weight: 600;
+.slick-next:after {
+  color: white !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
 }
 
-.swiper-button-prev:after {
-  color: white;
-  font-size: 18px;
-  font-weight: 600;
+.slick-prev:after {
+  color: white !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
 }
+
+.slick-arrow{
+  padding-top: -10px;
+} */
 
 @layer base {
   * {
