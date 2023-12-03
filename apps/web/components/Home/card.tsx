@@ -5,19 +5,8 @@ interface CardProps {
 }
 
 export function Card({ status }: CardProps) {
-  let width = status ? 250 : 170;
+  let style = status ? 'carousel-img-bigger' : 'carousel-img-smaller';
   return (
-    <div className="swiper-slide" style={{ width: width }}>
-      <div className="card">
-        <Image
-          className="object-cover w-full h-full"
-          src="/img/stone.png"
-          width={width}
-          height={200}
-          alt=""
-          srcSet=""
-        />
-      </div>
-    </div>
+    <img src="/img/slider-2.jpg" alt="" className={`${style}`} />
   );
 }
