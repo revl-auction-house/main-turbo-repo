@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Slider from "react-slick";
 import ModalComponent from "../ui/Modal";
+import AuctionTimer from "./auctionTimer";
 import { Card } from "./card";
 
 const arr: number[] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -63,14 +64,13 @@ export function Banner() {
         <div className="pt-24 bgGradient">
             <div>
                 <div className="ml-5">
-                    <div type="button"
-                        className="text-white bg-[#4C4678]  border-gray-200 focus:ring-4 font-medium rounded-[18px] text-sm px-5 py-2 text-center inline-flex items-center  me-2 mb-2">
+                    <div className="text-white bg-[#4C4678]  border-gray-200 focus:ring-4 font-medium rounded-[18px] text-sm px-5 py-2 text-center inline-flex items-center  me-2 mb-2">
                         <div className="w-2.5 h-2.5 bg-white rounded-full me-4"></div>
                         Trending
                         <img src="/img/Trending.png" className="w-10 ms-1.5 h-9" alt="" />
                     </div>
                 </div>
-                <div className="swiper-container ">
+                <div className="items-center justify-between mx-5">
                     <Slider {...settings}>
                         {arr.map((item: any, index: number) => (
                             <Card key={index} status={isMiddleCard(index)} />
@@ -78,14 +78,10 @@ export function Banner() {
 
                     </Slider>
                 </div>
-
             </div>
             <div className="grid max-w-screen-xl px-4 py-8 mx-auto lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12">
                 <div className="mr-auto place-self-center lg:col-span-6">
-                    <div className="relative mb-5 w-fit rounded-2xl border-2 border-[#605D96] overflow-hidden">
-                        <div className="absolute  h-full bg-[#605D96] " style={{ width: '80%' }}></div>
-                        <p className="relative z-10 m-4 text-base font-medium text-heading">Time left - 10:06 min</p>
-                    </div>
+                    <AuctionTimer start={1701630717000} end={1701631243000} />
                     <h1 className="max-w-2xl mb-4 text-4xl font-normal leading-normal tracking-tight text-heading md:text-5xl ">
                         The Bored Ape</h1>
                     <p className="max-w-2xl font-normal text-sub md:text-2xl ">by Artist name</p>

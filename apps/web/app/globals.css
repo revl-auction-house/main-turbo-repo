@@ -49,13 +49,6 @@
   }
 }
 
-.swiper-container {
-  width: 100%;
-  padding: 30px;
-  margin: auto;
-}
-
-
 .bgGradient {
   background: linear-gradient(109deg, #363062 0%, #4846A3 100%);
 }
