@@ -21,11 +21,14 @@
     "build-and-start": "pnpm run build && pnpm run start",
     "dev": "npm-watch build-and-start",
     "generateDummyData": "node --experimental-specifier-resolution=node dist/src/generateDummyData",
+    "testMongo": "pnpm run build && node --experimental-specifier-resolution=node dist/src/testMongo",
     "codegen": "graphql-codegen"
   },
   "dependencies": {
+    "dotenv": "^16.3.1",
     "graphql": "^16.8.1",
-    "graphql-yoga": "^5.0.0"
+    "graphql-yoga": "^5.0.0",
+    "mongodb": "^6.3.0"
   },
   "peerDependencies": {
     "o1js": "0.13.1"

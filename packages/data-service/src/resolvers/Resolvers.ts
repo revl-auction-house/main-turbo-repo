@@ -2,7 +2,6 @@ import { DataSource } from "../dataSource";
 import {
   QueryResolvers,
   Nft,
-  Collection,
   EnglishAuction,
   AuctionType,
   AuctionTypeResolvers,
@@ -26,7 +25,11 @@ const Query: QueryResolvers<{ dataSource: DataSource }> = {
       return dataSource.getNFTs(skip!, count!);
     }
   },
-  nft: async (parent, { collection, idx }, { dataSource }): Promise<Nft> => {
+  nft: async (
+    parent,
+    { collection, idx },
+    { dataSource }
+  ): Promise<Nft | null> => {
     // console.log("resolver | nft: ", parent);
     return dataSource.getNFT(collection, idx);
   },
@@ -34,11 +37,11 @@ const Query: QueryResolvers<{ dataSource: DataSource }> = {
     _,
     { skip = 0, count = 5 },
     { dataSource }
-  ): Promise<Collection[]> => {
+  ): Promise<any> => {
     // console.log("collections: ", skip, count);
     return dataSource.getCollections(skip!, count!);
   },
-  collection: async (_, { address }, { dataSource }): Promise<Collection> => {
+  collection: async (_, { address }, { dataSource }) => {
     return dataSource.getCollection(address);
   },
   auctions: async (

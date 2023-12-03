@@ -78,11 +78,11 @@ export type Nft = {
 
 export type Query = {
   __typename?: 'Query';
-  auction: Auction;
+  auction?: Maybe<Auction>;
   auctions: Array<Auction>;
-  collection: Collection;
+  collection?: Maybe<Collection>;
   collections: Array<Collection>;
-  nft: Nft;
+  nft?: Maybe<Nft>;
   nfts: Array<Nft>;
   topBids: Array<Bid>;
   userBids: Array<Bid>;
@@ -306,11 +306,11 @@ export type NftResolvers<ContextType = any, ParentType extends ResolversParentTy
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  auction?: Resolver<ResolversTypes['Auction'], ParentType, ContextType, Partial<QueryAuctionArgs>>;
+  auction?: Resolver<Maybe<ResolversTypes['Auction']>, ParentType, ContextType, Partial<QueryAuctionArgs>>;
   auctions?: Resolver<Array<ResolversTypes['Auction']>, ParentType, ContextType, Partial<QueryAuctionsArgs>>;
-  collection?: Resolver<ResolversTypes['Collection'], ParentType, ContextType, RequireFields<QueryCollectionArgs, 'address'>>;
+  collection?: Resolver<Maybe<ResolversTypes['Collection']>, ParentType, ContextType, RequireFields<QueryCollectionArgs, 'address'>>;
   collections?: Resolver<Array<ResolversTypes['Collection']>, ParentType, ContextType, Partial<QueryCollectionsArgs>>;
-  nft?: Resolver<ResolversTypes['NFT'], ParentType, ContextType, RequireFields<QueryNftArgs, 'collection' | 'idx'>>;
+  nft?: Resolver<Maybe<ResolversTypes['NFT']>, ParentType, ContextType, RequireFields<QueryNftArgs, 'collection' | 'idx'>>;
   nfts?: Resolver<Array<ResolversTypes['NFT']>, ParentType, ContextType, Partial<QueryNftsArgs>>;
   topBids?: Resolver<Array<ResolversTypes['Bid']>, ParentType, ContextType, Partial<QueryTopBidsArgs>>;
   userBids?: Resolver<Array<ResolversTypes['Bid']>, ParentType, ContextType, RequireFields<QueryUserBidsArgs, 'address'>>;

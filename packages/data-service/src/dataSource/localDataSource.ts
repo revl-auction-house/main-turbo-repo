@@ -61,8 +61,10 @@ export class LocalDataSource implements DataSource {
   constructor(filename = ".local_DB") {
     this.filename = filename;
   }
-  public async getCollection(address: string): Promise<Collection> {
+  public async getCollection(address: string) {
     await this.readFile();
+    if (!(address in this.data.collections)) return null;
+
     const collection: Collection = { ...this.data.collections[address] };
     return collection;
   }
@@ -97,12 +99,7 @@ export class LocalDataSource implements DataSource {
     });
   }
 
-  public async getAuction(id: string): Promise<
-    | undefined
-    | (Omit<Auction, "type"> & {
-        type: Omit<EnglishAuction, "bids"> | DutchAuction;
-      })
-  > {
+  public async getAuction(id: string) {
     await this.readFile();
     // console.log("local DB | getAuction: ", id);
     const aucData = this.data.auctions[id];
@@ -133,7 +130,7 @@ export class LocalDataSource implements DataSource {
         },
       };
     }
-    return undefined;
+    return null;
   }
 
   public async getAuctions(
@@ -156,15 +153,9 @@ export class LocalDataSource implements DataSource {
     return auctions.slice(skip, skip + count);
   }
 
-  public async getNFT(collectionAddress: string, index: number): Promise<Nft> {
+  public async getNFT(collectionAddress: string, index: number) {
     await this.readFile();
-    return new Promise((resolve, reject) => {
-      const nft = this.data.collections[collectionAddress]?.nfts[index];
-      if (nft) {
-        resolve(nft);
-      }
-      reject("NFT not found");
-    });
+    return this.data.collections[collectionAddress]?.nfts[index];
   }
   public async getNFTs(skip = 0, count = 10): Promise<Nft[]> {
     await this.readFile();
