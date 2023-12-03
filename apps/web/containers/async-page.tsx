@@ -1,10 +1,10 @@
 "use client";
 import { Faucet } from "@/components/faucet";
-import { Banner } from "@/components/ui/Home/banner";
-import { EngagedLiveAuction } from "@/components/ui/Home/engagedLiveAuction";
-import { LiveAuction } from "@/components/ui/Home/liveAuction";
-import { Search } from "@/components/ui/Home/searchBox";
-import { TrendingCollection } from "@/components/ui/Home/trendingCollection";
+import { Banner } from "@/components/Home/banner";
+import { EngagedLiveAuction } from "@/components/Home/engagedLiveAuction";
+import { LiveAuction } from "@/components/Home/liveAuction";
+import { Search } from "@/components/Home/searchBox";
+import { TrendingCollection } from "@/components/Home/trendingCollection";
 import { useFaucet } from "@/lib/stores/balances";
 import { useWalletStore } from "@/lib/stores/wallet";
 

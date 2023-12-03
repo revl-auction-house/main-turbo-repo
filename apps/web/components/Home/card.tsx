@@ -2,10 +2,9 @@ import Image, { ImageProps } from "next/image";
 
 interface CardProps {
   status: Boolean;
-  inde: Number;
 }
 
-export function Card({ status, inde }: CardProps) {
+export function Card({ status }: CardProps) {
   let width = status ? 250 : 170;
   return (
     <div className="swiper-slide" style={{ width: width }}>

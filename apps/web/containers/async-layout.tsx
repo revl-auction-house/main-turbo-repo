@@ -1,5 +1,5 @@
 import Header from "@/components/header";
-import { Footer } from "@/components/ui/Home/footer";
+import { Footer } from "@/components/Home/footer";
 import { Toaster } from "@/components/ui/toaster";
 import { useBalancesStore, useObserveBalance } from "@/lib/stores/balances";
 import { useChainStore, usePollBlockHeight } from "@/lib/stores/chain";
