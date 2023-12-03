@@ -81,7 +81,7 @@ export function Banner() {
             </div>
             <div className="grid max-w-screen-xl px-4 py-8 mx-auto lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12">
                 <div className="mr-auto place-self-center lg:col-span-6">
-                    <AuctionTimer start={1701630717000} end={1701631243000} />
+                    <AuctionTimer start={1701630717000} end={1701717807000} />
                     <h1 className="max-w-2xl mb-4 text-4xl font-normal leading-normal tracking-tight text-heading md:text-5xl ">
                         The Bored Ape</h1>
                     <p className="max-w-2xl font-normal text-sub md:text-2xl ">by Artist name</p>
