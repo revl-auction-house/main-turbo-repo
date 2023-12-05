@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+// import { useAuctionStore } from "@/lib/stores/auction";
+import { useAuctionStore } from "@/lib/stores/auction";
+import React, { useState, useEffect } from "react";
 import Slider from "react-slick";
 import ModalComponent from "../ui/Modal";
 import AuctionTimer from "./auctionTimer";
@@ -9,7 +11,6 @@ export function Banner() {
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
-
     const [currentSlide, setCurrentSlide] = useState(0);
 
     const settings = {
@@ -27,6 +28,16 @@ export function Banner() {
             return false;
         }
     }
+
+    const { loading, auctions, fetchAuctions } = useAuctionStore();
+
+    useEffect(() => {
+        fetchAuctions();
+    }, [fetchAuctions]);
+
+    console.log(auctions, "auctions")
+
+
 
     const sampleHTMLContent = () => {
         return (
@@ -70,21 +81,26 @@ export function Banner() {
                         <img src="/img/Trending.png" className="w-10 ms-1.5 h-9" alt="" />
                     </div>
                 </div>
-                <div className="items-center justify-between mx-5">
-                    <Slider {...settings}>
-                        {arr.map((item: any, index: number) => (
-                            <Card key={index} status={isMiddleCard(index)} />
-                        ))}
+                <div className="flex items-center justify-between">
+                    <div className="mx-5 w-full">
+                        <Slider {...settings}>
+                            {arr.map((item: any, index: number) => (
+                                <Card key={index} status={isMiddleCard(index)} />
+                            ))}
 
-                    </Slider>
+                        </Slider>
+                    </div>
                 </div>
             </div>
             <div className="grid max-w-screen-xl px-4 py-8 mx-auto lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12">
                 <div className="mr-auto place-self-center lg:col-span-6">
-                    <AuctionTimer start={1701630717000} end={1701717807000} />
+                    <AuctionTimer start={1701630717000} end={1700717807000} />
                     <h1 className="max-w-2xl mb-4 text-4xl font-normal leading-normal tracking-tight text-heading md:text-5xl ">
-                        The Bored Ape</h1>
-                    <p className="max-w-2xl font-normal text-sub md:text-2xl ">by Artist name</p>
+                        {auctions && auctions.length ? auctions[0]?.nft?.name : ""}
+                    </h1>
+                    <p className="max-w-2xl font-normal text-sub md:text-2xl ">
+                        by Artist name
+                    </p>
                 </div>
                 <div className="flex items-end lg:mt-0 lg:col-span-6">
                     <div className="flex flex-col gap-4 mx-auto h-fit md:flex-row md:ml-auto md:mr-0 w-fit">
