@@ -9,13 +9,11 @@ import {
   UInt64,
   PublicKey,
 } from "o1js";
-import { NFTKey, NFT } from "../../src/NFT";
-import {
-  EnglishAuction,
-  EnglishAuctionModule,
-} from "../../src/Auctions/EnglishAuction";
+import { NFTKey, NFT } from "../NFT";
+import { EnglishAuction, EnglishAuctionModule } from "./EnglishAuction";
 import { log } from "@proto-kit/common";
-import { Balances } from "../../src/Balances";
+import { Balances } from "../Balances";
+import { GlobalCounter } from "../GlobalCounter";
 
 log.setLevel("ERROR");
 
@@ -23,6 +21,7 @@ describe("EnglishAuction", () => {
   let appChain: TestingAppChain<{
     EnglishAuctionModule: typeof EnglishAuctionModule;
     NFT: typeof NFT;
+    GlobalCounter: typeof GlobalCounter;
     Balances: typeof Balances;
   }>;
   let alicePrivateKey: PrivateKey;
@@ -42,11 +41,13 @@ describe("EnglishAuction", () => {
       modules: {
         EnglishAuctionModule,
         NFT,
+        GlobalCounter,
         Balances,
       },
       config: {
         EnglishAuctionModule: {},
         NFT: {},
+        GlobalCounter: {},
         Balances: {},
       },
     });
@@ -66,11 +67,14 @@ describe("EnglishAuction", () => {
     auction = appChain.runtime.resolve("EnglishAuctionModule");
     auctionQuery = appChain.query.runtime.EnglishAuctionModule;
 
+    // console.log("Alice: ", alice.toBase58());
+    // console.log("Bob:   ", bob.toBase58());
+
     // Alice mints 1000 tokens
     appChain.setSigner(alicePrivateKey);
     inMemorySigner.config.signer = alicePrivateKey;
     let tx = await appChain.transaction(alice, () => {
-      balances.addBalance(alice, UInt64.from(1000));
+      balances.setBalance(alice, UInt64.from(1000));
     });
     await tx.sign();
     await tx.send();
@@ -100,7 +104,7 @@ describe("EnglishAuction", () => {
     expect(block?.txs[0].status, block?.txs[0].statusMessage).toBe(true);
 
     const nft0Key = NFTKey.from(minter, UInt32.from(0));
-    let nft0 = await appChain.query.runtime.NFT.records.get(nft0Key);
+    let nft0 = await appChain.query.runtime.NFT.nftRecords.get(nft0Key);
     expect(nft0?.owner).toStrictEqual(minter); // minter is still owner
     expect(nft0?.locked.toBoolean()).toStrictEqual(false); // nft should not be locked
 
@@ -113,7 +117,7 @@ describe("EnglishAuction", () => {
     block = await appChain.produceBlock();
     expect(block?.txs[0].status, block?.txs[0].statusMessage).toBe(true);
 
-    nft0 = await appChain.query.runtime.NFT.records.get(nft0Key);
+    nft0 = await appChain.query.runtime.NFT.nftRecords.get(nft0Key);
     expect(nft0?.owner).toStrictEqual(minter); // minter should still be owner
     expect(nft0?.locked.toBoolean()).toStrictEqual(true); // nft should be locked now
 
@@ -147,7 +151,7 @@ describe("EnglishAuction", () => {
     minterBalance = await balanceQuery.balances.get(minter);
     expect(minterBalance?.toBigInt()).toBe(500n);
 
-    nft0 = await appChain.query.runtime.NFT.records.get(nft0Key);
+    nft0 = await appChain.query.runtime.NFT.nftRecords.get(nft0Key);
     expect(nft0?.owner).toStrictEqual(alice); // alice is the new owner
     expect(nft0?.locked.toBoolean()).toStrictEqual(false); // nft should be unlocked
   });
@@ -175,7 +179,7 @@ describe("EnglishAuction", () => {
     expect(block?.txs[0].status, block?.txs[0].statusMessage).toBe(true);
 
     const nft0Key = NFTKey.from(minter, UInt32.from(0));
-    let nft0 = await appChain.query.runtime.NFT.records.get(nft0Key);
+    let nft0 = await appChain.query.runtime.NFT.nftRecords.get(nft0Key);
 
     // alice tries to list it for auction
     inMemorySigner.config.signer = alicePrivateKey; // appChain.setSigner(alicePrivateKey);

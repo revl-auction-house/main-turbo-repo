@@ -19,7 +19,7 @@ export class Balances extends RuntimeModule<unknown> {
   }
 
   @runtimeMethod()
-  public addBalance(address: PublicKey, amount: UInt64): void {
+  public setBalance(address: PublicKey, amount: UInt64) {
     const circulatingSupply = this.circulatingSupply.get();
     this.circulatingSupply.set(circulatingSupply.value.add(amount));
 

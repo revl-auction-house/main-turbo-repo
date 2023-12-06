@@ -15,7 +15,7 @@ import {
   UInt64,
 } from "o1js";
 import { log } from "@proto-kit/common";
-import { ClaimKey, PrivateToken } from "../../src/PrivateToken/PrivateToken";
+import { ClaimKey, PrivateToken } from "./PrivateToken";
 
 import {
   EncryptedBalance,
@@ -24,8 +24,8 @@ import {
   TransferProof,
   DepositHashProof,
   generateDepositHash,
-} from "../../src/PrivateToken/Proofs";
-import { Balances } from "../../src/Balances";
+} from "./Proofs";
+import { Balances } from "../Balances";
 import { Pickles } from "o1js/dist/node/snarky";
 import { dummyBase64Proof } from "o1js/dist/node/lib/proof_system";
 
@@ -77,7 +77,7 @@ describe("Private Token", () => {
     inMemorySigner.config.signer = alicePrivateKey;
 
     let tx = await appChain.transaction(alice, () => {
-      balances.addBalance(alice, UInt64.from(1000));
+      balances.setBalance(alice, UInt64.from(1000));
     });
     await tx.sign();
     await tx.send();

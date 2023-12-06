@@ -8,11 +8,12 @@ import {
   UInt64,
   PublicKey,
 } from "o1js";
-import { NFTKey, NFT } from "../../src/NFT";
-import { DutchAuctionModule } from "../../src/Auctions/DutchAuction";
+import { NFTKey, NFT } from "../NFT";
+import { DutchAuction, DutchAuctionModule } from "./DutchAuction";
 import { log } from "@proto-kit/common";
 import { ModuleQuery } from "@proto-kit/sequencer";
-import { Balances } from "../../src/Balances";
+import { Balances } from "../Balances";
+import { GlobalCounter } from "../GlobalCounter";
 
 log.setLevel("ERROR");
 
@@ -20,6 +21,7 @@ describe("DutchAuctions", () => {
   let appChain: TestingAppChain<{
     DutchAuctionModule: typeof DutchAuctionModule;
     NFT: typeof NFT;
+    GlobalCounter: typeof GlobalCounter;
     Balances: typeof Balances;
   }>;
   let alicePrivateKey: PrivateKey;
@@ -38,11 +40,13 @@ describe("DutchAuctions", () => {
       modules: {
         DutchAuctionModule,
         NFT,
+        GlobalCounter,
         Balances,
       },
       config: {
         DutchAuctionModule: {},
         NFT: {},
+        GlobalCounter: {},
         Balances: {},
       },
     });
@@ -68,7 +72,7 @@ describe("DutchAuctions", () => {
     appChain.setSigner(alicePrivateKey);
     inMemorySigner.config.signer = alicePrivateKey;
     let tx = await appChain.transaction(alice, () => {
-      balances.addBalance(alice, UInt64.from(1000));
+      balances.setBalance(alice, UInt64.from(1000));
     });
     await tx.sign();
     await tx.send();
@@ -94,7 +98,7 @@ describe("DutchAuctions", () => {
     await appChain.produceBlock();
 
     const nft0Key = NFTKey.from(bob, UInt32.from(0));
-    let nft0 = await nftQuery.records.get(nft0Key);
+    let nft0 = await nftQuery.nftRecords.get(nft0Key);
     expect(nft0?.owner).toStrictEqual(bob); // bob is still owner
     expect(nft0?.locked.toBoolean()).toStrictEqual(false); // nft should be locked
 
@@ -123,7 +127,7 @@ describe("DutchAuctions", () => {
     await tx.send();
     await appChain.produceBlock();
 
-    nft0 = await nftQuery.records.get(nft0Key);
+    nft0 = await nftQuery.nftRecords.get(nft0Key);
     expect(nft0?.owner).toStrictEqual(alice); // now Alice owns it
     // bob should receive 990
     let bobBalance = await balanceQuery.balances.get(bob);

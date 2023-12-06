@@ -1,6 +1,6 @@
 import { TestingAppChain } from "@proto-kit/sdk";
 import { Poseidon, PrivateKey, UInt32, Encoding } from "o1js";
-import { NFTKey, NFT } from "../src/NFT";
+import { NFTKey, NFT } from "./NFT";
 import { log } from "@proto-kit/common";
 
 log.setLevel("ERROR");
@@ -67,8 +67,8 @@ describe("NFT", () => {
 
     const nft1key = NFTKey.from(minter, UInt32.from(0));
     const nft2key = NFTKey.from(minter, UInt32.from(1));
-    let nft1 = await appChain.query.runtime.NFT.records.get(nft1key);
-    let nft2 = await appChain.query.runtime.NFT.records.get(nft2key);
+    let nft1 = await appChain.query.runtime.NFT.nftRecords.get(nft1key);
+    let nft2 = await appChain.query.runtime.NFT.nftRecords.get(nft2key);
     expect(nft1?.owner).toStrictEqual(bob);
     expect(nft2?.owner).toStrictEqual(alice);
 

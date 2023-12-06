@@ -1,10 +1,16 @@
-import { runtimeMethod, runtimeModule } from "@proto-kit/module";
+import {
+  runtimeMethod,
+  runtimeModule,
+  RuntimeModule,
+  state,
+} from "@proto-kit/module";
 import { Bool, Provable, PublicKey, Struct, UInt64 } from "o1js";
 import { inject } from "tsyringe";
 import { NFT, NFTKey } from "../NFT";
 import { StateMap, assert } from "@proto-kit/protocol";
 import { Auction, AuctionModule, BaseAuctionData } from "./Auction";
 import { Balances } from "../Balances";
+import { GlobalCounter } from "../GlobalCounter";
 
 export class DutchAuction extends Struct({
   ...BaseAuctionData,
@@ -22,9 +28,10 @@ export class DutchAuction extends Struct({
 export class DutchAuctionModule extends AuctionModule<DutchAuction> {
   public constructor(
     @inject("NFT") public nft: NFT,
+    @inject("GlobalCounter") public counter: GlobalCounter,
     @inject("Balances") public balance: Balances
   ) {
-    super(nft);
+    super(nft, counter);
     this.records = StateMap.from<UInt64, DutchAuction>(UInt64, DutchAuction);
   }
 
