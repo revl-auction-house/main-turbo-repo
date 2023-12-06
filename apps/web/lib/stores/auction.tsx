@@ -24,10 +24,13 @@ const AUCTIONS_QUERY = `
       creator
       id
       endTime
+      startTime
       ended
+      winner
       nft {
         collectionAddress
         name
+        imgUrl
       }
     }
   }

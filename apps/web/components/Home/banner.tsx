@@ -5,6 +5,7 @@ import Slider from "react-slick";
 import ModalComponent from "../ui/Modal";
 import AuctionTimer from "./auctionTimer";
 import { Card } from "./card";
+import truncateMiddle from "truncate-middle";
 
 const arr: number[] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 export function Banner() {
@@ -43,7 +44,7 @@ export function Banner() {
         return (
             <div className="relative flex flex-col text-gray-700 bg-white shadow-md w-96 rounded-xl bg-clip-border">
                 <div
-                    className="relative grid mx-4 mb-4 -mt-6 overflow-hidden text-white shadow-lg h-28 place-items-center rounded-xl bg-gradient-to-tr from-gray-900 to-gray-800 bg-clip-border shadow-gray-900/20">
+                    className="relative grid mx-4 mb-4 -mt-6 overflow-hidden text-white shadow-lg h-28 place-items-center rounded-xl bg-[#4846A3] bg-clip-border">
                     <h3 className="block font-sans text-3xl antialiased font-semibold leading-snug tracking-normal text-white">
                         Place You Bid
                     </h3>
@@ -62,7 +63,7 @@ export function Banner() {
                 </div>
                 <div className="p-6 pt-0">
                     <button
-                        className="block w-full select-none rounded-lg bg-gradient-to-tr from-gray-900 to-gray-800 py-3 px-6 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-gray-900/20 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                        className="block w-full select-none rounded-lg bg-buttonColor py-3 px-6 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-gray-900/20 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
                         type="button">
                         Submit
                     </button>
@@ -82,24 +83,27 @@ export function Banner() {
                     </div>
                 </div>
                 <div className="flex items-center justify-between">
-                    <div className="mx-5 w-full">
-                        <Slider {...settings}>
-                            {arr.map((item: any, index: number) => (
-                                <Card key={index} status={isMiddleCard(index)} />
-                            ))}
-
-                        </Slider>
+                    <div className="overflow-x-hidden w-full">
+                        <div className="w-full mx-2">
+                            <Slider {...settings}>
+                                {auctions && auctions.length ? auctions.map((item: any, index: number) => (
+                                    <div key={index} className="px-[10px]">
+                                        <Card key={index} status={isMiddleCard(index)} item={item} />
+                                    </div>
+                                )) : ""}
+                            </Slider>
+                        </div>
                     </div>
                 </div>
             </div>
             <div className="grid max-w-screen-xl px-4 py-8 mx-auto lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12">
                 <div className="mr-auto place-self-center lg:col-span-6">
-                    <AuctionTimer start={1701630717000} end={1700717807000} />
+                    <AuctionTimer start={1701630717000} end={1702236780000} />
                     <h1 className="max-w-2xl mb-4 text-4xl font-normal leading-normal tracking-tight text-heading md:text-5xl ">
                         {auctions && auctions.length ? auctions[0]?.nft?.name : ""}
                     </h1>
                     <p className="max-w-2xl font-normal text-sub md:text-2xl ">
-                        by Artist name
+                        {auctions && auctions.length ? truncateMiddle(auctions[0]?.nft?.collectionAddress, 7, 7, "...") : ""}
                     </p>
                 </div>
                 <div className="flex items-end lg:mt-0 lg:col-span-6">
