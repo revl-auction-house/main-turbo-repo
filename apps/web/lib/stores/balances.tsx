@@ -45,8 +45,8 @@ export const useBalancesStore = create<
           state.balances[address] = balance?.toString() ?? "0";
         });
       } catch (error) {
-        console.error('Error fetching data:', error);
-      };      
+        console.error("Error fetching data:", error);
+      }
     },
     async faucet(client: Client, address: string) {
       const balances = client.runtime.resolve("Balances");

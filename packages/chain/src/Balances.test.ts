@@ -33,9 +33,8 @@ describe("Balances", () => {
     await tx1.send();
     const block1 = await appChain.produceBlock();
 
-    let aliceBalance = await appChain.query.runtime.Balances.balances.get(
-      alice
-    );
+    let aliceBalance =
+      await appChain.query.runtime.Balances.balances.get(alice);
 
     expect(block1?.txs[0].status).toBe(true);
     expect(aliceBalance?.toBigInt()).toBe(1000n);

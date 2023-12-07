@@ -8,7 +8,6 @@ import { TrendingCollection } from "@/components/Home/trendingCollection";
 import { useFaucet } from "@/lib/stores/balances";
 import { useWalletStore } from "@/lib/stores/wallet";
 
-
 export default function Home() {
   const wallet = useWalletStore();
   const drip = useFaucet();
