@@ -89,8 +89,8 @@ export const useChainStore = create<ChainState, [["zustand/immer", never]]>(
       set((state) => {
         state.loading = false;
         state.block = {
-          height: data.network.block.height,
-          ...data.block,
+          height: data?.network?.block?.height,
+          ...data?.block,
         };
       });
     },

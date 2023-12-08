@@ -1,8 +1,22 @@
+import { useAuctionStore } from "@/lib/stores/auction";
+import { useTopBidStore } from "@/lib/stores/topBids";
+import { useEffect } from "react";
 import { LiveAuctionCard } from "./liveAuctionCard";
 import { TopBid } from "./topBid";
 
 export function LiveAuction() {
   const arr: number[] = [1, 2, 3, 4];
+  const { loading, auctions, fetchAuctions } = useAuctionStore();
+
+  const { topBids, fetchTopBids } = useTopBidStore();
+
+  useEffect(() => {
+    fetchAuctions();
+    if (fetchTopBids) {
+      fetchTopBids();
+    }
+  }, []);
+
 
   return (
     <div className="bg-blackBg pb-20 pt-24">
@@ -31,9 +45,9 @@ export function LiveAuction() {
               >
                 <path
                   stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="0.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="0.8"
                   d="m1 1 4 4 4-4"
                 />
               </svg>
@@ -142,9 +156,10 @@ export function LiveAuction() {
             </div>
           </div>
           <div className="mt-10 grid justify-items-center gap-6 md:grid-cols-2">
-            {arr.map((item: number) => (
-              <LiveAuctionCard />
-            ))}
+            {auctions && auctions.length
+              ? auctions.map((item: any, index: number) => (
+                <LiveAuctionCard item={item} key={index} />
+              )) : ""}
           </div>
         </div>
         <div className=" lg:col-span-5 lg:mt-0">
@@ -153,9 +168,12 @@ export function LiveAuction() {
               <p className="ms-4 text-[32px]  font-semibold text-[#DCDCDC]">
                 Top Bids
               </p>
-              {arr.map((item: number) => (
-                <TopBid />
-              ))}
+              {topBids && topBids.length
+                ? topBids.map((item: any, index: number) => (
+                  <div key={index}>
+                    <TopBid item={item} />
+                  </div>
+                )) : ""}
             </div>
             <div className="z-10 flex ">
               <div className="h-28 flex-grow   rounded-[20px]  bg-[#13181D]"></div>

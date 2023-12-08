@@ -19,7 +19,7 @@ const AuctionTimer: React.FC<AuctionTimerProps> = ({ start, end }) => {
           style={{ width: `${timeProgress}%` }}
         ></div>
         {text !== "Ended" ? (
-          <p className="relative z-10 m-4 flex text-center text-base font-medium text-heading">
+          <div className="relative z-10 m-4 flex text-center text-base font-medium text-heading">
             Time left -
             <div className="flex items-center">
               <h4 className="w-[18px]">
@@ -45,7 +45,7 @@ const AuctionTimer: React.FC<AuctionTimerProps> = ({ start, end }) => {
               </h4>
               <h6 className="ml-1">S</h6>
             </div>
-          </p>
+          </div>
         ) : (
           <p className="relative z-10 m-4 text-base font-medium text-heading">
             Time Ended

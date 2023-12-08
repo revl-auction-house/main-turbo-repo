@@ -17,6 +17,9 @@ const nextConfig = {
     return config;
   },
   compress: false,
+  images: {
+    domains: ['ipfs.io'],
+  },
 };
 
 module.exports = nextConfig;

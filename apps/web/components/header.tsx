@@ -79,9 +79,9 @@ export default function Header({
               >
                 <path
                   stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
                   d="M1 1h15M1 7h15M1 13h15"
                 />
               </svg>
@@ -111,7 +111,7 @@ export default function Header({
                   <path
                     d="M161 0.181641V10.1816C161 15.1522 156.971 19.1816 152 19.1816H10C5.02943 19.1816 1 15.1522 1 10.1816V2.02035"
                     stroke="url(#paint0_linear_429_125)"
-                    stroke-width="0.7"
+                    strokeWidth="0.7"
                   />
                   <rect
                     x="64"
@@ -133,8 +133,8 @@ export default function Header({
                       <stop />
                       <stop
                         offset="1"
-                        stop-color="#FF6B00"
-                        stop-opacity="0.31"
+                        stopColor="#FF6B00"
+                        stopOpacity="0.31"
                       />
                     </linearGradient>
                   </defs>

@@ -1,13 +1,21 @@
-import Image, { ImageProps } from "next/image";
+
+import Image from "next/image";
+
+interface NFT {
+  imgUrl: string;
+}
 
 interface CardProps {
   status: Boolean;
-  item: Object;
+  item: {
+    nft?: NFT;
+  };
 }
 
 export function Card({ status, item }: CardProps) {
-  let style = status
+
+  let styles = status
     ? "carousel-img-bigger"
     : "carousel-img-smaller md:my-[5px] xl:my-[6px]";
-  return <img src="/img/slider-2.jpg" alt="" className={`${style}`} />;
+  return <Image src={item?.nft?.imgUrl} width={200} height={300} alt="" className={`${styles}`} />;
 }

@@ -1,23 +1,36 @@
 import Image from "next/image";
 
-export function LiveAuctionCard() {
+interface NFT {
+  imgUrl: string;
+  name: string;
+}
+
+interface CardProps {
+  item: {
+    id: string;
+    nft?: NFT;
+  };
+}
+export function LiveAuctionCard({ item }: CardProps) {
+  console.log(item, "iteme")
   return (
     <div className="h-fit max-w-xs rounded-[27px] bg-[#1e1e1e] p-4">
       <Image
         className="mx-auto mb-8 h-full max-h-[300px] w-full max-w-[300px] rounded-3xl object-cover"
-        src="/img/monkey.png"
+        src={item?.nft?.imgUrl}
         width={100}
         height={100}
+        priority={true}
         alt=""
-        srcset=""
+        srcSet=""
       />
       <div className="space-y-3 px-3">
         <div className="flex items-center justify-between ">
           <div>
             <p className="text-xs font-normal text-[#B6B6B6]">Started by</p>
-            <p className="text-2xl font-semibold text-[#DCDCDC]">Name</p>
+            <p className="text-2xl font-semibold text-[#DCDCDC]">{item?.nft?.name}</p>
           </div>
-          <p className="text-xl font-light text-[#00adf8ab]">#09</p>
+          <p className="text-xl font-light text-[#00adf8ab]">#{item?.id}</p>
         </div>
         <button
           type="button"

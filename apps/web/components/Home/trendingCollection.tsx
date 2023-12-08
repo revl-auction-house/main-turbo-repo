@@ -9,8 +9,8 @@ export function TrendingCollection() {
       </p>
       <div className="mx-auto max-w-[1249px] rounded-[85px] border border-[#fff5f51c] pt-28">
         <div className="mx-auto grid max-w-custom justify-items-center gap-10 md:grid-cols-2 lg:grid-cols-3">
-          {arr.map((item: number) => (
-            <div className="w-80">
+          {arr.map((item: number, index: number) => (
+            <div className="w-80" key={index}>
               <div className="relative h-[310px] w-[310px]">
                 <div className="absolute right-3 top-3 flex w-fit items-center rounded-[63px] border border-white bg-white/30 px-5 py-2 backdrop-blur-sm">
                   <div className="mr-2.5 h-1.5 w-1.5 rounded-full bg-red-500"></div>
@@ -22,7 +22,7 @@ export function TrendingCollection() {
                   className="h-full w-full rounded-3xl object-cover"
                   src="/img/cyberCat.png  "
                   alt=""
-                  srcset=""
+                  srcSet=""
                 />
               </div>
               <div className="-mt-5 space-y-2 rounded-[22px] bg-[#1e1e1e47] p-1.5 backdrop-blur-lg">

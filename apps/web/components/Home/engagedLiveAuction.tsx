@@ -20,10 +20,11 @@ export function EngagedLiveAuction() {
         <div className="swiper mySwiper h-32">
           <div className="swiper-wrapper">
             <Slider {...settings}>
-              {arr.map((item: number) => (
+              {arr.map((item: number, index: number) => (
                 <div
                   className="swiper-slide"
                   style={{ height: "fit-content", width: "20rem" }}
+                  key={index}
                 >
                   <div>
                     <div className="mr-8 h-fit w-80 rounded-[27px] bg-[#1e1e1e] p-4">
