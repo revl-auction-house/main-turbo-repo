@@ -12,9 +12,7 @@ export function LiveAuction() {
 
   useEffect(() => {
     fetchAuctions();
-    if (fetchTopBids) {
-      fetchTopBids();
-    }
+    fetchTopBids();
   }, []);
 
 
@@ -25,7 +23,7 @@ export function LiveAuction() {
           <div className="mx-auto flex w-full max-w-md justify-between md:mx-0 ">
             <p className="w-fit text-5xl text-heading">Live Auction</p>
             <p className="w-fit rounded-2xl border border-[#ABABAB] p-4 text-base text-[#ABABAB]">
-              643 Live
+              {auctions?.length} Live
             </p>
           </div>
           <div className="mx-auto mt-3 flex w-full max-w-md justify-between gap-8 md:mx-0">

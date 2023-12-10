@@ -116,7 +116,7 @@ export function Banner() {
       </div>
       <div className="mx-auto grid max-w-screen-xl px-4 py-8 lg:grid-cols-12 lg:gap-8 lg:py-16 xl:gap-0">
         <div className="mr-auto place-self-center lg:col-span-6">
-          <AuctionTimer start={1701630717000} end={1702236780000} />
+          <AuctionTimer start={1701630717000} end={1702236780000} component="banner" />
           <h1 className="mb-4 max-w-2xl text-4xl font-normal leading-normal tracking-tight text-heading md:text-5xl ">
             {auctions && auctions.length ? auctions[0]?.nft?.name : ""}
           </h1>

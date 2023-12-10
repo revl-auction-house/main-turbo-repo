@@ -1,4 +1,8 @@
+import { getTimeAgo } from "@/lib/utils";
+
 export function TopBid({ item }: any) {
+  const time = getTimeAgo(item?.auction?.endTime)
+
   return (
     <div className="mt-6 rounded-[27px] bg-[#0b0f10] p-[18px]">
       <div className="flex items-center justify-between">
@@ -20,7 +24,7 @@ export function TopBid({ item }: any) {
         </span>
       </div>
       <div className="mt-5 w-fit rounded-[37px] border border-[#808080] px-4 py-2.5 text-xs font-normal text-[#828282]">
-        Ended 2 mins ago
+        Ended {time} ago
       </div>
     </div>
   );
