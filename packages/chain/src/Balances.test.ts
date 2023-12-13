@@ -26,16 +26,15 @@ describe("Balances", () => {
     const balances = appChain.runtime.resolve("Balances");
 
     const tx1 = await appChain.transaction(alice, () => {
-      balances.setBalance(alice, UInt64.from(1000));
+      balances.addBalance(alice, UInt64.from(1000));
     });
 
     await tx1.sign();
     await tx1.send();
     const block1 = await appChain.produceBlock();
 
-    let aliceBalance = await appChain.query.runtime.Balances.balances.get(
-      alice
-    );
+    let aliceBalance =
+      await appChain.query.runtime.Balances.balances.get(alice);
 
     expect(block1?.txs[0].status).toBe(true);
     expect(aliceBalance?.toBigInt()).toBe(1000n);

@@ -74,7 +74,7 @@ describe("EnglishAuction", () => {
     appChain.setSigner(alicePrivateKey);
     inMemorySigner.config.signer = alicePrivateKey;
     let tx = await appChain.transaction(alice, () => {
-      balances.setBalance(alice, UInt64.from(1000));
+      balances.addBalance(alice, UInt64.from(1000));
     });
     await tx.sign();
     await tx.send();

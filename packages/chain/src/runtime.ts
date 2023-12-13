@@ -4,7 +4,7 @@ import { Balances } from "./Balances";
 import { GlobalCounter } from "./GlobalCounter";
 import { NFT } from "./NFT";
 
-export default {
+export const runtime = {
   modules: {
     Balances,
     NFT,
