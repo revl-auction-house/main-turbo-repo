@@ -36,7 +36,6 @@ export class BlindFirstPriceAuctionModule extends AuctionModule<BlindFirstPriceA
     x: Poseidon.hash(Encoding.stringToFields("BlindFirstPriceAuction")),
     isOdd: Bool(false),
   });
-  @state() public auctionIds = StateMap.from<NFTKey, UInt64>(NFTKey, UInt64);
   @state() public bidHashes = StateMap.from<Field, Bool>(Field, Bool);
 
   public constructor(
@@ -57,7 +56,7 @@ export class BlindFirstPriceAuctionModule extends AuctionModule<BlindFirstPriceA
     biddingWindow: UInt64,
     revealWindow: UInt64,
     minPrice: UInt64
-  ) {
+  ): UInt64 {
     const auction = new BlindFirstPriceAuction({
       nftKey,
       creator: this.transaction.sender,
@@ -73,7 +72,7 @@ export class BlindFirstPriceAuctionModule extends AuctionModule<BlindFirstPriceA
       this.privateToken.DEPOSIT_ADDRESS,
       minPrice
     );
-    this.auctionIds.set(nftKey, this.createAuction(auction));
+    return this.createAuction(auction);
   }
 
   /**
@@ -83,10 +82,9 @@ export class BlindFirstPriceAuctionModule extends AuctionModule<BlindFirstPriceA
    * @param sealedBidProof
    */
   @runtimeMethod()
-  public placeSealedBid(nftKey: NFTKey, sealedBidProof: SealedBidProof) {
-    const auctionId = this.auctionIds.get(nftKey);
-    assert(auctionId.isSome, "no auctions exists");
-    const auction = this.records.get(auctionId.value).value;
+  public placeSealedBid(auctionId: UInt64, sealedBidProof: SealedBidProof) {
+    assert(this.records.get(auctionId).isSome, "no auctions exists");
+    const auction = this.records.get(auctionId).value;
     assert(
       auction.revealTime.greaterThanOrEqual(this.network.block.height),
       "bidding ended"
@@ -176,10 +174,9 @@ export class BlindFirstPriceAuctionModule extends AuctionModule<BlindFirstPriceA
    * @param nftKey
    */
   @runtimeMethod()
-  public settle(nftKey: NFTKey) {
-    const auctionId = this.auctionIds.get(nftKey);
-    assert(auctionId.isSome, "no auctions exists");
-    const auction = this.records.get(auctionId.value).value;
+  public settle(auctionId: UInt64) {
+    assert(this.records.get(auctionId).isSome, "no auctions exists");
+    const auction = this.records.get(auctionId).value;
     assert(
       auction.endTime
         .lessThan(this.network.block.height)
@@ -189,6 +186,6 @@ export class BlindFirstPriceAuctionModule extends AuctionModule<BlindFirstPriceA
     // transfer the locked token amount to seller or auction creator
     this.privateToken.unlockBalance(auction.creator, auction.maxBid.price);
 
-    this.endAuction(auctionId.value, auction.maxBid.bidder);
+    this.endAuction(auctionId, auction.maxBid.bidder);
   }
 }

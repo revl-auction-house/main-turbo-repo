@@ -109,8 +109,9 @@ describe("EnglishAuction", () => {
     expect(nft0?.locked.toBoolean()).toStrictEqual(false); // nft should not be locked
 
     // minter lists for auction
+    let auctionId: UInt64;
     tx = await appChain.transaction(minter, () => {
-      auction.start(nft0Key, UInt64.from(1)); // bidding active for next 1 block
+      auctionId = auction.start(nft0Key, UInt64.from(1)); // bidding active for next 1 block
     });
     await tx.sign();
     await tx.send();
@@ -125,7 +126,7 @@ describe("EnglishAuction", () => {
     inMemorySigner.config.signer = alicePrivateKey; // appChain.setSigner(alicePrivateKey);
 
     tx = await appChain.transaction(alice, () => {
-      auction.placeBid(nft0Key, UInt64.from(500));
+      auction.placeBid(auctionId, UInt64.from(500));
     });
     await tx.sign();
     await tx.send();
@@ -141,7 +142,7 @@ describe("EnglishAuction", () => {
     inMemorySigner.config.signer = minterPrivateKey; // appChain.setSigner(minterPrivateKey);
 
     tx = await appChain.transaction(minter, () => {
-      auction.end(nft0Key);
+      auction.end(auctionId);
     });
     await tx.sign();
     await tx.send();
