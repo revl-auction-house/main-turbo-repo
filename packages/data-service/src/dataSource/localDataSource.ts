@@ -1,13 +1,7 @@
 import * as fs from "fs";
 import * as util from "util";
 import { DataSource } from "./dataSource";
-import {
-  Nft,
-  Collection,
-  Auction,
-  EnglishAuction,
-  DutchAuction,
-} from "../resolvers/resolvers-types";
+import { NftPart, CollectionPart, AuctionPart, BidPart } from "./types";
 
 const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
@@ -18,41 +12,24 @@ export class LocalDataSource implements DataSource {
   private writeCounter: number = 0;
   private loaded = false;
   private data: {
-    collections: {
+    kv: {
+      [key: string]: {};
+    };
+    nfts: {
       [key: string]: {
-        nfts: Nft[];
-        address: string;
-        name: string;
-        description: string;
+        [key: number]: NftPart;
       };
+    };
+    collections: {
+      [key: string]: CollectionPart;
     };
     auctions: {
-      [key: string]: {
-        creator: string;
-        collectionAddress: string;
-        nftIdx: number;
-        winner: string;
-        startTime: number;
-        endTime: number | undefined;
-        ended: boolean;
-        type: "english" | "dutch" | "blind";
-        // english
-        bidCount?: number;
-        maxBid?: number;
-        maxBidder?: string;
-        // dutch
-        decayRate?: number;
-        minPrice?: number;
-        startPrice?: number;
-      };
+      [key: string]: AuctionPart;
     };
-    bids: {
-      amount: number;
-      auctionId: string;
-      bidder: string;
-      timestamp: number;
-    }[];
+    bids: BidPart[];
   } = {
+    kv: {},
+    nfts: {},
     collections: {},
     auctions: {},
     bids: [],
@@ -65,10 +42,9 @@ export class LocalDataSource implements DataSource {
     await this.readFile();
     if (!(address in this.data.collections)) return null;
 
-    const collection: Collection = { ...this.data.collections[address] };
-    return collection;
+    return this.data.collections[address];
   }
-  public async getCollections(skip = 0, count = 10): Promise<Collection[]> {
+  public async getCollections(skip = 0, count = 10) {
     await this.readFile();
     return Object.values(this.data.collections).slice(skip, skip + count);
   }
@@ -77,23 +53,19 @@ export class LocalDataSource implements DataSource {
     await this.readFile();
     return this.data.bids
       .filter((bid) => bid.auctionId === id)
-      .slice(skip, skip + count)
-      .map((bid) => {
-        return { ...bid, timestamp: bid.timestamp.toString() };
-      });
+      .slice(skip, skip + count);
   }
   public async getBidsByBidder(address: string, skip = 0, count = 10) {
     await this.readFile();
     return this.data.bids
       .filter((bid) => bid.bidder === address)
-      .slice(skip, skip + count)
-      .map((bid) => {
-        return { ...bid, timestamp: bid.timestamp.toString() };
-      });
+      .slice(skip, skip + count);
   }
   public async getTopBids(skip = 0, count = 10) {
     await this.readFile();
-    const sortedBids = this.data.bids.sort((a, b) => b.amount - a.amount);
+    const sortedBids = this.data.bids.sort(
+      (a, b) => Number(b.amount) - Number(a.amount)
+    );
     return sortedBids.slice(skip, skip + count).map((bid) => {
       return { ...bid, timestamp: bid.timestamp.toString() };
     });
@@ -102,35 +74,9 @@ export class LocalDataSource implements DataSource {
   public async getAuction(id: string) {
     await this.readFile();
     // console.log("local DB | getAuction: ", id);
-    const aucData = this.data.auctions[id];
-    const nft =
-      this.data.collections[aucData.collectionAddress]?.nfts[aucData.nftIdx];
-    if (aucData.type == "english") {
-      return {
-        ...aucData,
-        id: id,
-        nft: nft,
-        type: {
-          id,
-          maxBid: aucData.maxBid!,
-          maxBidder: aucData.maxBidder!,
-          bidCount: aucData.bidCount!,
-        },
-      };
-    } else if (aucData.type == "dutch") {
-      return {
-        ...aucData,
-        id: id,
-        nft: nft,
-        type: {
-          id,
-          startPrice: aucData.startPrice!,
-          minPrice: aucData.minPrice!,
-          decayRate: aucData.decayRate!,
-        },
-      };
-    }
-    return null;
+    if (!(id in this.data.auctions)) return null;
+
+    return this.data.auctions[id];
   }
 
   public async getAuctions(
@@ -140,9 +86,7 @@ export class LocalDataSource implements DataSource {
     count = 10
   ) {
     await this.readFile();
-    let auctions = await Promise.all(
-      Object.keys(this.data.auctions).map((id) => this.getAuction(id))
-    );
+    let auctions = Object.values(this.data.auctions);
     if (creator) {
       auctions = auctions.filter((auction) => auction?.creator === creator);
     }
@@ -155,162 +99,141 @@ export class LocalDataSource implements DataSource {
 
   public async getNFT(collectionAddress: string, index: number) {
     await this.readFile();
-    return this.data.collections[collectionAddress]?.nfts[index];
+    if (!(collectionAddress in this.data.nfts)) return null;
+    if (!(index in this.data.nfts[collectionAddress])) return null;
+    return this.data.nfts[collectionAddress][index];
   }
-  public async getNFTs(skip = 0, count = 10): Promise<Nft[]> {
+  public async getNFTs(skip = 0, count = 10) {
     await this.readFile();
-    const nfts: Nft[] = [];
+    let nfts: NftPart[] = [];
     for (const collectionAddr in this.data.collections) {
-      const collection = this.data.collections[collectionAddr];
-      nfts.push(...collection.nfts);
+      const collectionNfts = Object.values(this.data.nfts[collectionAddr]);
+      nfts = nfts.concat(collectionNfts);
     }
     return nfts.slice(skip, skip + count); // Corrected to return the correct count
   }
   public async getNFTsByOwner(skip = 0, count = 10, address: string) {
     await this.readFile();
-    const nfts: Nft[] = [];
+    let nfts: NftPart[] = [];
     for (const collectionAddr in this.data.collections) {
-      const collection = this.data.collections[collectionAddr];
-      const ownerNFTs = collection.nfts.filter((nft) => nft.owner === address);
-      nfts.push(...ownerNFTs);
+      const collectionNfts = Object.values(
+        this.data.nfts[collectionAddr]
+      ).filter((nft) => nft.owner === address);
+      nfts = nfts.concat(collectionNfts);
     }
     return nfts.slice(skip, skip + count); // Corrected to return the correct count
   }
-  public async getNFTsByCollection(
-    skip = 0,
-    count = 10,
-    address: string
-  ): Promise<Nft[]> {
+  public async getNFTsByCollection(skip = 0, count = 10, address: string) {
     await this.readFile();
-    const nfts: Nft[] = this.data.collections[address]?.nfts || [];
+    const nfts = Object.values(this.data.nfts[address]) || [];
     return nfts.slice(skip, skip + count); // Corrected to return the correct count
   }
 
-  async addNFT(
-    name: string,
-    owner: string,
-    data = "",
-    dataHash = "",
-    imgUrl = "",
-    collectionAddress: string
+  async createNFT(
+    collectionAddress: string,
+    idx: number,
+    data: NftPart
   ): Promise<void> {
-    this.dirty = true;
+    await this.readFile();
     if (!this.data.collections[collectionAddress]) {
-      throw new Error("Collection not found");
+      Promise.reject("Collection not found");
     }
-    const idx = this.data.collections[collectionAddress]?.nfts.length;
-    const nft: Nft = {
-      collectionAddress,
-      data,
-      dataHash,
-      idx: idx ? idx : 0,
-      imgUrl,
-      locked: false,
-      name,
-      owner,
-    };
-    this.data.collections[collectionAddress]?.nfts.push(nft);
-    this.writeData();
+    if (!this.data.nfts[collectionAddress]) {
+      this.data.nfts[collectionAddress] = {};
+    }
+    this.data.nfts[collectionAddress][idx] = data;
+    this.dirty = true;
+    await this.writeData();
   }
-  async addCollection(
-    name: string,
-    address: string,
-    description = ""
+
+  async updateNFT(
+    collectionAddress: string,
+    idx: number,
+    data: Partial<NftPart>
   ): Promise<void> {
+    await this.readFile();
+    if (!this.data.collections[collectionAddress]) {
+      Promise.reject("Collection not found");
+    }
+    if (!this.data.nfts[collectionAddress]) {
+      Promise.reject("NFT not found");
+    }
+    this.data.nfts[collectionAddress][idx] = {
+      ...this.data.nfts[collectionAddress][idx],
+      ...data,
+    };
     this.dirty = true;
+    await this.writeData();
+  }
+
+  async createCollection(address: string, data: CollectionPart): Promise<void> {
+    await this.readFile();
+    this.data.collections[address] = data;
+    this.dirty = true;
+    await this.writeData();
+  }
+
+  async updateCollection(
+    address: string,
+    data: Partial<CollectionPart>
+  ): Promise<void> {
+    await this.readFile();
+    if (!this.data.collections[address]) {
+      Promise.reject("Collection not found");
+    }
     this.data.collections[address] = {
-      address,
-      name,
-      description,
-      nfts: [],
+      ...this.data.collections[address],
+      ...data,
     };
-    this.writeData();
-  }
-  async addEnglishAuc(
-    id: string,
-    creator: string,
-    collectionAddress: string,
-    nftIdx: number,
-    duration: number // secs
-  ) {
-    // check if owner
-    if (
-      this.data.collections[collectionAddress]?.nfts[nftIdx]?.owner !== creator
-    ) {
-      return;
-    }
     this.dirty = true;
-    this.data.auctions[id] = {
-      creator,
-      collectionAddress,
-      nftIdx,
-      winner: "",
-      startTime: Math.ceil(Date.now() / 1000),
-      endTime: Math.ceil(Date.now() / 1000) + duration,
-      ended: false,
-      type: "english",
-      bidCount: 0,
-      maxBid: 0,
-      maxBidder: "",
-    };
-    // lock nft
-    this.data.collections[collectionAddress].nfts[nftIdx].locked = true;
-    console.log("created Eng Auction ID:", id);
-    this.writeData();
+    await this.writeData();
   }
-  async addDutchAuc(
-    id: string,
-    creator: string,
-    collectionAddress: string,
-    nftIdx: number,
-    startPrice: number,
-    minPrice: number,
-    decayRate: number
-  ) {
-    // check if owner
-    if (
-      this.data.collections[collectionAddress]?.nfts[nftIdx]?.owner != creator
-    ) {
-      return;
-    }
+
+  async createAuction(id: string, data: AuctionPart): Promise<void> {
+    await this.readFile();
+    this.data.auctions[id] = data;
     this.dirty = true;
+    await this.writeData();
+  }
+
+  async updateAuction(id: string, data: Partial<AuctionPart>): Promise<void> {
+    await this.readFile();
+    if (!this.data.auctions[id]) {
+      Promise.reject("Auction not found");
+    }
     this.data.auctions[id] = {
-      creator,
-      collectionAddress,
-      nftIdx,
-      winner: "",
-      startTime: Math.ceil(Date.now() / 1000),
-      endTime: undefined,
-      ended: false,
-      type: "dutch",
-      decayRate,
-      minPrice,
-      startPrice,
+      ...this.data.auctions[id],
+      ...data,
     };
-    // lock nft
-    this.data.collections[collectionAddress].nfts[nftIdx].locked = true;
-    console.log("created Dutch Auction ID:", id);
+    this.dirty = true;
+    await this.writeData();
+  }
+
+  async createBid(
+    auctionId: string,
+    bidder: string,
+    amount: string
+  ): Promise<void> {
+    await this.readFile();
+    this.data.bids.push({
+      auctionId,
+      bidder,
+      amount,
+      timestamp: Date.now().toString(),
+    });
+    this.dirty = true;
+    await this.writeData();
+  }
+
+  async setValue(key: string, value: any) {
+    this.dirty = true;
+    this.data.kv[key] = value;
     this.writeData();
   }
-  async addBid(id: string, amount: number, bidder: string) {
-    const auc = this.data.auctions[id];
-    if (auc && amount > Number(auc.maxBid)) {
-      this.dirty = true;
-      this.data.auctions[id] = {
-        ...auc,
-        bidCount: auc.bidCount ? auc.bidCount + 1 : 1,
-        maxBid: amount,
-        maxBidder: bidder,
-      };
-      this.data.bids.push({
-        amount,
-        auctionId: id,
-        bidder,
-        timestamp: Date.now(),
-      });
-      console.log("placed bid for AuctionId: ", id, " amount:", amount);
-      this.writeData();
-    }
+
+  async getValue(key: string): Promise<any> {
+    await this.readFile();
+    return this.data.kv[key];
   }
 
   private async readFile() {

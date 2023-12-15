@@ -1,65 +1,65 @@
-import {
-  Nft,
-  Collection,
-  Auction,
-  Bid,
-  EnglishAuction,
-  DutchAuction,
-} from "../resolvers/resolvers-types";
+import { NftPart, CollectionPart, AuctionPart, BidPart } from "./types";
 
 export interface DataSource {
   //NFTs
-  getNFT: (collectionAddress: string, index: number) => Promise<Nft | null>;
-  getNFTs: (skip: number, count: number) => Promise<Nft[]>;
-  getNFTsByOwner: (
+  getNFT(collectionAddress: string, index: number): Promise<NftPart | null>;
+  getNFTs(skip: number, count: number): Promise<NftPart[]>;
+  getNFTsByOwner(
     skip: number,
     count: number,
     address: string
-  ) => Promise<Nft[]>;
-  getNFTsByCollection: (
+  ): Promise<NftPart[]>;
+  getNFTsByCollection(
     skip: number,
     count: number,
     address: string
-  ) => Promise<Nft[]>;
+  ): Promise<NftPart[]>;
 
-  getCollection: (address: string) => Promise<Collection | null>;
-  getCollections: (
-    skip?: number,
-    count?: number
-  ) => Promise<Omit<Collection, "nfts">[]>;
+  getCollection(address: string): Promise<CollectionPart | null>;
+  getCollections(skip?: number, count?: number): Promise<CollectionPart[]>;
 
-  getAuctions: (
+  getAuctions(
     creator: string | undefined,
     live: boolean | undefined,
     skip: number,
     count: number
-  ) => Promise<
-    (
-      | null
-      | (Omit<Auction, "type"> & {
-          type: Omit<EnglishAuction, "bids"> | DutchAuction;
-        })
-    )[]
-  >;
-  getAuction: (id: string) => Promise<
-    | null
-    | (Omit<Auction, "type"> & {
-        type: Omit<EnglishAuction, "bids"> | DutchAuction;
-      })
-  >;
+  ): Promise<AuctionPart[]>;
+  getAuction(id: string): Promise<null | AuctionPart>;
 
-  getBidsByAuctionId: (
+  getBidsByAuctionId(
     id: string,
     skip?: number,
     count?: number
-  ) => Promise<Omit<Bid, "auction">[]>;
-  getBidsByBidder: (
+  ): Promise<BidPart[]>;
+  getBidsByBidder(
     address: string,
     skip?: number,
     count?: number
-  ) => Promise<Omit<Bid, "auction">[]>;
-  getTopBids: (
-    skip?: number,
-    count?: number
-  ) => Promise<Omit<Bid, "auction">[]>;
+  ): Promise<BidPart[]>;
+  getTopBids(skip?: number, count?: number): Promise<BidPart[]>;
+
+  setValue(key: string, value: any): Promise<void>;
+  getValue(key: string): Promise<any | null>;
+
+  createNFT(
+    collectionAddress: string,
+    idx: number,
+    data: NftPart
+  ): Promise<void>;
+  updateNFT(
+    collectionAddress: string,
+    idx: number,
+    data: Partial<NftPart>
+  ): Promise<void>;
+
+  createCollection(address: string, data: CollectionPart): Promise<void>;
+  updateCollection(
+    address: string,
+    data: Partial<CollectionPart>
+  ): Promise<void>;
+
+  createAuction(id: string, data: AuctionPart): Promise<void>;
+  updateAuction(id: string, data: Partial<AuctionPart>): Promise<void>;
+
+  createBid(auctionId: string, bidder: string, amount: string): Promise<void>;
 }

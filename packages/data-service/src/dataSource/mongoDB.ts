@@ -1,21 +1,7 @@
 import * as mongoDB from "mongodb";
 import * as dotenv from "dotenv";
 import { DataSource } from "./dataSource";
-import {
-  Nft,
-  Auction,
-  DutchAuction,
-  EnglishAuction,
-  Bid,
-  Collection,
-} from "../resolvers/resolvers-types";
-import { Cipher } from "crypto";
-
-enum auctionTypes {
-  English = "english",
-  Dutch = "dutch",
-  Blind = "blind",
-}
+import { NftPart, CollectionPart, AuctionPart, BidPart } from "./types";
 
 export class MongoDB implements DataSource {
   private client: mongoDB.MongoClient;
@@ -33,11 +19,9 @@ export class MongoDB implements DataSource {
       "_id.collectionAddress": collectionAddress,
       "_id.index": index,
     });
-    if (nftData) {
-      delete nftData._id;
-      return { ...nftData, collectionAddress, idx: index } as Nft;
-    }
-    return null;
+    if (nftData === null) return null;
+    delete nftData._id;
+    return { ...nftData, collectionAddress, idx: index } as NftPart;
   }
   public async getNFTs(skip = 0, count = 10) {
     const nftData = await this.db
@@ -52,7 +36,7 @@ export class MongoDB implements DataSource {
         ...nft,
         collectionAddress: (_id as any).collectionAddress,
         idx: (_id as any).index,
-      } as Nft;
+      } as NftPart;
     });
   }
   public async getNFTsByOwner(skip = 0, count = 10, address: string) {
@@ -70,7 +54,7 @@ export class MongoDB implements DataSource {
         ...nft,
         collectionAddress: (_id as any).collectionAddress,
         idx: (_id as any).index,
-      } as Nft;
+      } as NftPart;
     });
   }
   public async getNFTsByCollection(skip = 0, count = 10, address: string) {
@@ -88,37 +72,18 @@ export class MongoDB implements DataSource {
         ...nft,
         collectionAddress: (_id as any).collectionAddress,
         idx: (_id as any).index,
-      } as Nft;
+      } as NftPart;
     });
   }
 
   public async getCollection(address: string) {
-    const collectionDetailData = (await this.db
+    const collectionDetail = (await this.db
       .collection("collectionDetails")
       .findOne({ "_id.address": address }))!;
-    if (collectionDetailData === null) return null;
+    if (collectionDetail === null) return null;
 
-    const { _id, ...collectionDetail } = collectionDetailData!;
-    const nfts = await this.db
-      .collection("nfts")
-      .find({
-        "_id.collectionAddress": address,
-      })
-      .limit(24)
-      .toArray();
-    return {
-      address,
-      description: collectionDetail?.description,
-      name: collectionDetail?.name,
-      nfts: nfts.map((nftData) => {
-        const { _id, ...nft } = nftData;
-        return {
-          ...nft,
-          collectionAddress: address,
-          idx: (_id as any).index,
-        } as Nft;
-      }),
-    };
+    const { _id, ...data } = collectionDetail!;
+    return { ...data, address: (_id as any).address } as CollectionPart;
   }
   public async getCollections(skip = 0, count = 10) {
     const collectionData = await this.db
@@ -129,73 +94,17 @@ export class MongoDB implements DataSource {
       .toArray();
     return collectionData.map((collection) => {
       const { _id, ...data } = collection;
-      return { ...data, address: (_id as any).address } as Omit<
-        Collection,
-        "nfts"
-      >;
+      return { ...data, address: (_id as any).address } as CollectionPart;
     });
   }
 
-  private async getAuctionFromAuctionData(auctionData: any): Promise<
-    | (Omit<Auction, "type"> & {
-        type: Omit<EnglishAuction, "bids"> | DutchAuction;
-      })
-    | null
-  > {
-    if (auctionData === null) return null;
-
-    const id = auctionData._id.auctionId;
-    const nft = await this.getNFT(
-      auctionData.collectionAddress,
-      auctionData.nftIdx
-    );
-    if (auctionData.type === auctionTypes.English) {
-      return {
-        id,
-        nft: nft!,
-        creator: auctionData.creator,
-        endTime: auctionData.endTime,
-        ended: auctionData.ended,
-        startTime: auctionData.startTime,
-        winner: auctionData.winner,
-        type: {
-          id,
-          maxBid: auctionData.maxBid,
-          maxBidder: auctionData.maxBidder,
-          bidCount: auctionData.bidCount,
-        },
-      };
-    } else if (auctionData.type === auctionTypes.Dutch) {
-      return {
-        id,
-        nft: nft!,
-        creator: auctionData.creator,
-        endTime: auctionData.endTime,
-        ended: auctionData.ended,
-        startTime: auctionData.startTime,
-        winner: auctionData.winner,
-        type: {
-          id,
-          decayRate: auctionData.decayRate,
-          startPrice: auctionData.startPrice,
-          minPrice: auctionData.minPrice,
-        },
-      };
-    } else if (auctionData.type === auctionTypes.Blind) {
-      return null;
-    }
-    return null;
-  }
-  public async getAuction(id: string): Promise<
-    | null
-    | (Omit<Auction, "type"> & {
-        type: Omit<EnglishAuction, "bids"> | DutchAuction;
-      })
-  > {
-    const auctionData = (await this.db
+  public async getAuction(id: string) {
+    const auctionData = await this.db
       .collection("auctions")
-      .findOne({ "_id.auctionId": id }))!;
-    return this.getAuctionFromAuctionData(auctionData);
+      .findOne({ "_id.auctionId": id });
+    if (auctionData === null) return null;
+    const { _id, ...auction } = auctionData;
+    return { ...auction, id: (_id as any).auctionId } as AuctionPart;
   }
   public async getAuctions(
     creator: string | undefined,
@@ -210,25 +119,20 @@ export class MongoDB implements DataSource {
     if (live) {
       filter.ended = false;
     }
-    const auctionData = await this.db
+    const auctions = await this.db
       .collection("auctions")
       .find(filter)
       .skip(skip)
       .limit(count)
       .toArray();
-    return Promise.all(
-      auctionData.map((auctionData) => {
-        return this.getAuctionFromAuctionData(auctionData);
-      })
-    );
+    return auctions.map((auctionData) => {
+      const { _id, ...auction } = auctionData;
+      return { ...auction, id: (_id as any).auctionId } as AuctionPart;
+    });
   }
 
-  public async getBidsByAuctionId(
-    id: string,
-    skip = 0,
-    count = 10
-  ): Promise<Omit<Bid, "auction">[]> {
-    let bidData = await this.db
+  public async getBidsByAuctionId(id: string, skip = 0, count = 10) {
+    let bids = await this.db
       .collection("bids")
       .find({
         auctionId: id,
@@ -236,17 +140,13 @@ export class MongoDB implements DataSource {
       .skip(skip)
       .limit(count)
       .toArray();
-    return bidData.map((bidWithId) => {
+    return bids.map((bidWithId) => {
       const { _id, ...bid } = bidWithId;
-      return { ...bid } as Omit<Bid, "auction">;
+      return { ...bid } as BidPart;
     });
   }
-  public async getBidsByBidder(
-    address: string,
-    skip = 0,
-    count = 10
-  ): Promise<Omit<Bid, "auction">[]> {
-    let bidData = await this.db
+  public async getBidsByBidder(address: string, skip = 0, count = 10) {
+    let bids = await this.db
       .collection("bids")
       .find({
         bidder: address,
@@ -254,26 +154,59 @@ export class MongoDB implements DataSource {
       .skip(skip)
       .limit(count)
       .toArray();
-    return bidData.map((bidWithId) => {
+    return bids.map((bidWithId) => {
       const { _id, ...bid } = bidWithId;
-      return { ...bid } as Omit<Bid, "auction">;
+      return { ...bid } as BidPart;
     });
   }
-  public async getTopBids(
-    skip = 0,
-    count = 10
-  ): Promise<Omit<Bid, "auction">[]> {
-    let bidData = await this.db
+  public async getTopBids(skip = 0, count = 10) {
+    let bids = await this.db
       .collection("bids")
       .find()
       .sort({ amount: -1 })
       .skip(skip)
       .limit(count)
       .toArray();
-    return bidData.map((bidWithId) => {
+    return bids.map((bidWithId) => {
       const { _id, ...bid } = bidWithId;
-      return { ...bid } as Omit<Bid, "auction">;
+      return { ...bid } as BidPart;
     });
+  }
+
+  setValue(key: string, value: any): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
+  getValue(key: string): Promise<any> {
+    throw new Error("Method not implemented.");
+  }
+  createNFT(
+    collectionAddress: string,
+    idx: number,
+    data: NftPart
+  ): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
+  updateNFT(
+    collectionAddress: string,
+    idx: number,
+    data: NftPart
+  ): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
+  createCollection(address: string, data: CollectionPart): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
+  updateCollection(address: string, data: CollectionPart): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
+  createAuction(id: string, data: AuctionPart): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
+  updateAuction(id: string, data: AuctionPart): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
+  createBid(auctionId: string, bidder: string, amount: string): Promise<void> {
+    throw new Error("Method not implemented.");
   }
 
   private async connectToDatabase() {
