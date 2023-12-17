@@ -41,6 +41,9 @@ export interface DataSource {
   setValue(key: string, value: any): Promise<void>;
   getValue(key: string): Promise<any | null>;
 
+  getNftCount(collectionAddress: string): Promise<number>;
+  getAuctionCount(): Promise<number>;
+
   createNFT(
     collectionAddress: string,
     idx: number,

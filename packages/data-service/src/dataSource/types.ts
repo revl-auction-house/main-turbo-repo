@@ -31,7 +31,7 @@ export type AuctionPart = Omit<
   Omit<Omit<Auction, "winningBid">, "auctionData"> & {
     collectionAddress: string;
     nftIdx: number;
-    winningBid: BidPart;
+    winningBid?: BidPart;
     auctionType: auctionType;
     auctionData:
       | EnglishAuctionPart

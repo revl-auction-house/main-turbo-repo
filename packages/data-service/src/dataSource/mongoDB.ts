@@ -173,6 +173,13 @@ export class MongoDB implements DataSource {
     });
   }
 
+  public async getNftCount(collectionAddress: string): Promise<number> {
+    throw new Error("Method not implemented.");
+  }
+  public async getAuctionCount(): Promise<number> {
+    throw new Error("Method not implemented.");
+  }
+
   setValue(key: string, value: any): Promise<void> {
     throw new Error("Method not implemented.");
   }

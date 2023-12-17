@@ -129,6 +129,17 @@ export class LocalDataSource implements DataSource {
     return nfts.slice(skip, skip + count); // Corrected to return the correct count
   }
 
+  public async getNftCount(collectionAddress: string): Promise<number> {
+    await this.readFile();
+    if (!(collectionAddress in this.data.collections)) return 0;
+    return Object.keys(this.data.nfts[collectionAddress]).length;
+  }
+
+  public async getAuctionCount(): Promise<number> {
+    await this.readFile();
+    return Object.keys(this.data.auctions).length;
+  }
+
   async createNFT(
     collectionAddress: string,
     idx: number,
@@ -168,6 +179,7 @@ export class LocalDataSource implements DataSource {
 
   async createCollection(address: string, data: CollectionPart): Promise<void> {
     await this.readFile();
+    if (address in this.data.collections) return;
     this.data.collections[address] = data;
     this.dirty = true;
     await this.writeData();
@@ -233,6 +245,7 @@ export class LocalDataSource implements DataSource {
 
   async getValue(key: string): Promise<any> {
     await this.readFile();
+    console.log("getValue:", key, this.data.kv, this.data.kv[key]);
     return this.data.kv[key];
   }
 

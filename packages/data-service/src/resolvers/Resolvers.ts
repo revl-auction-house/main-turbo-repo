@@ -1,21 +1,29 @@
 import { DataSource } from "../dataSource";
 import {
+  BlindSecondPriceAuctionPart,
+  CollectionPart,
+  NftPart,
+  AuctionPart,
+  auctionType,
+} from "../dataSource/types";
+import {
   QueryResolvers,
-  Nft,
-  EnglishAuction,
-  AuctionType,
   AuctionTypeResolvers,
   EnglishAuctionResolvers,
-  Bid,
   BidResolvers,
+  BlindFirstPriceAuctionResolvers,
+  BlindSecondPriceAuctionResolvers,
+  NftResolvers,
+  CollectionResolvers,
+  AuctionResolvers,
 } from "./resolvers-types";
 
-const Query: QueryResolvers<{ dataSource: DataSource }> = {
+export const Query: QueryResolvers<{ dataSource: DataSource }> = {
   nfts: async (
     _,
     { owner, collection, skip, count },
     { dataSource }
-  ): Promise<Nft[]> => {
+  ): Promise<any[]> => {
     // console.log("resolver | nftss");
     if (owner) {
       return dataSource.getNFTsByOwner(skip!, count!, owner);
@@ -25,11 +33,7 @@ const Query: QueryResolvers<{ dataSource: DataSource }> = {
       return dataSource.getNFTs(skip!, count!);
     }
   },
-  nft: async (
-    parent,
-    { collection, idx },
-    { dataSource }
-  ): Promise<Nft | null> => {
+  nft: async (_, { collection, idx }, { dataSource }): Promise<any | null> => {
     // console.log("resolver | nft: ", parent);
     return dataSource.getNFT(collection, idx);
   },
@@ -41,7 +45,7 @@ const Query: QueryResolvers<{ dataSource: DataSource }> = {
     // console.log("collections: ", skip, count);
     return dataSource.getCollections(skip!, count!);
   },
-  collection: async (_, { address }, { dataSource }) => {
+  collection: async (_, { address }, { dataSource }): Promise<any> => {
     return dataSource.getCollection(address);
   },
   auctions: async (
@@ -69,7 +73,84 @@ const Query: QueryResolvers<{ dataSource: DataSource }> = {
   },
 };
 
-const Bid: BidResolvers<{ dataSource: DataSource }> = {
+export const NFT: NftResolvers<{ dataSource: DataSource }> = {
+  collection: async (parent: any, _, { dataSource }): Promise<any> => {
+    // console.log("Nft | resolver", parent);
+    if ("collectionAddress" in parent) {
+      return await dataSource.getCollection(parent.collectionAddress);
+    }
+  },
+};
+export const Collection: CollectionResolvers<{ dataSource: DataSource }> = {
+  nfts: async (parent: any, _, { dataSource }): Promise<any> => {
+    // console.log("Collection | resolver", parent);
+    if ("address" in parent) {
+      return await dataSource.getNFTsByCollection(0, 24, parent.address);
+    }
+  },
+};
+export const Auction: AuctionResolvers<{ dataSource: DataSource }> = {
+  nft: async (parent: any, _, { dataSource }): Promise<any> => {
+    // console.log("Auction | resolver", parent);
+    if ("collectionAddress" in parent && "nftIdx" in parent) {
+      return await dataSource.getNFT(parent.collectionAddress, parent.nftIdx);
+    }
+  },
+  auctionData: async (parent: any, _, { dataSource }): Promise<any> => {
+    // console.log("Auction | resolver", parent);
+    return { ...parent.auctionData, type: parent.auctionType };
+  },
+};
+export const EnglishAuction: EnglishAuctionResolvers<{
+  dataSource: DataSource;
+}> = {
+  bids: async (parent: any, _, { dataSource }): Promise<any> => {
+    // console.log("EnglishAuction | resolver", parent);
+    if ("id" in parent) {
+      return await dataSource.getBidsByAuctionId(parent.id);
+    }
+  },
+};
+export const BlindFirstPriceAuction: BlindFirstPriceAuctionResolvers<{
+  dataSource: DataSource;
+}> = {
+  bids: async (parent: any, _, { dataSource }): Promise<any> => {
+    // console.log("EnglishAuction | resolver", parent);
+    if ("id" in parent) {
+      return await dataSource.getBidsByAuctionId(parent.id);
+    }
+  },
+};
+export const BlindSecondPriceAuction: BlindSecondPriceAuctionResolvers<{
+  dataSource: DataSource;
+}> = {
+  bids: async (parent: any, _, { dataSource }): Promise<any> => {
+    // console.log("EnglishAuction | resolver", parent);
+    if ("id" in parent) {
+      return await dataSource.getBidsByAuctionId(parent.id);
+    }
+  },
+};
+export const AuctionType: AuctionTypeResolvers = {
+  // using auctionType
+  __resolveType: (parent: any) => {
+    // console.log("AuctionType | resolver", parent);
+    if ("type" in parent) {
+      switch (parent.type as auctionType) {
+        case "english":
+          return "EnglishAuction";
+        case "dutch":
+          return "DutchAuction";
+        case "blindFirstPrice":
+          return "BlindFirstPriceAuction";
+        case "blindSecondPrice":
+          return "BlindSecondPriceAuction";
+      }
+    }
+    return null;
+  },
+};
+export const Bid: BidResolvers<{ dataSource: DataSource }> = {
   auction: async (parent: any, _, { dataSource }): Promise<any> => {
     // console.log("Bid | resolver", parent);
     if ("auctionId" in parent) {
@@ -77,23 +158,3 @@ const Bid: BidResolvers<{ dataSource: DataSource }> = {
     }
   },
 };
-
-const EnglishAuction: EnglishAuctionResolvers<{ dataSource: DataSource }> = {
-  bids: async (parent, _, { dataSource }) => {
-    return dataSource.getBidsByAuctionId(parent.id) as Promise<Bid[]>;
-  },
-};
-
-const AuctionType: AuctionTypeResolvers = {
-  __resolveType: (data, obj, info) => {
-    // console.log("resolve AuctionType: ", data, data.__typename);
-    if ("maxBidder" in data) {
-      return "EnglishAuction";
-    } else if ("decayRate" in data) {
-      return "DutchAuction";
-    }
-    return null;
-  },
-};
-
-export { Query, Bid, EnglishAuction, AuctionType };
