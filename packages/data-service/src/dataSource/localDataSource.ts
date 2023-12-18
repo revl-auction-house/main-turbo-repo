@@ -245,7 +245,6 @@ export class LocalDataSource implements DataSource {
 
   async getValue(key: string): Promise<any> {
     await this.readFile();
-    console.log("getValue:", key, this.data.kv, this.data.kv[key]);
     return this.data.kv[key];
   }
 

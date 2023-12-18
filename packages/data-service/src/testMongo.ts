@@ -54,4 +54,12 @@ let res;
 // console.log("---------------------------------");
 
 // await client.close();
+
+// Call the getNFT method
+const nft = await db.getNFT(collectionAddress, 0);
+console.log(nft);
+
+// test for create and updates
+// const newNft = {
+
 process.exit();

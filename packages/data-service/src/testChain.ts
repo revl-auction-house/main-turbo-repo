@@ -1,3 +1,9 @@
+/**
+ * This file is used to test the chain end to end
+ * start the chain, run this script to sends transactions
+ * to the chain. Run the indexerJob to test out the indexer
+ * and ingest data into mongoDB or local storage
+ */
 import { localHostClient as client } from "chain";
 import { PrivateKey, UInt64, UInt32, Poseidon, Encoding } from "O1js";
 import { LocalDataSource } from "./dataSource";

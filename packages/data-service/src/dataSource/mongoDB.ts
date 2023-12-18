@@ -174,46 +174,119 @@ export class MongoDB implements DataSource {
   }
 
   public async getNftCount(collectionAddress: string): Promise<number> {
-    throw new Error("Method not implemented.");
+    return this.db.collection("nfts").countDocuments({
+      "_id.collectionAddress": collectionAddress,
+    });
   }
   public async getAuctionCount(): Promise<number> {
-    throw new Error("Method not implemented.");
+    return this.db.collection("auctions").countDocuments();
   }
 
-  setValue(key: string, value: any): Promise<void> {
-    throw new Error("Method not implemented.");
+  public async setValue(key: string, value: any): Promise<void> {
+    await this.db.collection<{ _id: string; value: any }>("kv").insertOne({
+      _id: key,
+      value,
+    });
   }
-  getValue(key: string): Promise<any> {
-    throw new Error("Method not implemented.");
+  public async getValue(key: string): Promise<any> {
+    const result = await this.db
+      .collection<{ _id: string }>("kv")
+      .findOne({ _id: key });
+    if (result === null) return null;
+    const { _id, ...value } = result;
+    return value;
   }
-  createNFT(
+
+  public async createNFT(
     collectionAddress: string,
     idx: number,
     data: NftPart
   ): Promise<void> {
-    throw new Error("Method not implemented.");
+    await this.db
+      .collection<{
+        _id: { collectionAddress: string; index: number };
+      }>("nfts")
+      .insertOne({
+        _id: {
+          collectionAddress,
+          index: idx,
+        },
+        ...data,
+      });
   }
-  updateNFT(
+
+  public async updateNFT(
     collectionAddress: string,
     idx: number,
-    data: NftPart
+    data: Partial<NftPart>
   ): Promise<void> {
-    throw new Error("Method not implemented.");
+    await this.db
+      .collection<{
+        _id: { collectionAddress: string; index: number };
+      }>("nfts")
+      .updateOne(
+        {
+          _id: {
+            collectionAddress,
+            index: idx,
+          },
+        },
+        {
+          $set: data,
+        }
+      );
   }
-  createCollection(address: string, data: CollectionPart): Promise<void> {
-    throw new Error("Method not implemented.");
+
+  public async createCollection(
+    address: string,
+    data: CollectionPart
+  ): Promise<void> {
+    await this.db
+      .collection<{ _id: { address: string } }>("collectionDetails")
+      .insertOne({
+        _id: { address },
+        ...data,
+      });
   }
-  updateCollection(address: string, data: CollectionPart): Promise<void> {
-    throw new Error("Method not implemented.");
+
+  public async updateCollection(
+    address: string,
+    data: Partial<CollectionPart>
+  ): Promise<void> {
+    await this.db
+      .collection("collectionDetails")
+      .updateOne({ "_id.address": address }, { $set: data });
   }
-  createAuction(id: string, data: AuctionPart): Promise<void> {
-    throw new Error("Method not implemented.");
+
+  public async createAuction(id: string, data: AuctionPart): Promise<void> {
+    await this.db
+      .collection<{ _id: { auctionId: string } }>("auctions")
+      .insertOne({
+        _id: { auctionId: id },
+        ...data,
+      });
   }
-  updateAuction(id: string, data: AuctionPart): Promise<void> {
-    throw new Error("Method not implemented.");
+
+  public async updateAuction(
+    id: string,
+    data: Partial<AuctionPart>
+  ): Promise<void> {
+    await this.db
+      .collection("auctions")
+      .updateOne({ "_id.auctionId": id }, { $set: data });
   }
-  createBid(auctionId: string, bidder: string, amount: string): Promise<void> {
-    throw new Error("Method not implemented.");
+
+  public async createBid(
+    auctionId: string,
+    bidder: string,
+    amount: string
+  ): Promise<void> {
+    await this.db.collection("bids").insertOne({
+      auctionId,
+      bidder,
+      amount,
+      timestamp: Date.now(),
+    });
   }
 
   private async connectToDatabase() {

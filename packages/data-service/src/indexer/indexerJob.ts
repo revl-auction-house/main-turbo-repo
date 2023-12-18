@@ -1,6 +1,9 @@
-import { DataSource, LocalDataSource } from "../dataSource";
+import { DataSource, LocalDataSource, MongoDB } from "../dataSource";
 import { TxnProcessor } from "./txnProcessor";
 import { BlockQueryResponse } from "./types";
+import * as dotenv from "dotenv";
+
+dotenv.config();
 
 async function fetchBlock(
   height: number,
@@ -46,9 +49,14 @@ async function fetchBlock(
 }
 
 let blockToIndex = 0;
-const dataSource: DataSource = new LocalDataSource();
+// Choose data source based on environment variable
+console.log(`Using ${process.env.DATA_STORAGE} for data storage`);
+const dataSource: DataSource =
+  process.env.DATA_STORAGE === "mongo" ? new MongoDB() : new LocalDataSource();
+
 const txnProcessor = new TxnProcessor(dataSource);
 await txnProcessor.init();
+
 async function start(interval = 5000) {
   try {
     let data = await fetchBlock(blockToIndex);
@@ -60,6 +68,7 @@ async function start(interval = 5000) {
           txnProcessor.processTransaction(tx.tx.methodId, tx.tx, blockHeight);
         }
       }
+      // TODO save block indexed so far
       blockToIndex++;
     }
   } catch {
@@ -70,4 +79,5 @@ async function start(interval = 5000) {
     start(interval);
   }, interval);
 }
+
 start();
