@@ -25,7 +25,6 @@ export class EnglishAuctionModule extends AuctionModule<EnglishAuction> {
     x: Poseidon.hash(Encoding.stringToFields("EnglishAuction")),
     isOdd: Bool(false),
   });
-  @state() public auctionIds = StateMap.from<NFTKey, UInt64>(NFTKey, UInt64);
 
   public constructor(
     @inject("NFT") public nft: NFT,
@@ -44,7 +43,7 @@ export class EnglishAuctionModule extends AuctionModule<EnglishAuction> {
    * @param duration `placeBid` possible in the next `duration` blocks
    */
   @runtimeMethod()
-  public start(nftKey: NFTKey, duration: UInt64) {
+  public start(nftKey: NFTKey, duration: UInt64): UInt64 {
     // TODO is duration > buffer required
     const auction = new EnglishAuction({
       nftKey,
@@ -55,14 +54,13 @@ export class EnglishAuctionModule extends AuctionModule<EnglishAuction> {
       endTime: this.network.block.height.add(duration),
       maxBid: new Bids({ bidder: this.transaction.sender, price: UInt64.zero }),
     });
-    this.auctionIds.set(nftKey, this.createAuction(auction));
+    return this.createAuction(auction);
   }
 
   @runtimeMethod()
-  public placeBid(nftKey: NFTKey, bid: UInt64) {
-    const auctionId = this.auctionIds.get(nftKey);
-    assert(auctionId.isSome, "no auctions exists");
-    const auction = this.records.get(auctionId.value).value;
+  public placeBid(auctionId: UInt64, bid: UInt64) {
+    assert(this.records.get(auctionId).isSome, "no auctions exists");
+    const auction = this.records.get(auctionId).value;
     const currentBid = new Bids({
       bidder: this.transaction.sender,
       price: bid,
@@ -86,7 +84,7 @@ export class EnglishAuctionModule extends AuctionModule<EnglishAuction> {
       auction.maxBid.price
     );
     // update maxBids
-    this.records.set(auctionId.value, { ...auction, maxBid: currentBid });
+    this.records.set(auctionId, { ...auction, maxBid: currentBid });
   }
 
   /**
@@ -96,10 +94,9 @@ export class EnglishAuctionModule extends AuctionModule<EnglishAuction> {
    * @param nftKey
    */
   @runtimeMethod()
-  public end(nftKey: NFTKey) {
-    const auctionId = this.auctionIds.get(nftKey);
-    assert(auctionId.isSome, "no auctions exists");
-    const auction = this.records.get(auctionId.value).value;
+  public end(auctionId: UInt64) {
+    assert(this.records.get(auctionId).isSome, "no auctions exists");
+    const auction = this.records.get(auctionId).value;
     assert(
       auction.endTime
         .lessThan(this.network.block.height)
@@ -113,6 +110,6 @@ export class EnglishAuctionModule extends AuctionModule<EnglishAuction> {
       auction.maxBid.price
     );
     // end auction
-    this.endAuction(auctionId.value, auction.maxBid.bidder);
+    this.endAuction(auctionId, auction.maxBid.bidder);
   }
 }

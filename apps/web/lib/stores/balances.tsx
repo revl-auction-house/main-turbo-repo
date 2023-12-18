@@ -50,7 +50,7 @@ export const useBalancesStore = create<
       const sender = PublicKey.fromBase58(address);
 
       const tx = await client.transaction(sender, () => {
-        balances.setBalance(sender, UInt64.from(1000));
+        balances.addBalance(sender, UInt64.from(1000));
       });
 
       await tx.sign();

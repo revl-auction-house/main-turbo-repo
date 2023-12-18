@@ -1,9 +1,24 @@
-import { Query, EnglishAuction, AuctionType, Bid } from "./Resolvers";
-
-export default {
+import {
   Query,
+  EnglishAuction,
   Bid,
+  Auction,
+  AuctionType,
+  BlindSecondPriceAuction,
+  BlindFirstPriceAuction,
+  Collection,
+  NFT,
+} from "./Resolvers";
+
+export const resolvers = {
+  // Mutation,
+  Query,
+  NFT,
+  Collection,
+  Auction,
   AuctionType,
   EnglishAuction,
-  // Mutation,
+  BlindFirstPriceAuction,
+  BlindSecondPriceAuction,
+  Bid,
 };

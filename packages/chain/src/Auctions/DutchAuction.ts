@@ -41,7 +41,7 @@ export class DutchAuctionModule extends AuctionModule<DutchAuction> {
     startPrice: UInt64,
     decayRate: UInt64,
     minPrice: UInt64 = UInt64.zero
-  ) {
+  ): UInt64 {
     const auction = new DutchAuction({
       nftKey,
       creator: this.transaction.sender,
@@ -53,7 +53,7 @@ export class DutchAuctionModule extends AuctionModule<DutchAuction> {
       minPrice,
     });
     assert(auction.startPrice.greaterThan(auction.minPrice), "Invalid price");
-    this.createAuction(auction);
+    return this.createAuction(auction);
   }
 
   /**
@@ -62,6 +62,7 @@ export class DutchAuctionModule extends AuctionModule<DutchAuction> {
    */
   @runtimeMethod()
   public bid(auctionId: UInt64) {
+    assert(this.records.get(auctionId).isSome, "no auctions exists");
     const auction = this.records.get(auctionId).value;
     const decay = Provable.if(
       this.network.block.height.equals(UInt64.zero),

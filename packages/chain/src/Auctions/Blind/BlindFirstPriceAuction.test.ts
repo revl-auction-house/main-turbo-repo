@@ -101,13 +101,13 @@ describe("BlindFirstPriceAuction", () => {
     appChain.setSigner(alicePrivateKey);
     inMemorySigner.config.signer = alicePrivateKey;
     let tx = await appChain.transaction(alice, () => {
-      balances.setBalance(alice, UInt64.from(1000));
+      balances.addBalance(alice, UInt64.from(1000));
     });
     await tx.sign();
     await tx.send();
     await appChain.produceBlock();
     tx = await appChain.transaction(alice, () => {
-      balances.setBalance(bob, UInt64.from(1000));
+      balances.addBalance(bob, UInt64.from(1000));
     });
     await tx.sign();
     await tx.send();
@@ -141,9 +141,10 @@ describe("BlindFirstPriceAuction", () => {
       let block = await appChain.produceBlock();
       expect(block?.txs[0].status, block?.txs[0].statusMessage).toBe(true);
       const nft0Key = NFTKey.from(minter, UInt32.from(0));
+      let auctionId: UInt64 = UInt64.from(1);
       // minter starts an Auction
       tx = await appChain.transaction(minter, () => {
-        blindAuctions.start(
+        auctionId = blindAuctions.start(
           nft0Key,
           UInt64.from(2),
           UInt64.from(2),
@@ -158,8 +159,7 @@ describe("BlindFirstPriceAuction", () => {
       let nft0 = await nftQuery.nftRecords.get(nft0Key);
       expect(nft0?.owner).toStrictEqual(minter); // minter should still be owner
       expect(nft0?.locked.toBoolean()).toStrictEqual(true); // nft should be locked now
-      let auctionId = (await auctionQuery.auctionIds.get(nft0Key)) as UInt64;
-      expect(auctionId?.toBigInt()).toBe(0n);
+      expect(auctionId.toBigInt()).toBe(0n);
       let auction = await auctionQuery.records.get(auctionId!);
       // console.log(auction);
       expect(auction?.ended.toBoolean()).toBeFalsy();
@@ -180,7 +180,7 @@ describe("BlindFirstPriceAuction", () => {
           aliceSalt
         );
         tx = await appChain.transaction(alice, async () => {
-          blindAuctions.placeSealedBid(nft0Key, sealedBidProof);
+          blindAuctions.placeSealedBid(auctionId, sealedBidProof);
         });
         await tx.sign();
         await tx.send();
@@ -199,7 +199,7 @@ describe("BlindFirstPriceAuction", () => {
           bobSalt
         );
         tx = await appChain.transaction(bob, async () => {
-          blindAuctions.placeSealedBid(nft0Key, sealedBidProof);
+          blindAuctions.placeSealedBid(auctionId, sealedBidProof);
         });
         await tx.sign();
         await tx.send();
@@ -254,7 +254,7 @@ describe("BlindFirstPriceAuction", () => {
       // auction settlement, anyone can call
       inMemorySigner.config.signer = alicePrivateKey;
       tx = await appChain.transaction(alice, () => {
-        blindAuctions.settle(nft0Key);
+        blindAuctions.settle(auctionId);
       });
       await tx.sign();
       await tx.send();

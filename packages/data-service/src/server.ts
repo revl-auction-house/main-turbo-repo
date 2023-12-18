@@ -1,13 +1,15 @@
 import { createYoga, createSchema } from "graphql-yoga";
 import { createServer } from "node:http";
 import { readFileSync } from "node:fs";
-import resolvers from "./resolvers";
-import { DataSource, LocalDataSource } from "./dataSource";
+import { resolvers } from "./resolvers";
+import { DataSource, LocalDataSource, MongoDB } from "./dataSource";
 
 const typeDefs = readFileSync("./src/schema.graphql", "utf8");
 // console.log("resolvers: ", resolvers);
 const schema = createSchema({ typeDefs, resolvers });
-const dataSource: DataSource = new LocalDataSource();
+console.log(`Using ${process.env.DATA_STORAGE} for data storage`);
+const dataSource: DataSource =
+  process.env.DATA_STORAGE === "mongo" ? new MongoDB() : new LocalDataSource();
 const yoga = createYoga({ schema, context: { dataSource } });
 const server = createServer(yoga);
 
