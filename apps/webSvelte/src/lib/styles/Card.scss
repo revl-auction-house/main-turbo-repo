@@ -1,0 +1,72 @@
+@tailwind components;
+
+@layer components {
+	.card {
+		@apply select-none grid gap-3 p-3;
+
+		@apply rounded-xl;
+
+		@apply bg-card shadow-lg shadow-card-darker/50;
+
+		img {
+			@apply rounded-xl aspect-square object-cover;
+		}
+
+		h1,
+		h2,
+		h3,
+		h4,
+		h5,
+		h6,
+		a {
+			@apply flex gap-1 items-baseline;
+		}
+
+		h1 {
+			@apply gap-2;
+			@apply text-4xl font-bold text-card-foreground-lighter stroke-card-foreground-lighter;
+		}
+
+		h2 {
+			@apply gap-2;
+			@apply text-3xl font-semibold text-card-foreground-lighter stroke-card-foreground-lighter;
+		}
+		h3 {
+			@apply gap-2;
+			@apply text-2xl font-semibold text-card-foreground-lighter stroke-card-foreground-lighter;
+		}
+
+		h4 {
+			@apply gap-2;
+			@apply text-xl font-medium text-card-foreground stroke-card-foreground;
+		}
+
+		h5 {
+			@apply gap-1;
+			@apply text-base font-medium text-card-foreground-darker stroke-card-foreground-darker;
+		}
+		h6 {
+			@apply gap-1;
+			@apply text-sm font-normal text-card-foreground-darker stroke-card-foreground-darker;
+		}
+		a {
+			@apply gap-1;
+			@apply text-xl font-medium text-card-foreground-lighter stroke-card-foreground-lighter;
+		}
+		hr {
+			@apply outline-none border-none bg-gradient-to-r from-card via-primary to-card h-[2px];
+		}
+		progress {
+			@apply w-full h-2;
+		}
+		progress::-webkit-progress-bar {
+			@apply bg-card-foreground-lighter;
+		}
+		progress::-webkit-progress-value {
+			@apply bg-card-foreground;
+		}
+		progress::-moz-progress-bar {
+			@apply bg-card-foreground;
+		}
+	}
+}
