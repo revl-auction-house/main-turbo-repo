@@ -77,6 +77,7 @@
 						class="cursor-pointer rounded-2xl h-[250px] aspect-square mx-auto object-cover shadow-lg shadow-paper-950/20"
 						{src}
 						alt=""
+						crossorigin="anonymous"
 					/>
 				</div>
 			{/each}

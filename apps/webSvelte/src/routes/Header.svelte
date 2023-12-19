@@ -3,6 +3,7 @@
 	import { focus, press } from '$lib/actions/interaction';
 	import Logo from '$lib/icons/Logo.svelte';
 	import { Search } from 'lucide-svelte';
+	import { onMount } from 'svelte';
 
 	let links = [
 		{ name: 'Live Auctions', url: '/' },
@@ -11,6 +12,10 @@
 		{ name: 'My NFTS', url: '/mynfts' }
 	];
 	let searchbar: HTMLInputElement;
+	let connectWallet: any;
+	onMount(async () => {
+		connectWallet = (await import('$lib/stores/wallet.store')).connectWallet;
+	});
 </script>
 
 <svelte:window
@@ -24,22 +29,6 @@
 />
 <header class="sticky top-0 z-50">
 	<nav class="relative bg-paper-950 shadow-lg shadow-paper-950/50">
-		<div class="container p-4 mx-auto flex justify-between items-center">
-			<a href="/" class="">
-				<Logo />
-			</a>
-			<button
-				use:press
-				type="button"
-				class="px-8 py-4 rounded-lg
-					text-2xl font-semibold
-					block text-center
-					bg-primary text-paper-100
-					shadow-lg shadow-primary/20"
-			>
-				Connect wallet
-			</button>
-		</div>
 		<ul class="absolute inset-0 flex justify-center items-center rounded-lg text-xl font-medium">
 			{#each links as link}
 				<li>
@@ -54,6 +43,23 @@
 				</li>
 			{/each}
 		</ul>
+		<div class="container p-4 mx-auto flex justify-between items-center">
+			<a href="/" class="">
+				<Logo />
+			</a>
+			<button
+				use:press
+				type="button"
+				on:click={connectWallet}
+				class="px-8 py-4 rounded-lg
+				text-2xl font-semibold
+				block text-center
+				bg-primary text-paper-100
+				shadow-lg shadow-primary/20"
+			>
+				Connect wallet
+			</button>
+		</div>
 	</nav>
 	<search-bar class="w-full flex gap-1">
 		<div

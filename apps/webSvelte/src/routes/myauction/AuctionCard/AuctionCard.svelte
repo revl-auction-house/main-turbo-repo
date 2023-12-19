@@ -21,7 +21,7 @@
 
 <div class="card layout">
 	<h5 class="flex-col row-span-2">
-		<img use:press {src} loading="lazy" alt="" />
+		<img use:press {src} loading="lazy" alt="" crossorigin="anonymous" />
 		<h4 class="w-full">
 			<a use:press class="flex-1 overflow-hidden mask-right" href="collection/{name}">
 				{name}
