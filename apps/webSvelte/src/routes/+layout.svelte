@@ -10,7 +10,9 @@
 
 	//production only
 
-	onMount(() => {
+	onMount(async () => {
+		await import('reflect-metadata');
+
 		startTimeStore();
 		setupIO();
 		setupMO();
