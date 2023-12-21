@@ -45,7 +45,7 @@
 
 <div>
 	<h5>Bidding Ends in</h5>
-	<h4>{formatEllipsis(timeLeft, 12, 'end')}</h4>
+	<h4>{timeLeft}</h4>
 </div>
 
 <div>

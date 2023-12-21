@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { overflowingClass } from '$lib/actions/utils';
-	import type { Bid, BlindAuction } from '$lib/api';
+	import type { Bid, Auction, BlindAuction } from '$lib/api';
 	import { formatEllipsis, formatTimeDifference } from '$lib/formatting';
 	import { currentTime } from '$lib/components/time.store';
 	import MinaToken from '$lib/icons/MinaToken.svelte';
@@ -26,14 +25,14 @@
 	$: phase = 'bidding';
 </script>
 
-<div use:overflowingClass class="overflow-clip overflowing:mask-right">
+<div>
 	<h5>
 		Type
 		<a class="w-4 h-4 self-start" use:press href="auctions/help">
 			<Info />
 		</a>
 	</h5>
-	<h4 class="whitespace-nowrap">Blind 2nd Price</h4>
+	<h4>Blind 2nd Price</h4>
 </div>
 
 {#if phase == 'reveal'}
@@ -62,7 +61,7 @@
 
 <div class="whitespace-nowrap">
 	<h5>Bidding Ends in</h5>
-	<h4>{formatEllipsis(timeLeft, 12, 'end')}</h4>
+	<h4>{timeLeft}</h4>
 </div>
 
 <div>

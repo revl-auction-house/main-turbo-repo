@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Bid, EnglishAuction } from '$lib/api';
+	import type { Bid, Auction, EnglishAuction } from '$lib/api';
 	import { formatEllipsis, formatTimeDifference } from '$lib/formatting';
 	import { currentTime } from '$lib/components/time.store';
 	import MinaToken from '$lib/icons/MinaToken.svelte';
@@ -46,7 +46,7 @@
 
 <div>
 	<h5>Bidding Ends in</h5>
-	<h4>{formatEllipsis(timeLeft, 12, 'end')}</h4>
+	<h4>{timeLeft}</h4>
 </div>
 
 <div>

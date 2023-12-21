@@ -1,4 +1,5 @@
 export function formatTimeDifference(ms: number) {
+	// return '999d 23h 59m 59s';
 	if (ms <= 0) return '0s';
 	//show fraction part if less than 10 seconds
 	if (ms < 10 * 1000) return `${(ms / 1000).toFixed(3)}s`;

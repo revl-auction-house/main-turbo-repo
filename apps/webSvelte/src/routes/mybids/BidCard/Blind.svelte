@@ -1,5 +1,6 @@
 <script lang="ts">
-	import type { Bid, BlindAuction } from '$lib/api';
+	import { overflowingClass } from '$lib/actions/utils';
+	import type { Auction, Bid, BlindAuction } from '$lib/api';
 	import { formatEllipsis, formatTimeDifference } from '$lib/formatting';
 	import { currentTime } from '$lib/components/time.store';
 	import MinaToken from '$lib/icons/MinaToken.svelte';
@@ -32,9 +33,7 @@
 			<Info />
 		</a>
 	</h5>
-	<h4 class=" whitespace-nowrap min-w-0 w-fit overflow-hidden overflowing:mask-right">
-		Blind 1st Price
-	</h4>
+	<h4>Blind 1st Price</h4>
 </div>
 
 {#if phase == 'reveal'}
@@ -64,12 +63,12 @@
 {#if phase == 'reveal'}
 	<div>
 		<h5>Revealing Ends in</h5>
-		<h4>{formatEllipsis(timeLeft, 12, 'end')}</h4>
+		<h4>{timeLeft}</h4>
 	</div>
 {:else}
 	<div>
 		<h5>Bidding Ends in</h5>
-		<h4>{formatEllipsis(timeLeft, 12, 'end')}</h4>
+		<h4>{timeLeft}</h4>
 	</div>
 {/if}
 
