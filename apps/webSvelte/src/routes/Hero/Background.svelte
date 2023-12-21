@@ -4,7 +4,7 @@
 	//Todo use canvas to create still images from gifs
 </script>
 
-<img transition:fade={{ duration: 600 }} {src} alt="" />
+<img transition:fade={{ duration: 600 }} {src} alt="" crossorigin="anonymous" />
 
 <style>
 	img {

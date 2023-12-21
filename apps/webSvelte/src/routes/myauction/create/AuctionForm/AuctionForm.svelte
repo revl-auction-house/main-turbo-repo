@@ -56,7 +56,14 @@
 	<section class="container mx-auto grid gap-3 justify-center">
 		<div class="card max-w-[600px]">
 			<div class="col-span-full grid gap-3 grid-cols-3">
-				<img class="row-span-3" use:press {src} loading="lazy" alt="" />
+				<img
+					class="flex-col row-span-3"
+					use:press
+					{src}
+					loading="lazy"
+					alt=""
+					crossorigin="anonymous"
+				/>
 				<h4 class="col-span-2">
 					<a
 						use:press

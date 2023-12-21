@@ -3,6 +3,8 @@
 	import { focus, press } from '$lib/actions/interaction';
 	import Logo from '$lib/icons/Logo.svelte';
 	import { Search } from 'lucide-svelte';
+	import { onMount } from 'svelte';
+
 	let links = [
 		{ name: 'Live Auctions', url: '/' },
 		{ name: 'My Auction', url: '/myauction' },
@@ -10,6 +12,10 @@
 		{ name: 'My NFTS', url: '/mynfts' }
 	];
 	let searchbar: HTMLInputElement;
+	let connectWallet: any;
+	onMount(async () => {
+		connectWallet = (await import('$lib/stores/wallet.store')).connectWallet;
+	});
 </script>
 
 <svelte:window

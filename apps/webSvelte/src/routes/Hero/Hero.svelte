@@ -81,6 +81,7 @@
 						class="cursor-pointer rounded-2xl h-[250px] aspect-square mx-auto object-cover shadow-2xl"
 						{src}
 						alt=""
+						crossorigin="anonymous"
 					/>
 				</div>
 			{/each}

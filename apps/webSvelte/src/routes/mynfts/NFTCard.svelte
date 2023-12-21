@@ -17,7 +17,7 @@
 </script>
 
 <div class="card layout">
-	<img class="row-span-3" use:press {src} loading="lazy" alt="" />
+	<img class="row-span-3" use:press {src} loading="lazy" alt="" crossorigin="anonymous" />
 	<h4 class="col-span-2">
 		<a
 			use:press
