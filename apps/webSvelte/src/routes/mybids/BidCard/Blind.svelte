@@ -1,13 +1,13 @@
 <script lang="ts">
-	import { overflowingClass } from '$lib/actions/utils';
-	import type { Auction, BlindAuction } from '$lib/api';
+	import type { Bid, BlindAuction } from '$lib/api';
 	import { formatEllipsis, formatTimeDifference } from '$lib/formatting';
 	import { currentTime } from '$lib/components/time.store';
 	import MinaToken from '$lib/icons/MinaToken.svelte';
 	import { press } from '$lib/actions/interaction';
 	import { Info } from 'lucide-svelte';
 
-	export let auction: Auction;
+	export let bid: Bid;
+	$: auction = bid.auction;
 	$: auctionType = auction.type as BlindAuction;
 
 	$: nftName = auction.nft.name;
@@ -32,7 +32,9 @@
 			<Info />
 		</a>
 	</h5>
-	<h4>Blind 1st Price</h4>
+	<h4 class=" whitespace-nowrap min-w-0 w-fit overflow-hidden overflowing:mask-right">
+		Blind 1st Price
+	</h4>
 </div>
 
 {#if phase == 'reveal'}

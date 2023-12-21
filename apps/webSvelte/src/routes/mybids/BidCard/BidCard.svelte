@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { formatEllipsis } from '$lib/formatting';
-	import { Auctions } from '$lib/data';
+	import { Bids } from '$lib/data';
 
 	import English from './English.svelte';
 	import Dutch from './Dutch.svelte';
@@ -11,13 +11,13 @@
 
 	import '$lib/styles/Card.scss';
 	import { overflowingClass } from '$lib/actions/utils';
-	export let auction = Auctions[0];
+	export let bid = Bids[0];
 
 	//common to all auction types
-	$: src = auction.nft.imgUrl;
-	$: name = formatEllipsis(auction.nft.name, 16);
-	$: id = auction.nft.idx;
-	$: typename = auction.type.typename;
+	$: src = bid.auction.nft.imgUrl;
+	$: name = formatEllipsis(bid.auction.nft.name, 16);
+	$: id = bid.auction.nft.idx;
+	$: typename = bid.auction.type.typename;
 </script>
 
 <div class="card layout">
@@ -36,13 +36,13 @@
 		<h4>#{id}</h4>
 	</h4>
 	{#if typename == 'EnglishAuction'}
-		<English {auction} />
+		<English {bid} />
 	{:else if typename == 'DutchAuction'}
-		<Dutch {auction} />
+		<Dutch {bid} />
 	{:else if typename == 'BlindAuction'}
-		<Blind {auction} />
+		<Blind {bid} />
 	{:else if typename == 'BlindSecondHighestAuction'}
-		<Blindv2 {auction} />
+		<Blindv2 {bid} />
 	{/if}
 </div>
 

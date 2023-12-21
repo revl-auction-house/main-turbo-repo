@@ -24,7 +24,7 @@
 			href="collection/{name}"
 			tabindex="-1"
 			use:overflowingClass
-			class="min-w-0 w-fit overflowing:mask-right"
+			class="min-w-0 w-fit overflow-hidden overflowing:mask-right"
 		>
 			<ArrowUpRightIcon class="w-4 h-4 flex-none" />
 			<h2>{name}</h2>
@@ -41,7 +41,7 @@
 		<h4>{10.245}<MinaToken class="w-4 h-4 flex-none" /></h4>
 	</div>
 	<div class="col-span-2">
-		{#if Math.random() > 0.5}
+		{#if auctionId}
 			<a use:press href="/myauction/{auctionId}" tabindex="0" class="link-button accent">
 				In Auction
 			</a>
@@ -58,7 +58,7 @@
 		grid-template: 1fr auto auto / min(50%, 200px) 1fr 1fr;
 	}
 	.link-button {
-		@apply whitespace-nowrap justify-center p-2 rounded-xl;
+		@apply whitespace-nowrap justify-center p-2 rounded-xl w-full;
 	}
 	.primary {
 		@apply colored-primary;

@@ -20,13 +20,21 @@
 		value = selectedOption;
 		dropDownOpen = false;
 	};
+
+	$: dropDownOpen && addEventListener('click', handleOutsideClick, { once: true });
+
+	const handleOutsideClick = (e: MouseEvent) => {
+		if (!dropDown.contains(e.target as Node)) {
+			dropDownOpen = false;
+		}
+	};
 </script>
 
 <div class="form-input mb-6">
 	<h5 class="label">{label}</h5>
 	<button
 		type="button"
-		on:click={() => {
+		on:click|stopPropagation={() => {
 			dropDownOpen = true;
 		}}
 		class="input-container text-left"

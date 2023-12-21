@@ -13,7 +13,7 @@
 	}
 
 	body::-webkit-scrollbar-track {
-		@apply bg-background;
+		@apply bg-background-darker;
 	}
 
 	body::-webkit-scrollbar-thumb {

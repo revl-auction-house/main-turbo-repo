@@ -1,13 +1,14 @@
 <script lang="ts">
 	import { overflowingClass } from '$lib/actions/utils';
-	import type { Auction, BlindAuction } from '$lib/api';
+	import type { Bid, BlindAuction } from '$lib/api';
 	import { formatEllipsis, formatTimeDifference } from '$lib/formatting';
 	import { currentTime } from '$lib/components/time.store';
 	import MinaToken from '$lib/icons/MinaToken.svelte';
 	import { press } from '$lib/actions/interaction';
 	import { Info } from 'lucide-svelte';
 
-	export let auction: Auction;
+	export let bid: Bid;
+	$: auction = bid.auction;
 	$: auctionType = auction.type as BlindAuction;
 
 	$: nftName = auction.nft.name;
@@ -25,14 +26,14 @@
 	$: phase = 'bidding';
 </script>
 
-<div>
+<div use:overflowingClass class="overflow-clip overflowing:mask-right">
 	<h5>
 		Type
 		<a class="w-4 h-4 self-start" use:press href="auctions/help">
 			<Info />
 		</a>
 	</h5>
-	<h4>Blind 1st Price</h4>
+	<h4 class="whitespace-nowrap">Blind 2nd Price</h4>
 </div>
 
 {#if phase == 'reveal'}
@@ -59,17 +60,10 @@
 	<h4>{bidCount}</h4>
 </div> -->
 
-{#if phase == 'reveal'}
-	<div>
-		<h5>Revealing Ends in</h5>
-		<h4>{formatEllipsis(timeLeft, 12, 'end')}</h4>
-	</div>
-{:else}
-	<div>
-		<h5>Bidding Ends in</h5>
-		<h4>{formatEllipsis(timeLeft, 12, 'end')}</h4>
-	</div>
-{/if}
+<div class="whitespace-nowrap">
+	<h5>Bidding Ends in</h5>
+	<h4>{formatEllipsis(timeLeft, 12, 'end')}</h4>
+</div>
 
 <div>
 	<h5>Progress</h5>

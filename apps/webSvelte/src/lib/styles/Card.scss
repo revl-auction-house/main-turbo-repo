@@ -9,6 +9,10 @@
 
 		@apply bg-card shadow-lg shadow-card-darker/50;
 
+		> * {
+			@apply overflow-hidden overflowing:mask-right;
+		}
+
 		img {
 			@apply rounded-xl aspect-square object-cover;
 		}
@@ -21,6 +25,9 @@
 		h6,
 		a {
 			@apply flex gap-1 items-baseline;
+			&:not(:has(*)) {
+				@apply w-fit whitespace-nowrap;
+			}
 		}
 
 		h1 {

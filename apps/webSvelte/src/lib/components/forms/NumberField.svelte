@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { Pointer } from 'lucide-svelte';
 	import './_style.scss';
 	export let label: string;
 	export let value: number;
@@ -12,7 +11,7 @@
 	<h5 class="label">{label}</h5>
 	<div class="flex input-container">
 		<slot name="leading" />
-		<input bind:value type="number" step="0" {placeholder} />
+		<input bind:value type="number" step="0" {placeholder} min="0" />
 		<slot name="trailing" />
 	</div>
 	<div class="msg m-1 text-xs text-neutral-darker">={value}</div>

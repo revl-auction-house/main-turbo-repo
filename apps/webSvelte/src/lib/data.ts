@@ -42,7 +42,6 @@ const gTime = () => {
 };
 const gImgAddress = () => {
 	const images = [
-		'https://wallpapercave.com/wp/wp6903417.jpg',
 		'https://th.bing.com/th/id/OIP.Z0PLkCGpEDNcan8n3m-OIAHaFk?rs=1&pid=ImgDetMain',
 		'https://i.seadn.io/s/raw/files/84a9e8ded899637720c648315394a0d5.png?auto=format&dpr=1&w=384',
 		'https://i.seadn.io/s/raw/files/37655e8f1d5a26f91070f4f01ac5d463.png?auto=format&dpr=1&w=512',

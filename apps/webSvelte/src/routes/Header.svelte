@@ -1,9 +1,11 @@
 <script lang="ts">
+	import Wallet from './Wallet.svelte';
 	import { page } from '$app/stores';
 	import { focus, press } from '$lib/actions/interaction';
 	import Logo from '$lib/icons/Logo.svelte';
 	import { Search } from 'lucide-svelte';
 	import { onMount } from 'svelte';
+	import Dropdown from '$lib/components/Dropdown.svelte';
 
 	let links = [
 		{ name: 'Live Auctions', url: '/' },
@@ -29,12 +31,10 @@
 />
 <header class="sticky top-0 z-50">
 	<nav class="bg-background-darker shadow-lg">
-		<div class="container p-4 mx-auto flex justify-between items-center">
-			<div class="w-40 py-4 text-2xl font-semibold block text-center">
-				<a href="/">
-					<Logo />
-				</a>
-			</div>
+		<div class="relative container p-2 mx-auto flex justify-between items-center">
+			<a class="w-40 py-4 text-2xl font-semibold block text-center" href="/">
+				<Logo />
+			</a>
 			<ul class=" flex justify-center items-center rounded-xl text-xl font-medium">
 				{#each links as link}
 					<li>
@@ -49,18 +49,25 @@
 					</li>
 				{/each}
 			</ul>
-			<button
-				use:press
-				type="button"
-				class="w-40 py-4 rounded-xl
+			<Dropdown>
+				<button
+					slot="trigger"
+					on:click={connectWallet}
+					use:press
+					type="button"
+					class="w-40 py-4 rounded-xl
 					 font-semibold block text-2xl text-center
 					colored-primary shadow-lg shadow-primary/30"
-			>
-				Connect
-			</button>
+				>
+					Connect
+				</button>
+				<div slot="dropdown">
+					<Wallet />
+				</div>
+			</Dropdown>
 		</div>
 	</nav>
-	<search-bar class="w-full flex gap-1">
+	<search-bar class="relative -z-10 w-full flex gap-1">
 		<div class="bg-background-darker shadow-lg flex-1 rounded-br-2xl relative h-12 corner-right" />
 		<form class="flex items-center gap-2 mt-1 p-1 border-t-0 rounded-b-2xl">
 			<input

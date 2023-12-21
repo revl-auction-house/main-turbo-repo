@@ -22,4 +22,4 @@
 
 <DateTimeLocalField label="Set End Time" bind:value={endTime} />
 
-<DateTimeLocalField label="Set Reveal Time" bind:value={revealTime} min={endTime?.valueOf()} />
+<DateTimeLocalField label="Set Reveal Time" bind:value={revealTime} min={endTime} />
