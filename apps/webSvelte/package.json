@@ -35,11 +35,7 @@
 		"vite-plugin-top-level-await": "^1.4.1"
 	},
 	"dependencies": {
-<<<<<<< HEAD
-		"@tailwindcss/forms": "^0.5.7",
-=======
 		"chain": "workspace:*",
->>>>>>> 3e90b40e6992f4b28893d61753324789273b6865
 		"lucide-svelte": "^0.294.0",
 		"reflect-metadata": "^0.1.13",
 		"swiper": "^11.0.5"
