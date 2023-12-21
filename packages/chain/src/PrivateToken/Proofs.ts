@@ -195,7 +195,6 @@ export class DepositHashProof extends Experimental.ZkProgram.Proof(
 // currentBalance(enc) == resultingBalance(enc) + amount(plain text)
 export class WithdrawProofOutput extends Struct({
   owner: PublicKey,
-  to: PublicKey,
   currentBalance: EncryptedBalance,
   resultingBalance: EncryptedBalance,
   amount: UInt64,
@@ -203,8 +202,7 @@ export class WithdrawProofOutput extends Struct({
 export function generateWithdrawProofOutput(
   ownerPrivateKey: PrivateKey,
   currentEncryptedBalance: EncryptedBalance,
-  amount: UInt64,
-  to: PublicKey
+  amount: UInt64
 ): WithdrawProofOutput {
   const currentBal = currentEncryptedBalance.decrypt(ownerPrivateKey);
   currentBal.assertGreaterThanOrEqual(amount, "Not enough Balance");
@@ -217,7 +215,6 @@ export function generateWithdrawProofOutput(
 
   return new WithdrawProofOutput({
     owner: ownerPrivateKey.toPublicKey(),
-    to: to,
     currentBalance: currentEncryptedBalance,
     resultingBalance: encryptedResultingBalance,
     amount: amount,
@@ -227,7 +224,7 @@ export const withdrawProofProgram = Experimental.ZkProgram({
   publicOutput: WithdrawProofOutput,
   methods: {
     generate: {
-      privateInputs: [PrivateKey, EncryptedBalance, UInt64, PublicKey],
+      privateInputs: [PrivateKey, EncryptedBalance, UInt64],
       method: generateWithdrawProofOutput,
     },
   },
