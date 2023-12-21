@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { press } from '$lib/actions/interaction';
+	import { overflowingClass } from '$lib/actions/utils';
 	import { Bids, Nfts, Collections, Auctions } from '$lib/data';
 	import MinaToken from '$lib/icons/MinaToken.svelte';
 	import '$lib/styles/card.scss';
@@ -15,46 +16,54 @@
 	const auctionId = Auctions[-1]?.id;
 </script>
 
-<div class="card">
-	<h5 class="flex-col row-span-2">
-		<img use:press {src} loading="lazy" alt="" />
-		<h4 class="w-full">
-			<a use:press class="flex-1 overflow-hidden mask-right" href="collection/{name}">
-				{name}
-				<ArrowUpRightIcon class="h-4 w-4 self-center" />
+<div class="card layout">
+	<img class="row-span-3" use:press {src} loading="lazy" alt="" />
+	<h4 class="col-span-2">
+		<a
+			use:press
+			href="collection/{name}"
+			tabindex="-1"
+			use:overflowingClass
+			class="min-w-0 w-fit overflowing:mask-right"
+		>
+			<ArrowUpRightIcon class="w-4 h-4 flex-none" />
+			<h2>{name}</h2>
+		</a>
+		<h4>#{id}</h4>
+	</h4>
+
+	<div>
+		<h5>Bought</h5>
+		<h4>{10.024}<MinaToken class="w-4 h-4 flex-none" /></h4>
+	</div>
+	<div>
+		<h5>Floor</h5>
+		<h4>{10.245}<MinaToken class="w-4 h-4 flex-none" /></h4>
+	</div>
+	<div class="col-span-2">
+		{#if Math.random() > 0.5}
+			<a use:press href="/myauction/{auctionId}" tabindex="0" class="link-button accent">
+				In Auction
 			</a>
-			<h5>#{id}</h5>
-		</h4>
-	</h5>
-	<h5 class="justify-between">
-		Floor <h4>{floor} <MinaToken class="w-4 h-4 self-center" /></h4>
-	</h5>
-	<h5 class="justify-between">
-		Bought <h4>{bought} <MinaToken class="w-4 h-4 self-center" /></h4>
-	</h5>
-	{#if auctionId}
-		<a
-			use:press
-			href="/myauction/{auctionId}"
-			class="bg-accent justify-center p-3 rounded-xl rounded-t-md"
-		>
-			In Auction<ArrowUpRightIcon class="h-6 self-end" />
-		</a>
-	{:else}
-		<a
-			use:press
-			href="/myauction/create"
-			class="bg-primary justify-center p-3 rounded-xl rounded-t-md"
-		>
-			Create Auction<ArrowUpRightIcon class="h-6 self-end" />
-		</a>
-	{/if}
+		{:else}
+			<a use:press href="/myauction/create" tabindex="0" class="link-button primary">
+				Create Auction
+			</a>
+		{/if}
+	</div>
 </div>
 
 <style lang="scss">
-	// .overflow {
-	// 	@apply flex-1;
-	// 	@apply overflow-hidden;
-	// 	mask: linear-gradient(to right, #000 80%, transparent);
-	// }
+	.layout {
+		grid-template: 1fr auto auto / min(50%, 200px) 1fr 1fr;
+	}
+	.link-button {
+		@apply whitespace-nowrap justify-center p-2 rounded-xl;
+	}
+	.primary {
+		@apply colored-primary;
+	}
+	.accent {
+		@apply colored-accent;
+	}
 </style>

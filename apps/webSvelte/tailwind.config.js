@@ -1,29 +1,10 @@
-import theme from './src/lib/styles/theme';
-import plugin from 'tailwindcss/plugin';
-
+import {themeConfig,themePlugin} from './src/lib/styles/theme';
 /** @type {import('tailwindcss').Config} */
 module.exports = {
 	darkMode: ['class'],
 	content: ['./src/**/*.{html,js,svelte,ts}'],
-	theme: theme,
+	theme: themeConfig,
 	plugins: [
-		plugin(function ({ addVariant,matchUtilities }) {
-			matchUtilities(
-				{
-				  mask: (direction) => ({
-					"mask":`linear-gradient(to ${direction}, #000 80%, transparent)`
-				  }),
-				},
-				{ 
-					values: {
-						top:'top',
-						right:'right',
-						left:'left',
-						bottom:'bottom'
-					} 
-				}
-			  );
-			addVariant('in-view', '.in-view&');
-		})
+		themePlugin,
 	]
 };

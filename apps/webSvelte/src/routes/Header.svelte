@@ -3,7 +3,6 @@
 	import { focus, press } from '$lib/actions/interaction';
 	import Logo from '$lib/icons/Logo.svelte';
 	import { Search } from 'lucide-svelte';
-
 	let links = [
 		{ name: 'Live Auctions', url: '/' },
 		{ name: 'My Auction', url: '/myauction' },
@@ -23,72 +22,66 @@
 	}}
 />
 <header class="sticky top-0 z-50">
-	<nav class="relative bg-paper-950 shadow-lg shadow-paper-950/50">
+	<nav class="bg-background-darker shadow-lg">
 		<div class="container p-4 mx-auto flex justify-between items-center">
-			<a href="/" class="">
-				<Logo />
-			</a>
+			<div class="w-40 py-4 text-2xl font-semibold block text-center">
+				<a href="/">
+					<Logo />
+				</a>
+			</div>
+			<ul class=" flex justify-center items-center rounded-xl text-xl font-medium">
+				{#each links as link}
+					<li>
+						<a
+							use:press
+							href={link.url}
+							class:active={$page.url.pathname === link.url}
+							class="block rounded px-3 py-2 text-center text-neutral hover:text-accent"
+						>
+							{link.name}
+						</a>
+					</li>
+				{/each}
+			</ul>
 			<button
 				use:press
 				type="button"
-				class="px-8 py-4 rounded-lg
-					text-2xl font-semibold
-					block text-center
-					bg-primary text-paper-100
-					shadow-lg shadow-primary/20"
+				class="w-40 py-4 rounded-xl
+					 font-semibold block text-2xl text-center
+					colored-primary shadow-lg shadow-primary/30"
 			>
-				Connect wallet
+				Connect
 			</button>
 		</div>
-		<ul class="absolute inset-0 flex justify-center items-center rounded-lg text-xl font-medium">
-			{#each links as link}
-				<li>
-					<a
-						use:press
-						href={link.url}
-						class:active={$page.url.pathname === link.url}
-						class="block rounded px-3 py-2 text-center text-paper-400 hover:text-accent"
-					>
-						{link.name}
-					</a>
-				</li>
-			{/each}
-		</ul>
 	</nav>
 	<search-bar class="w-full flex gap-1">
-		<div
-			class="bg-paper-950 shadow-lg shadow-paper-950/50 flex-1 rounded-br-2xl relative h-12 corner-right"
-		/>
+		<div class="bg-background-darker shadow-lg flex-1 rounded-br-2xl relative h-12 corner-right" />
 		<form class="flex items-center gap-2 mt-1 p-1 border-t-0 rounded-b-2xl">
 			<input
 				bind:this={searchbar}
 				use:press
 				tabindex="-1"
 				type="text"
-				class="p-4 text-2xl rounded-lg min-w-[600px]
-				 bg-transparent backdrop-blur-lg backdrop-brightness-90 backdrop-contrast-50 backdrop-saturate-200
-				 text-paper-100 placeholder-paper-400
-				shadow-lg shadow-paper-950/20
-            	"
+				class="colored-glass
+				rounded-xl shadow-lg transition-colors p-4 text-2xl
+				min-w-[600px] placeholder-neutral/80
+				"
 				placeholder="Search anything....."
+				title=""
 				required
 			/>
 			<button
 				use:press
 				tabindex="-1"
 				type="button"
-				class="px-4 py-4 rounded-lg
-				aspect-square grid place-content-center
-				bg-transparent backdrop-blur-lg backdrop-brightness-90 backdrop-contrast-50 backdrop-saturate-200
-				shadow-lg shadow-paper-950/20
+				class="colored-glass
+				rounded-xl shadow-lg transition-colors p-4 text-2xl
 				"
 			>
-				<Search class="stroke-paper-100 w-8 h-8" />
+				<Search class="w-8 h-8" />
 			</button>
 		</form>
-		<div
-			class="bg-paper-950 shadow-lg shadow-paper-950/50 flex-1 rounded-bl-2xl relative h-12 corner-left"
-		/>
+		<div class="bg-background-darker shadow-lg flex-1 rounded-bl-2xl relative h-12 corner-left" />
 	</search-bar>
 </header>
 
@@ -106,8 +99,9 @@
 	a.active {
 		@apply text-accent border-b-[1px] border-accent;
 	}
+
 	.corner-right:after {
-		@apply bg-paper-950;
+		@apply bg-card;
 		content: '';
 		position: absolute;
 		width: 1rem;
@@ -121,7 +115,7 @@
 		);
 	}
 	.corner-left:before {
-		@apply bg-paper-950;
+		@apply bg-card;
 		content: '';
 		position: absolute;
 		width: 1rem;

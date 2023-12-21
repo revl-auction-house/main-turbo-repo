@@ -30,11 +30,11 @@
 
 <div>
 	<h5>Est. Price</h5>
-	<h1>
+	<h4>
 		{currentPrice.toFixed(4)}
 		<MinaToken class="w-6 h-6 self-center" />
-	</h1>
-	<h6>
+	</h4>
+	<!-- <h6>
 		{#if minPrice == currentPrice}
 			@ Min Price
 		{:else}
@@ -42,7 +42,7 @@
 			<h5>{decayRate} <MinaToken class="w-4 h-4 self-center" /></h5>
 			per hr
 		{/if}
-	</h6>
+	</h6> -->
 </div>
 
 <!-- <div>

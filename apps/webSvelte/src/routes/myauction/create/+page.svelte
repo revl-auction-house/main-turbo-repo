@@ -4,3 +4,10 @@
 
 <header-config data-floating-search-bar="false" />
 <AuctionForm />
+<svelte:head>
+	<style>
+		body {
+			height: 1300px;
+		}
+	</style>
+</svelte:head>

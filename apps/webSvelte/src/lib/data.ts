@@ -159,7 +159,7 @@ const gBid = () => {
 	return bid;
 };
 
-const count = 10;
+const count = 20;
 
 export const Nfts: Array<Nft> = Array.from({ length: count }, gNfts);
 

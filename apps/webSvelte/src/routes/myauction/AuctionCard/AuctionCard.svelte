@@ -10,6 +10,7 @@
 	import { ArrowUpRightIcon } from 'lucide-svelte';
 
 	import '$lib/styles/Card.scss';
+	import { overflowingClass } from '$lib/actions/utils';
 	export let auction = Auctions[0];
 
 	//common to all auction types
@@ -20,16 +21,20 @@
 </script>
 
 <div class="card layout">
-	<h5 class="flex-col row-span-2">
-		<img use:press {src} loading="lazy" alt="" />
-		<h4 class="w-full">
-			<a use:press class="flex-1 overflow-hidden mask-right" href="collection/{name}">
-				{name}
-				<ArrowUpRightIcon class="h-4 w-4 self-center" />
-			</a>
-			<h5>#{id}</h5>
-		</h4>
-	</h5>
+	<img class="row-span-3" use:press {src} loading="lazy" alt="" />
+	<h4 class="col-span-2">
+		<a
+			use:press
+			href="collection/{name}"
+			tabindex="-1"
+			use:overflowingClass
+			class="min-w-0 w-fit overflowing:mask-right"
+		>
+			<ArrowUpRightIcon class="w-4 h-4 flex-none" />
+			<h2>{name}</h2>
+		</a>
+		<h4>#{id}</h4>
+	</h4>
 	{#if typename == 'EnglishAuction'}
 		<English {auction} />
 	{:else if typename == 'DutchAuction'}
@@ -45,6 +50,6 @@
 	.layout {
 		overflow: hidden;
 		grid-auto-flow: column;
-		grid-template: auto auto auto/ 20ch 20ch;
+		grid-template: auto auto auto/ 1.25fr 1fr 20ch;
 	}
 </style>

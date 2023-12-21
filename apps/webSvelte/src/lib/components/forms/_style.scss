@@ -1,0 +1,65 @@
+.form-input {
+	@apply relative;
+	.input-container {
+		@apply relative w-full flex gap-1 ring-2 ring-card-lighter rounded-lg px-4 py-3;
+		@apply bg-transparent text-card-foreground-darker text-lg font-semibold;
+		&:hover {
+			@apply bg-card-lighter/20;
+		}
+		input {
+			all: unset;
+			color-scheme: dark;
+			width: 100%;
+			@apply block min-w-0;
+			@apply bg-transparent text-card-foreground-darker text-lg font-semibold;
+
+			&[type='radio'] {
+				@apply hidden;
+			}
+			&[type='checkbox'] {
+				@apply hidden;
+			}
+			&[type='time'],
+			&[type='date-time'],
+			&[type='datetime-local'],
+			&[type='date'] {
+				@apply flex items-center min-w-0;
+			}
+
+			&::-webkit-datetime-edit {
+				@apply rounded-lg;
+			}
+			&::-webkit-datetime-edit-fields-wrapper {
+				@apply p-0;
+			}
+			&::-webkit-datetime-edit-text {
+				@apply text-card-foreground;
+			}
+			&::-webkit-datetime-edit-month-field,
+			&::-webkit-datetime-edit-day-field,
+			&::-webkit-datetime-edit-year-field,
+			&::-webkit-datetime-edit-hour-field,
+			&::-webkit-datetime-edit-minute-field {
+				@apply mx-1 py-0 px-1 rounded-sm bg-transparent text-card-foreground-darker;
+			}
+
+			&::-webkit-datetime-edit-month-field:focus,
+			&::-webkit-datetime-edit-day-field:focus,
+			&::-webkit-datetime-edit-year-field:focus,
+			&::-webkit-datetime-edit-hour-field:focus,
+			&::-webkit-datetime-edit-minute-field:focus {
+				@apply text-card-foreground-lighter bg-background-lighter;
+			}
+
+			&::-webkit-inner-spin-button {
+				@apply hidden;
+			}
+			&::-webkit-calendar-picker-indicator {
+				@apply px-1;
+			}
+		}
+	}
+	.msg {
+		@apply absolute  w-full overflow-clip;
+	}
+}

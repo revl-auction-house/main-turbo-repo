@@ -3,7 +3,7 @@
 	//Swiper
 	import 'swiper/css';
 	import { Swiper } from 'swiper/core';
-	import theme from '$lib/styles/theme';
+	import { themeConfig } from '$lib/styles/theme';
 	import { press } from '$lib/actions/interaction';
 	import { ArrowLeft, ArrowRight } from 'lucide-svelte';
 	import Content from './Content.svelte';
@@ -11,7 +11,7 @@
 
 	let swiper: Swiper;
 	const initializer = (el: HTMLElement) => {
-		const [sm, md, lg, xl] = Object.values(theme.screens).map((bp) => parseInt(bp));
+		const [sm, md, lg, xl, xxl] = Object.values(themeConfig.screens).map((bp) => parseInt(bp));
 		swiper = new Swiper(el, {
 			// Default parameters
 			slidesPerView: 'auto',
@@ -32,6 +32,10 @@
 				[xl]: {
 					slidesPerView: 5,
 					loopAdditionalSlides: 3
+				},
+				[xxl]: {
+					slidesPerView: 7,
+					loopAdditionalSlides: 4
 				}
 			},
 			freeMode: {
@@ -66,15 +70,15 @@
 	<div class="-z-10 select-none pointer-events-none">
 		{#key bgImgUrl}<Background src={bgImgUrl} />{/key}
 	</div>
-	<div class="swiper" use:initializer>
+	<div class="swiper" use:initializer style="overflow:visible">
 		<!-- Additional required wrapper -->
 		<div class="swiper-wrapper">
 			<!-- Slides -->
 			{#each images as src}
-				<div class="swiper-slide py-4">
+				<div class="swiper-slide">
 					<img
 						use:press
-						class="cursor-pointer rounded-2xl h-[250px] aspect-square mx-auto object-cover shadow-lg shadow-paper-950/20"
+						class="cursor-pointer rounded-2xl h-[250px] aspect-square mx-auto object-cover shadow-2xl"
 						{src}
 						alt=""
 					/>
@@ -84,26 +88,12 @@
 	</div>
 	<div class="swiper-button-prev">
 		<span use:press>
-			<ArrowLeft
-				class="
-				w-16 h-16 p-2 rounded-full
-				stroke-paper-100 
-		 		bg-transparent backdrop-blur-lg backdrop-brightness-90 backdrop-contrast-50 backdrop-saturate-200
-				shadow-lg shadow-paper-950/20
-			"
-			/>
+			<ArrowLeft class="w-16 h-16 p-2 rounded-full colored-glass shadow-lg transition-colors" />
 		</span>
 	</div>
 	<div class="swiper-button-next">
 		<span use:press>
-			<ArrowRight
-				class="
-				w-16 h-16 p-2 rounded-full
-				stroke-paper-100 
-		 		bg-transparent backdrop-blur-lg backdrop-brightness-90 backdrop-contrast-50 backdrop-saturate-200
-				shadow-lg shadow-paper-950/20
-			"
-			/>
+			<ArrowRight class="w-16 h-16 p-2 rounded-full colored-glass shadow-lg transition-colors" />
 		</span>
 	</div>
 	<div class="z-10 container mx-auto relative h-[200px]">

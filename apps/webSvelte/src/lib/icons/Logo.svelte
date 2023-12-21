@@ -1,3 +1,3 @@
-<span class="self-center whitespace-nowrap text-2xl font-semibold text-paper-100">
+<span class="self-center whitespace-nowrap text-2xl font-semibold text-neutral-lighter">
 	REEVL
 </span>

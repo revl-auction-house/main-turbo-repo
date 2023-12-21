@@ -13,7 +13,7 @@ export const setupIO = () => {
 	);
 };
 
-export function io(el: HTMLElement) {
+export function inViewClass(el: HTMLElement) {
 	_io.subscribe((observer) => {
 		observer?.observe(el);
 		return observer;

@@ -3,6 +3,8 @@
 	import { formatEllipsis, formatTimeDifference } from '$lib/formatting';
 	import { currentTime } from '$lib/components/time.store';
 	import MinaToken from '$lib/icons/MinaToken.svelte';
+	import { press } from '$lib/actions/interaction';
+	import { Info } from 'lucide-svelte';
 
 	export let auction: Auction;
 	$: auctionType = auction.type as BlindAuction;
@@ -23,26 +25,31 @@
 </script>
 
 <div>
-	<h5>Type</h5>
+	<h5>
+		Type
+		<a class="w-4 h-4 self-start" use:press href="auctions/help">
+			<Info />
+		</a>
+	</h5>
 	<h4>Blind 2nd Price</h4>
 </div>
 
 {#if phase == 'reveal'}
 	<div>
 		<h5>Highest Bid</h5>
-		<h1>
+		<h4>
 			{maxBid || 'N/A'}
 			<MinaToken class="w-6 h-6 self-center" />
-		</h1>
-		<h6>
+		</h4>
+		<!-- <h6>
 			by <h5>{formatEllipsis(maxBidder, 8) || 'N/A'}</h5>
-		</h6>
+		</h6> -->
 	</div>
 {:else}
 	<div>
 		<h5># Bids</h5>
-		<h1>{bidCount}</h1>
-		<h6>so far</h6>
+		<h4>{bidCount}</h4>
+		<!-- <h6>so far</h6> -->
 	</div>
 {/if}
 

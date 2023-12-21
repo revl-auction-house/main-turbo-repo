@@ -33,6 +33,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@tailwindcss/forms": "^0.5.7",
 		"lucide-svelte": "^0.294.0",
 		"swiper": "^11.0.5"
 	}

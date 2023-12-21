@@ -32,11 +32,11 @@
 
 {#each details as detail}
 	<div class="whitespace-nowrap">
-		<div class="text-paper-400">
+		<div class="text-neutral">
 			{detail.name}
 		</div>
 		<div
-			class="text-paper-100 font-bold text-2xl overflow-hidden overflow-ellipsis"
+			class="text-neutral-lighter font-bold text-2xl overflow-hidden overflow-ellipsis"
 			style="width:{detail.width}"
 		>
 			{detail.value}
@@ -46,11 +46,9 @@
 <button
 	use:press
 	type="button"
-	class="px-8 py-4 rounded-lg
-    text-2xl font-semibold
-    block text-center whitespace-nowrap
-    bg-primary text-paper-100
-    shadow-lg shadow-primary/20"
+	class="px-8 py-4 rounded-xl
+	font-semibold block text-2xl text-center
+   colored-primary shadow-lg"
 >
 	Place Bid
 </button>

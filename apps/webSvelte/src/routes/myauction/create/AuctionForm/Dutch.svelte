@@ -1,4 +1,6 @@
 <script lang="ts">
+	import NumberField from '$lib/components/forms/NumberField.svelte';
+	import TextField from '$lib/components/forms/TextField.svelte';
 	import { fade } from 'svelte/transition';
 	import { press } from '$lib/actions/interaction';
 	import type { Auction, DutchAuction } from '$lib/api';
@@ -7,55 +9,36 @@
 	import MinaToken from '$lib/icons/MinaToken.svelte';
 	import { HelpCircle, Info, TrendingDown } from 'lucide-svelte';
 
-	export let auction: Auction;
-	$: auctionType = auction.type as DutchAuction;
+	// $: decayRate = auctionType.decayRate;
+	// $: startPrice = auctionType.startPrice;
+	// $: minPrice = auctionType.minPrice;
+	// $: elaspedTime = $currentTime - auction.startTime;
+	// $: currentPrice = Math.max(startPrice - (decayRate / hour) * elaspedTime, minPrice);
+	// $: timeLeftForMinPrice = Math.max(0, (startPrice - minPrice) / (decayRate / hour) - elaspedTime);
 
-	$: decayRate = auctionType.decayRate;
-	$: startPrice = auctionType.startPrice;
-	$: minPrice = auctionType.minPrice;
-	$: elaspedTime = $currentTime - auction.startTime;
-	$: currentPrice = Math.max(startPrice - (decayRate / hour) * elaspedTime, minPrice);
-	$: timeLeftForMinPrice = Math.max(0, (startPrice - minPrice) / (decayRate / hour) - elaspedTime);
+	let startPrice: number;
+	let decayRate: number;
+	let minPrice: number;
+	export let fulfilledRequirements = false;
+	$: logic = {
+		startPriceSelected: startPrice != undefined,
+		decayRateSelected: decayRate != undefined,
+		minPriceSelected: minPrice != undefined
+	};
+	$: fulfilledRequirements = Object.values(logic).every((value) => value == true);
 </script>
 
-<div>
-	<h5>
-		Type
-		<a class="w-4 h-4 self-start" use:press href="auctions/help">
-			<Info />
-		</a>
-	</h5>
-	<h4>Dutch</h4>
-</div>
-
-<div>
-	<h5>Est. Price</h5>
-	<h1>
-		{currentPrice.toFixed(4)}
-		<MinaToken class="w-6 h-6 self-center" />
-	</h1>
-	<h6>
-		{#if minPrice == currentPrice}
-			@ Min Price
-		{:else}
-			<TrendingDown class="w-4 h-4 self-center" />
-			<h5>{decayRate} <MinaToken class="w-4 h-4 self-center" /></h5>
-			per hr
-		{/if}
-	</h6>
-</div>
-
-<!-- <div>
-	<h5>Started at</h5>
-	<h4>{startPrice} <MinaToken class="w-4 h-4 self-center" /></h4>
-</div> -->
-
-<div>
-	<h5>Min Price in</h5>
-	<h4>{formatTimeDifference(timeLeftForMinPrice)}</h4>
-</div>
-
-<div>
-	<h5>Min Price</h5>
-	<h4>{minPrice} <MinaToken class="w-4 h-4 self-center" /></h4>
+<div class="grid">
+	<NumberField label="Set Starting Price" bind:value={startPrice}>
+		<MinaToken slot="trailing" class="w-6 h-6" />
+	</NumberField>
+	<NumberField label="Set Decay Rate" bind:value={decayRate}>
+		<h6 class="flex-none" slot="trailing">
+			<MinaToken class="w-6 h-6 self-center" />
+			/ hr
+		</h6>
+	</NumberField>
+	<NumberField label="Set Min Price" bind:value={minPrice}>
+		<MinaToken slot="trailing" class="w-6 h-6" />
+	</NumberField>
 </div>

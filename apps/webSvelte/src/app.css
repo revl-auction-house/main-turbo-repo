@@ -6,21 +6,21 @@
 @layer base {
 	body {
 		@apply overflow-y-scroll;
-		@apply bg-paper-900 text-paper-100;
+		@apply bg-background text-neutral-lighter;
 	}
 	body::-webkit-scrollbar {
 		@apply w-2;
 	}
 
 	body::-webkit-scrollbar-track {
-		@apply bg-paper-950;
+		@apply bg-background;
 	}
 
 	body::-webkit-scrollbar-thumb {
-		@apply bg-primary rounded-lg shadow-lg;
+		@apply bg-primary rounded-xl shadow-lg;
 	}
 	body::-webkit-scrollbar-thumb:hover {
-		@apply bg-paper-0;
+		@apply bg-white;
 	}
 	* {
 		@apply outline-none;

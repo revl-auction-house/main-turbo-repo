@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { io } from '$lib/actions/observers';
+	import { inViewClass } from '$lib/actions/observers';
 	import { Auctions } from '$lib/data';
 	import AuctionCard from './AuctionCard/AuctionCard.svelte';
 </script>
@@ -9,7 +9,7 @@
 <section class="container mx-auto layout">
 	{#each Auctions as auction}
 		<div
-			use:io
+			use:inViewClass
 			class="mx-auto transition-[opacity,transform] opacity-0 scale-90 in-view:opacity-100 in-view:scale-100"
 		>
 			<AuctionCard {auction} />
@@ -20,9 +20,9 @@
 <style lang="scss">
 	.layout {
 		@apply grid w-fit gap-6 p-6 place-content-center place-items-center;
-		grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+		grid-template-columns: repeat(auto-fill, minmax(580px, 1fr));
 		> * {
-			@apply w-[380px];
+			@apply w-[580px];
 		}
 	}
 </style>
