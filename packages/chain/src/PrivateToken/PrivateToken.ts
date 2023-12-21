@@ -41,10 +41,6 @@ export class PrivateToken extends RuntimeModule<unknown> {
     x: Poseidon.hash(Encoding.stringToFields("PrivateToken.deposit")),
     isOdd: Bool(false),
   });
-  public readonly WITHDRAW_ADDRESS = PublicKey.from({
-    x: Poseidon.hash(Encoding.stringToFields("PrivateToken.withdraw")),
-    isOdd: Bool(false),
-  });
 
   @state() public ledger = StateMap.from<PublicKey, EncryptedBalance>(
     PublicKey,
@@ -221,10 +217,6 @@ export class PrivateToken extends RuntimeModule<unknown> {
   public withdraw(withdrawProof: WithdrawProof) {
     const withdrawProofOutput = withdrawProof.publicOutput;
     withdrawProof.verify();
-    assert(
-      withdrawProofOutput.to.equals(this.WITHDRAW_ADDRESS),
-      "Wrong recipient"
-    );
     // Check that the withdrawProof's innitial balance matches with on chain amount
     const currentBalance = this.ledger.get(withdrawProofOutput.owner).value;
     assert(
