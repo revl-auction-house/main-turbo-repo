@@ -143,6 +143,9 @@
 
 <style lang="scss">
 	.card {
+		* {
+			contain: none;
+		}
 		@apply min-w-[720px];
 		@apply my-16;
 		@apply bg-card;

@@ -14,5 +14,5 @@
 		<input bind:value type="number" step="0" {placeholder} min="0" />
 		<slot name="trailing" />
 	</div>
-	<div class="msg m-1 text-xs text-neutral-darker">={value}</div>
+	<div class="msg m-1 text-xs text-neutral-darker">= {value}</div>
 </div>

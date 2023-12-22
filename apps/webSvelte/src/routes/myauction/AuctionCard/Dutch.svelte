@@ -32,7 +32,7 @@
 	<h5>Est. Price</h5>
 	<h4>
 		{currentPrice.toFixed(4)}
-		<MinaToken class="w-6 h-6 self-center" />
+		<MinaToken class="w-4 h-4 self-center" />
 	</h4>
 	<!-- <h6>
 		{#if minPrice == currentPrice}

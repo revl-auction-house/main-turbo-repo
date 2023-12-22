@@ -10,11 +10,12 @@
 		@apply bg-card shadow-lg shadow-card-darker/50;
 
 		> * {
-			@apply overflow-hidden overflowing:mask-right;
+			contain: paint;
+			@apply overflowing:mask-right;
 		}
 
 		img {
-			@apply rounded-xl aspect-square object-cover;
+			@apply rounded-xl aspect-[5/6] object-cover;
 		}
 
 		h1,

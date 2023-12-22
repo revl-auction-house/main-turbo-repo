@@ -1,7 +1,7 @@
 .form-input {
 	@apply relative;
 	.input-container {
-		@apply relative w-full flex gap-1 ring-2 ring-card-lighter rounded-lg px-4 py-3;
+		@apply relative w-full flex gap-1 ring-2 ring-inset ring-card-lighter rounded-lg px-4 py-3;
 		@apply bg-transparent text-card-foreground-darker text-lg font-semibold;
 		&:hover {
 			@apply bg-card-lighter/20;

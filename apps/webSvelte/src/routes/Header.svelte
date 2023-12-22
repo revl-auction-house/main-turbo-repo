@@ -30,7 +30,7 @@
 	}}
 />
 <header class="sticky top-0 z-50">
-	<nav class="bg-background-darker shadow-lg">
+	<nav class="bg-background-darker">
 		<div class="relative container p-2 mx-auto flex justify-between items-center">
 			<a class="w-40 py-4 text-2xl font-semibold block text-center" href="/">
 				<Logo />

@@ -50,6 +50,6 @@
 	.layout {
 		overflow: hidden;
 		grid-auto-flow: column;
-		grid-template: auto auto auto/ auto 8.5em 10.5em;
+		grid-template: auto auto auto/ auto 9em 11em;
 	}
 </style>

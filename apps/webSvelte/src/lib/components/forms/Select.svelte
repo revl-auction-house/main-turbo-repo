@@ -2,19 +2,19 @@
 	import { scale } from 'svelte/transition';
 	import { press } from '$lib/actions/interaction';
 	import { expoOut } from 'svelte/easing';
+	import Dropdown from '../Dropdown.svelte';
 	export let label: string;
-	export let value: string;
+	export let value: string | undefined = undefined;
 	export let placeholder = '';
 	export let options: string[] = [];
 
 	let selectedOption = placeholder || 'Select an option';
-	let error = 'no error';
 
 	let dropDown: HTMLDivElement;
 
 	let dropDownOpen = false;
 
-	const handleInput = (e: Event) => {
+	const selectOption = (e: Event) => {
 		const target = e.target as HTMLInputElement;
 		selectedOption = target.value;
 		value = selectedOption;
@@ -28,31 +28,26 @@
 			dropDownOpen = false;
 		}
 	};
+	let closeDropDown: () => void;
 </script>
 
 <div class="form-input mb-6">
 	<h5 class="label">{label}</h5>
-	<button
-		type="button"
-		on:click|stopPropagation={() => {
-			dropDownOpen = true;
-		}}
-		class="input-container text-left"
-	>
-		<div use:press class="dropdown-selected">
-			{selectedOption}
+	<Dropdown bind:closeDropDown triggerStyle="width:100%">
+		<div slot="trigger" class="input-container text-left">
+			<div use:press class="dropdown-selected">
+				{selectedOption}
+			</div>
 		</div>
-	</button>
-	{#if dropDownOpen}
-		<div
-			class="dropdown"
-			bind:this={dropDown}
-			transition:scale={{ duration: 300, start: 0.9, easing: expoOut }}
-		>
+
+		<div slot="dropdown" class="menu">
 			{#each options as option}
 				<input
 					class="hidden"
-					on:click={handleInput}
+					on:click={(e) => {
+						selectOption(e);
+						closeDropDown();
+					}}
 					type="radio"
 					id={option}
 					name={label}
@@ -62,8 +57,8 @@
 				<label class="flex" use:press for={option}>{option}</label>
 			{/each}
 		</div>
-	{/if}
-	<div class="msg m-1 text-xs text-neutral-darker">={value}</div>
+	</Dropdown>
+	<div class="msg m-1 text-xs text-neutral-darker">= {value}</div>
 </div>
 
 <style lang="scss">
@@ -71,16 +66,10 @@
 		@apply px-2 py-1 text-sm font-semibold;
 	}
 	.dropdown-selected {
-		@apply flex-1 px-3;
+		@apply flex-1 px-2.5;
 	}
-	.dropdown {
-		position: absolute;
-		top: calc(100% + 0.5em);
-		left: 0;
-		right: 0;
-		@apply z-50 overflow-hidden ring-2 ring-neutral-darker bg-card-lighter rounded-md shadow-md
-        flex-col gap-3 p-1;
-		transition: all 0.3s ease-in-out;
+	.menu {
+		@apply flex flex-col gap-2 p-2;
 		label {
 			@apply flex-1 rounded-lg px-4 py-3 text-sm font-semibold;
 			&:hover {

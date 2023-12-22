@@ -9,7 +9,7 @@ export async function connectWallet() {
 	mina.on('accountsChanged', ([address0]) => {
 		wallet.set(address0);
 	});
-	const accounts = await window.mina.requestAccounts();
+	const accounts = await mina.requestAccounts();
 	console.log('connectWallet', accounts);
 	if (Array.isArray(accounts)) wallet.set(accounts[0]);
 }

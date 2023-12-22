@@ -55,7 +55,7 @@
 
 <style lang="scss">
 	.layout {
-		grid-template: 1fr auto auto / min(50%, 200px) 1fr 1fr;
+		grid-template: 1fr auto auto / auto 6em 6em;
 	}
 	.link-button {
 		@apply whitespace-nowrap justify-center p-2 rounded-xl w-full;
