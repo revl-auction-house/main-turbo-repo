@@ -1,9 +1,11 @@
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
 import topLevelAwait from 'vite-plugin-top-level-await';
+import houdini from 'houdini/vite';
 
 export default defineConfig({
 	plugins: [
+		houdini(),
 		sveltekit(),
 		topLevelAwait({
 			// The export name of top-level await promise for each chunk module

@@ -10,7 +10,8 @@
 		"sourceMap": true,
 		"strict": true,
 		"target": "esnext",
-		"moduleResolution": "bundler"
+		"moduleResolution": "bundler",
+		"rootDirs": [".", "./.svelte-kit/types", "./$houdini/types"]
 	}
 	// Path aliases are handled by https://kit.svelte.dev/docs/configuration#alias
 	//
