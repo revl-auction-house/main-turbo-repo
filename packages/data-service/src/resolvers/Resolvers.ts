@@ -50,11 +50,17 @@ export const Query: QueryResolvers<{ dataSource: DataSource }> = {
   },
   auctions: async (
     _,
-    { creator, live = true, skip = 0, count = 10 },
+    { creator, onlyLive = true, skip = 0, count = 10 },
     { dataSource }
   ): Promise<any[]> => {
-    // console.log("query resolver | auctions: ", creator, live, skip, count);
-    return dataSource.getAuctions(creator!, live!, skip!, count!);
+    const x = dataSource.getAuctions(creator!, onlyLive!, skip!, count!);
+    console.log(
+      "query resolver | auctions: ",
+      (await x).length,
+      creator,
+      onlyLive
+    );
+    return x;
   },
   userBids: async (
     _,
