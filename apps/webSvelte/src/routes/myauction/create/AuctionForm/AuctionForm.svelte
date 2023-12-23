@@ -7,8 +7,10 @@
 	import English from './English.svelte';
 	import Dutch from './Dutch.svelte';
 	import Blind from './Blind.svelte';
-	import '$lib/styles/Card.scss';
 	import { fade } from 'svelte/transition';
+	import '$lib/styles/card.scss';
+	import '$lib/styles/typography.scss';
+	import Form from '$lib/components/forms/Form.svelte';
 
 	let auction = JSON.parse(JSON.stringify(Auctions[0]));
 	$: name = auction.nft.name;
@@ -52,9 +54,9 @@
 	$: fulfilledRequirements = false;
 </script>
 
-<form method="POST">
+<Form>
 	<section class="container mx-auto grid gap-3 justify-center">
-		<div class="card max-w-[600px]">
+		<div class="card typography max-w-[600px]">
 			<div class="col-span-full grid gap-3 grid-cols-3">
 				<img
 					class="flex-col row-span-3"
@@ -139,7 +141,7 @@
 			</div>
 		</div>
 	</section>
-</form>
+</Form>
 
 <style lang="scss">
 	.card {
@@ -159,11 +161,11 @@
 			}
 		}
 		label {
-			@apply p-4 aspect-[5/3];
+			@apply p-4 aspect-[6/3];
 			@apply relative overflow-clip;
 			overflow-clip-margin: 2px;
 			@apply grid place-items-center p-4 rounded-xl cursor-pointer;
-			@apply ring-2 ring-inset ring-card-lighter;
+			@apply ring-2 ring-inset ring-neutral-darkest;
 			grid-template-rows: 1fr 1fr;
 			.tag {
 				@apply absolute -top-[2px] -right-[2px] 
@@ -171,7 +173,7 @@
 				colored-accent text-neutral-lighter;
 			}
 			&:hover {
-				@apply bg-card-lighter/20;
+				@apply bg-neutral-darkest/20;
 			}
 		}
 	}

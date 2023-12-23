@@ -20,6 +20,6 @@
 
 <Select label="Select Variant" bind:value={variant} options={['First Price', 'Second Price']} />
 
-<DateTimeLocalField label="Set End Time" bind:value={endTime} />
+<DateTimeLocalField label="Set End Time" bind:value={endTime} min={new Date()} />
 
 <DateTimeLocalField label="Set Reveal Time" bind:value={revealTime} min={endTime} />

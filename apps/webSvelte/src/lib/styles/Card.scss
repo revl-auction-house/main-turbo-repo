@@ -18,64 +18,10 @@
 			@apply rounded-xl aspect-[5/6] object-cover;
 		}
 
-		h1,
-		h2,
-		h3,
-		h4,
-		h5,
-		h6,
-		a {
-			@apply flex gap-1 items-baseline;
-			&:not(:has(*)) {
-				@apply w-fit whitespace-nowrap;
-			}
-		}
-
-		h1 {
-			@apply gap-2;
-			@apply text-4xl leading-[44px] font-bold text-card-foreground-lighter stroke-card-foreground-lighter;
-		}
-
-		h2 {
-			@apply gap-2;
-			@apply text-3xl leading-[40px] font-semibold text-card-foreground-lighter stroke-card-foreground-lighter;
-		}
-		h3 {
-			@apply gap-2;
-			@apply text-2xl leading-[36px] font-semibold text-card-foreground-lighter stroke-card-foreground-lighter;
-		}
-
-		h4 {
-			@apply gap-2;
-			@apply text-xl leading-[32px] font-medium text-card-foreground stroke-card-foreground;
-		}
-
-		h5 {
-			@apply gap-1;
-			@apply text-base leading-[26px] font-medium text-card-foreground-darker stroke-card-foreground-darker;
-		}
-		h6 {
-			@apply gap-1;
-			@apply text-sm leading-[24px] font-normal text-card-foreground-darker stroke-card-foreground-darker;
-		}
-		a {
-			@apply gap-1;
-			@apply text-xl leading-[32px] font-medium text-card-foreground-lighter stroke-card-foreground-lighter;
-		}
 		hr {
-			@apply outline-none border-none bg-gradient-to-r from-transparent via-primary/50 to-transparent h-[1px];
-		}
-		progress {
-			@apply w-full h-2;
-		}
-		progress::-webkit-progress-bar {
-			@apply bg-card-foreground-lighter;
-		}
-		progress::-webkit-progress-value {
-			@apply bg-card-foreground;
-		}
-		progress::-moz-progress-bar {
-			@apply bg-card-foreground;
+			@apply outline-none border-none bg-gradient-to-r 
+			from-transparent via-primary/50 to-transparent
+		 	h-[1px];
 		}
 	}
 }

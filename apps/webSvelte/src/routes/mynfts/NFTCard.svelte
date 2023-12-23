@@ -3,8 +3,9 @@
 	import { overflowingClass } from '$lib/actions/utils';
 	import { Bids, Nfts, Collections, Auctions } from '$lib/data';
 	import MinaToken from '$lib/icons/MinaToken.svelte';
-	import '$lib/styles/card.scss';
 	import { ArrowUpRightIcon } from 'lucide-svelte';
+	import '$lib/styles/card.scss';
+	import '$lib/styles/typography.scss';
 
 	export let nft = Nfts[0];
 	const name = nft.name;
@@ -16,7 +17,7 @@
 	const auctionId = Auctions[-1]?.id;
 </script>
 
-<div class="card layout">
+<div class="card typography layout">
 	<img class="row-span-3" use:press {src} loading="lazy" alt="" crossorigin="anonymous" />
 	<h4 class="col-span-2">
 		<a

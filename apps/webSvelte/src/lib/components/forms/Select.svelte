@@ -1,7 +1,5 @@
 <script lang="ts">
-	import { scale } from 'svelte/transition';
 	import { press } from '$lib/actions/interaction';
-	import { expoOut } from 'svelte/easing';
 	import Dropdown from '../Dropdown.svelte';
 	export let label: string;
 	export let value: string | undefined = undefined;

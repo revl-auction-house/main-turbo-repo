@@ -3,6 +3,10 @@
 	import { formatTimeDifference } from '$lib/formatting';
 	import { currentTime } from '$lib/components/time.store';
 	import { press } from '$lib/actions/interaction';
+	import Dialog from '$lib/components/Dialog.svelte';
+	import NumberField from '$lib/components/forms/NumberField.svelte';
+	import MinaToken from '$lib/icons/MinaToken.svelte';
+	import Form from '$lib/components/forms/Form.svelte';
 
 	export let auction: Auction;
 	$: auctionType = auction.type as EnglishAuction;
@@ -41,6 +45,8 @@
 			width: '16ch'
 		}
 	];
+
+	let showPlaceBidModal = false;
 </script>
 
 {#each details as detail}
@@ -59,9 +65,24 @@
 <button
 	use:press
 	type="button"
+	on:click={() => (showPlaceBidModal = true)}
 	class="px-8 py-4 rounded-xl
 	font-semibold block text-2xl text-center
-   colored-primary shadow-lg"
+	colored-primary shadow-lg"
 >
 	Place Bid
 </button>
+<Dialog
+	showModal={showPlaceBidModal}
+	on:close={() => {
+		showPlaceBidModal = false;
+	}}
+>
+	<h2 slot="header">Please specify the amount</h2>
+	<Form>
+		<NumberField label="Amount" min={maxBid + 1} value={maxBid + 1}>
+			<MinaToken slot="trailing" />
+		</NumberField>
+		<button type="submit">Place Bid</button>
+	</Form>
+</Dialog>

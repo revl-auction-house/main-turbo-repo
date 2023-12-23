@@ -16,15 +16,16 @@ export const themeConfig = {
 	colors: {
 		transparent: 'transparent',
 		primary: '#00b2ff', //blue
-		secondary: '#00ff38', //lime
+		secondary: '#00d728', //lime
 		accent: '#ff6a00', //orange
 		red: '#ff0000', //red
 		white: '#ffffff', //white
 		black: '#000000', //black
 		neutral: {
-			DEFAULT: '#d4d4d8',
-			lighter: '#f4f4f5',
-			darker: '#71717a'
+			DEFAULT: '#bababa',
+			lighter: '#d3d2d2',
+			darker: '#6a6a6a',
+			darkest: '#3a3a3a'
 		},
 		background: {
 			DEFAULT: '#25282a',
@@ -67,7 +68,7 @@ export const themePlugin = plugin(function ({ addVariant, matchUtilities, addCom
 		},
 		'.colored-secondary': {
 			color: '#ffffff',
-			background: 'linear-gradient(90deg, #00ff37 0%, #00b84a 100%)'
+			background: 'linear-gradient(90deg, #00d728 0%, #01cd63 100%)'
 		},
 		'.colored-accent': {
 			color: '#ffffff',

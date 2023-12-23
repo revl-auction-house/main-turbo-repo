@@ -9,6 +9,6 @@
 <style>
 	img {
 		@apply absolute inset-0 w-full h-full object-fill scale-105
-        filter blur-[50px] saturate-[1.2] contrast-[0.6] brightness-[0.6];
+        filter blur-[150px] saturate-[1.5] contrast-[0.5] brightness-[0.8];
 	}
 </style>

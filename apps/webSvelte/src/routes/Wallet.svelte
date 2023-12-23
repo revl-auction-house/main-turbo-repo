@@ -24,10 +24,10 @@
 		<div class="transfer">
 			<button use:press class="right hover:colored-primary">
 				<span> DEPOSIT </span>
-				<ArrowBigRight class="w-12 h-12 stroke-white fill-white" />
+				<ArrowBigRight class="w-8 h-8 stroke-white fill-white flex-none" />
 			</button>
 			<button use:press class="left hover:colored-primary">
-				<ArrowBigLeft class="w-12 h-12 stroke-white fill-white" />
+				<ArrowBigLeft class="w-8 h-8 stroke-white fill-white flex-none" />
 				<span> WITHDRAW </span>
 			</button>
 		</div>
@@ -37,10 +37,7 @@
 		</div>
 	</div>
 	<div class="mint-action">
-		<p class=" text-accent">Mint Free Test Tokens by clicking this button below</p>
-		<div class="flex justify-center">
-			<button use:press> Mint </button>
-		</div>
+		<button use:press> Mint Free Test Tokens</button>
 	</div>
 </div>
 
@@ -69,11 +66,9 @@
 		}
 	}
 	.mint-action {
-		p {
-			@apply text-base my-4 text-center;
-		}
+		@apply m-4 flex justify-center;
 		button {
-			@apply px-8 py-2 rounded-lg colored-accent text-base font-semibold;
+			@apply px-6 py-3 rounded-lg colored-secondary text-base font-semibold;
 		}
 	}
 </style>

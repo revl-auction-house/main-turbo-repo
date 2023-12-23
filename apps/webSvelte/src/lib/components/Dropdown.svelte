@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { scale } from 'svelte/transition';
-	import { press } from '$lib/actions/interaction';
 	import { expoOut } from 'svelte/easing';
-
+	import '$lib/styles/card.scss';
+	import { createEventDispatcher } from 'svelte';
 	export let triggerStyle = '';
 	export let dropdownStyle = '';
 	let dropDown: HTMLDivElement;
@@ -21,6 +21,12 @@
 	export const closeDropDown = () => {
 		dropDownOpen = false;
 	};
+
+	//create customed event
+	const dispatcher = createEventDispatcher();
+	$: if (dropDownOpen) {
+		dispatcher('open');
+	}
 </script>
 
 <div class="dropdown-container">
@@ -54,8 +60,7 @@
 		top: calc(100% + 0.5em);
 		right: 0;
 		min-width: 100%;
-		contain: paint;
 		@apply z-50 ring-2 ring-inset ring-primary
-        bg-background rounded-md shadow-primary/20 shadow-lg;
+        bg-background rounded-xl shadow-primary/20 shadow-lg;
 	}
 </style>

@@ -40,7 +40,7 @@
 			&::-webkit-datetime-edit-year-field,
 			&::-webkit-datetime-edit-hour-field,
 			&::-webkit-datetime-edit-minute-field {
-				@apply mx-1 py-0 px-1 rounded-sm bg-transparent text-card-foreground-darker;
+				@apply mx-1 py-0 px-1 rounded-sm bg-transparent;
 			}
 
 			&::-webkit-datetime-edit-month-field:focus,
@@ -48,7 +48,7 @@
 			&::-webkit-datetime-edit-year-field:focus,
 			&::-webkit-datetime-edit-hour-field:focus,
 			&::-webkit-datetime-edit-minute-field:focus {
-				@apply text-card-foreground-lighter bg-background-lighter;
+				@apply bg-background-lighter;
 			}
 
 			&::-webkit-inner-spin-button {

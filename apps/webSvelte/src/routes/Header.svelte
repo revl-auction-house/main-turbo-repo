@@ -9,9 +9,9 @@
 
 	let links = [
 		{ name: 'Live Auctions', url: '/' },
-		{ name: 'My Auction', url: '/myauction' },
-		{ name: 'My Bids', url: '/mybids' },
-		{ name: 'My NFTS', url: '/mynfts' }
+		{ name: 'My Auction', url: '/myauction/' },
+		{ name: 'My Bids', url: '/mybids/' },
+		{ name: 'My NFTS', url: '/mynfts/' }
 	];
 	let searchbar: HTMLInputElement;
 	let connectWallet: any;
@@ -49,18 +49,16 @@
 					</li>
 				{/each}
 			</ul>
-			<Dropdown>
-				<button
+			<Dropdown on:open={connectWallet}>
+				<div
 					slot="trigger"
-					on:click={connectWallet}
 					use:press
-					type="button"
 					class="w-40 py-4 rounded-xl
 					 font-semibold block text-2xl text-center
 					colored-primary shadow-lg shadow-primary/30"
 				>
 					Connect
-				</button>
+				</div>
 				<div slot="dropdown">
 					<Wallet />
 				</div>
@@ -81,7 +79,6 @@
 				"
 				placeholder="Search anything....."
 				title=""
-				required
 			/>
 			<button
 				use:press

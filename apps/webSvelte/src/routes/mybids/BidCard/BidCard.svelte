@@ -9,7 +9,8 @@
 	import { press } from '$lib/actions/interaction';
 	import { ArrowUpRightIcon } from 'lucide-svelte';
 
-	import '$lib/styles/Card.scss';
+	import '$lib/styles/card.scss';
+	import '$lib/styles/typography.scss';
 	import { overflowingClass } from '$lib/actions/utils';
 	export let bid = Bids[0];
 
@@ -20,7 +21,7 @@
 	$: typename = bid.auction.type.typename;
 </script>
 
-<div class="card layout">
+<div class="card typography layout">
 	<img class="row-span-3" use:press {src} loading="lazy" alt="" crossorigin="anonymous" />
 	<h4 class="col-span-2">
 		<a

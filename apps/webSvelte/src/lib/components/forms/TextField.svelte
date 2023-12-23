@@ -1,18 +1,27 @@
 <script lang="ts">
-	import './_style.scss';
+	import '$lib/styles/Forms.scss';
 	export let label: string;
 	export let value: string;
 	export let placeholder = '';
-
-	let error = 'no error';
+	export let validate = (value: string) => {
+		return '';
+	};
+	let touched = false;
+	let focused = false;
+	const handleFocus = () => {
+		focused = true;
+	};
+	const handleBlur = () => {
+		focused = false;
+		touched = true;
+	};
 </script>
 
-<div class="form-input mb-6">
-	<h5 class="label">{label}</h5>
-	<div class="flex input-container">
-		<slot name="leading" />
-		<input bind:value type="text" {placeholder} />
+<h5 class="form-label">{label}</h5>
+<div class="form-input-container outlined bold">
+	<input on:focus={handleFocus} on:blur={handleBlur} bind:value type="text" {placeholder} />
+	<div class="whitespace-nowrap grid place-items-center">
 		<slot name="trailing" />
 	</div>
-	<div class="msg m-1 text-xs text-neutral-darker">= {value}</div>
 </div>
+<div class="font-normal text-xs m-1 h-3 warning">{touched ? validate(value) : ''}</div>
