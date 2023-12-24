@@ -147,8 +147,7 @@ describe("BlindFirstPriceAuction", () => {
         auctionId = blindAuctions.start(
           nft0Key,
           UInt64.from(2),
-          UInt64.from(2),
-          UInt64.zero
+          UInt64.from(2)
         ); // bidding active for next 2 block
       });
       await tx.sign();
