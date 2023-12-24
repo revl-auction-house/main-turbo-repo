@@ -52,7 +52,7 @@ export class PrivateToken extends RuntimeModule<unknown> {
     EncryptedBalance
   );
   // a counter per user for each new claim
-  @state() public nounces = StateMap.from<PublicKey, UInt64>(PublicKey, UInt64);
+  @state() public nonces = StateMap.from<PublicKey, UInt64>(PublicKey, UInt64);
 
   @state() public deposits = StateMap.from<UInt64, Field>(UInt64, Field);
   @state() public depositNounce = State.from(UInt64);
@@ -93,9 +93,9 @@ export class PrivateToken extends RuntimeModule<unknown> {
      * when eventually claimed
      */
     const to = transferProofOutput.to;
-    const claimKey = ClaimKey.from(to, this.nounces.get(to).value);
+    const claimKey = ClaimKey.from(to, this.nonces.get(to).value);
     // update nounce
-    this.nounces.set(to, this.nounces.get(to).value.add(1));
+    this.nonces.set(to, this.nonces.get(to).value.add(1));
     // store the claim so it can be claimed later
     this.claims.set(claimKey, transferProofOutput.amount);
   }
@@ -176,7 +176,7 @@ export class PrivateToken extends RuntimeModule<unknown> {
     this.deposits.set(nounce.value, depositHashProof.publicOutput);
     // update depositNounce
     this.depositNounce.set(nounce.value.add(Field(1)));
-    // transfer amount to DEPOSIT_ADDRESS
+    // transfer amount to dEPOSITADDRESS
     this.balance.transferFrom(
       this.transaction.sender,
       this.DEPOSIT_ADDRESS,
@@ -203,9 +203,9 @@ export class PrivateToken extends RuntimeModule<unknown> {
     // proofOutput.rootHash exists in historical hashes
 
     const to = proofOutput.to;
-    const claimKey = ClaimKey.from(to, this.nounces.get(to).value);
+    const claimKey = ClaimKey.from(to, this.nonces.get(to).value);
     // update nounce
-    this.nounces.set(to, this.nounces.get(to).value.add(1));
+    this.nonces.set(to, this.nonces.get(to).value.add(1));
     // store the claim so it can be claimed later
     this.claims.set(claimKey, proofOutput.amount);
   }

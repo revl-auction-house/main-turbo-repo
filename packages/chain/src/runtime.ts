@@ -9,7 +9,7 @@ export const runtime = {
   modules: {
     Balances,
     NFT,
-    PrivateToken,
+    // PrivateToken,
     GlobalCounter,
     EnglishAuctionModule,
     // DutchAuctionModule,
@@ -17,7 +17,7 @@ export const runtime = {
   config: {
     Balances: {},
     NFT: {},
-    PrivateToken: {},
+    // PrivateToken: {},
     GlobalCounter: {},
     EnglishAuctionModule: {},
     // DutchAuctionModule: {},

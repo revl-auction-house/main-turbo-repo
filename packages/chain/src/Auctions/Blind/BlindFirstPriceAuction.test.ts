@@ -147,8 +147,7 @@ describe("BlindFirstPriceAuction", () => {
         auctionId = blindAuctions.start(
           nft0Key,
           UInt64.from(2),
-          UInt64.from(2),
-          UInt64.zero
+          UInt64.from(2)
         ); // bidding active for next 2 block
       });
       await tx.sign();
@@ -356,8 +355,8 @@ describe("BlindFirstPriceAuction", () => {
     await tx.send();
     let block = await appChain.produceBlock();
     expect(block?.txs[0].status, block?.txs[0].statusMessage).toBe(true);
-    const claimNounce =
-      0 | Number((await privateTokenQuery.nounces.get(publicKey))?.toBigInt());
+    const claimNonce =
+      0 | Number((await privateTokenQuery.nonces.get(publicKey))?.toBigInt());
 
     // step 2: call addDeposit to get the private tokens in a `claim`
     const dummyMerkelMap = new MerkleMap(); // TODO remove later when using appChain state
@@ -384,7 +383,7 @@ describe("BlindFirstPriceAuction", () => {
     block = await appChain.produceBlock();
     expect(block?.txs[0].status, block?.txs[0].statusMessage).toBe(true);
     // step 3: call addClaim to update ledger balance
-    tx = await addClaimTxn(pvtKey, claimNounce, claimNounce == 0);
+    tx = await addClaimTxn(pvtKey, claimNonce, claimNonce == 0);
     await tx.sign();
     await tx.send();
 

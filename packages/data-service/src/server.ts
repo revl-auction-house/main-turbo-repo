@@ -3,6 +3,9 @@ import { createServer } from "node:http";
 import { readFileSync } from "node:fs";
 import { resolvers } from "./resolvers";
 import { DataSource, LocalDataSource, MongoDB } from "./dataSource";
+import * as dotenv from "dotenv";
+
+dotenv.config();
 
 const typeDefs = readFileSync("./src/schema.graphql", "utf8");
 // console.log("resolvers: ", resolvers);

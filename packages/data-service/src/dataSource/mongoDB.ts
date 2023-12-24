@@ -190,11 +190,10 @@ export class MongoDB implements DataSource {
   }
   public async getValue(key: string): Promise<any> {
     const result = await this.db
-      .collection<{ _id: string }>("kv")
+      .collection<{ _id: string; value: any }>("kv")
       .findOne({ _id: key });
     if (result === null) return null;
-    const { _id, ...value } = result;
-    return value;
+    return { ...result.value };
   }
 
   public async createNFT(

@@ -41,12 +41,13 @@ export class TxnProcessor {
     /** NFT */
     this.processors[getMethodId("NFT", "mint")] = async (data) => {
       const [to, hash] = data.argsJSON.map((arg: string) => JSON.parse(arg));
-      console.log("minting: ", to, hash);
+      // console.log("minting: ", to, hash);
       const collectionAddr = data.sender;
       const nftData = await this.dataSource.getValue(hash);
-      console.log("nftData", nftData);
+      // console.log("nftData", nftData);
       if (nftData) {
         const nftCount = await this.dataSource.getNftCount(collectionAddr);
+        console.log("nftCount", nftCount);
         // remove las word from nftData.name
         if (nftCount === 0) {
           const collectionData: CollectionPart = {
@@ -63,9 +64,9 @@ export class TxnProcessor {
             collectionAddr,
             collectionData
           );
-          console.log("created Collection");
+          console.log("created Collection", collectionData.name);
         }
-        await this.dataSource.createNFT(collectionAddr, 0, {
+        await this.dataSource.createNFT(collectionAddr, nftCount, {
           name: nftData.name || "",
           imgUrl:
             nftData.img || nftData.imgUri || nftData.image || nftData.imageUri,
