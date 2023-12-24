@@ -9,7 +9,7 @@
 
 	let links = [
 		{ name: 'Live Auctions', url: '/' },
-		{ name: 'My Auction', url: '/myauction/' },
+		{ name: 'My Auctions', url: '/myauctions/' },
 		{ name: 'My Bids', url: '/mybids/' },
 		{ name: 'My NFTS', url: '/mynfts/' }
 	];

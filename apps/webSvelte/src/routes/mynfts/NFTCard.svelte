@@ -5,7 +5,6 @@
 	import MinaToken from '$lib/icons/MinaToken.svelte';
 	import { ArrowUpRightIcon } from 'lucide-svelte';
 	import '$lib/styles/card.scss';
-	import '$lib/styles/typography.scss';
 
 	export let nft = Nfts[0];
 	const name = nft.name;

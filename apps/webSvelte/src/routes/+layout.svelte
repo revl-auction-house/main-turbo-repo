@@ -5,7 +5,7 @@
 	import { register } from 'swiper/element/bundle';
 	import { onMount } from 'svelte';
 	import Header from './Header.svelte';
-
+	import '$lib/styles/typography.scss';
 	//production only
 
 	onMount(async () => {

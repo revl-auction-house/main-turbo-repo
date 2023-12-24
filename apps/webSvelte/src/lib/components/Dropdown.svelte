@@ -2,44 +2,33 @@
 	import { scale } from 'svelte/transition';
 	import { expoOut } from 'svelte/easing';
 	import '$lib/styles/card.scss';
-	import { createEventDispatcher } from 'svelte';
-	export let triggerStyle = '';
 	export let dropdownStyle = '';
 	let dropDown: HTMLDivElement;
 
-	let dropDownOpen = false;
+	export let open = false;
 
-	$: dropDownOpen && addEventListener('pointerup', handleOutsideClick);
+	$: open && addEventListener('pointerup', handleOutsideClick);
 
 	const handleOutsideClick = (e: PointerEvent) => {
 		if (!dropDown.contains(e.target as Node)) {
-			closeDropDown();
+			open = false;
 			removeEventListener('pointerup', handleOutsideClick);
 		}
 	};
-
-	export const closeDropDown = () => {
-		dropDownOpen = false;
-	};
-
-	//create customed event
-	const dispatcher = createEventDispatcher();
-	$: if (dropDownOpen) {
-		dispatcher('open');
-	}
 </script>
 
 <div class="dropdown-container">
 	<button
-		style={triggerStyle}
+		class={$$restProps.class}
+		style={$$restProps.style}
 		type="button"
 		on:click|stopPropagation={() => {
-			dropDownOpen = true;
+			open = true;
 		}}
 	>
 		<slot name="trigger">open dropdown</slot>
 	</button>
-	{#if dropDownOpen}
+	{#if open}
 		<div
 			class="dropdown"
 			style={dropdownStyle}

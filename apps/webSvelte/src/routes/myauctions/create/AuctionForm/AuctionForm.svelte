@@ -9,7 +9,7 @@
 	import Blind from './Blind.svelte';
 	import { fade } from 'svelte/transition';
 	import '$lib/styles/card.scss';
-	import '$lib/styles/typography.scss';
+	
 	import Form from '$lib/components/forms/Form.svelte';
 
 	let auction = JSON.parse(JSON.stringify(Auctions[0]));
@@ -51,7 +51,7 @@
 
 	$: selectedAuctionType = auctionsTypes.find((type) => type.value == typename) || auctionsTypes[0];
 
-	$: fulfilledRequirements = false;
+	$: isValid = false;
 </script>
 
 <Form>
@@ -122,16 +122,13 @@
 			<div class="pt-6 grid grid-cols-2 gap-3">
 				{#key selectedAuctionType}
 					<div>
-						<svelte:component
-							this={selectedAuctionType.form.component}
-							bind:fulfilledRequirements
-						/>
+						<svelte:component this={selectedAuctionType.form.component} bind:isValid />
 					</div>
 				{/key}
 			</div>
 			<div class="grid">
 				<button
-					disabled={fulfilledRequirements == false}
+					disabled={isValid == false}
 					use:press
 					type="submit"
 					class="flex-1 button colored-primary disabled:brightness-[0.3] disabled:pointer-events-none disabled:cursor-not-allowed"

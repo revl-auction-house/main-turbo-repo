@@ -10,7 +10,7 @@
 	import { ArrowUpRightIcon } from 'lucide-svelte';
 
 	import '$lib/styles/card.scss';
-	import '$lib/styles/typography.scss';
+
 	import { overflowingClass } from '$lib/actions/utils';
 	export let auction = Auctions[0];
 

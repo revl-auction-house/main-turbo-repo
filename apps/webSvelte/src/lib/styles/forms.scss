@@ -58,10 +58,12 @@
 	}
 
 	.form-input-container {
-		@apply flex flex-row gap-1 p-2;
+		@apply flex flex-row gap-1 p-2 mb-2;
 		> input {
-			@apply bg-transparent border-none outline-none
-            flex-1;
+			@apply flex-1 min-w-0 h-6;
+		}
+		&:has(input:user-invalid, input:out-of-range) {
+			@apply ring-accent;
 		}
 	}
 
@@ -96,14 +98,6 @@
 	&:has(*:focus) {
 		@apply ring-neutral-lighter  bg-neutral-darkest/40;
 	}
-}
-
-.warning {
-	@apply text-accent ring-accent border-accent stroke-accent;
-}
-
-.error {
-	@apply text-red ring-red border-red stroke-red;
 }
 
 .bold {

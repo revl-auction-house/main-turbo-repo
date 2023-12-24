@@ -1,4 +1,7 @@
 <script lang="ts">
+	import { press } from '$lib/actions/interaction';
+	import { XIcon } from 'lucide-svelte';
+
 	export let showModal = false;
 
 	let dialog: HTMLDialogElement;
@@ -11,12 +14,17 @@
 <dialog bind:this={dialog} on:close on:click|self={() => dialog.close()}>
 	<!-- svelte-ignore a11y-no-static-element-interactions -->
 	<div on:click|stopPropagation>
-		<slot name="header" />
-		<hr />
+		<div class="flex">
+			<div>
+				<slot name="header" />
+			</div>
+			<button class="p-2 ml-auto" on:click={() => dialog.close()}>
+				<slot name="close">
+					<XIcon class="w-6 h-6 stroke-neutral-lighter" />
+				</slot>
+			</button>
+		</div>
 		<slot />
-		<hr />
-		<!-- svelte-ignore a11y-autofocus -->
-		<button autofocus on:click={() => dialog.close()}>close modal</button>
 	</div>
 </dialog>
 

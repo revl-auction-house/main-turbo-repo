@@ -78,11 +78,15 @@
 		showPlaceBidModal = false;
 	}}
 >
-	<h2 slot="header">Please specify the amount</h2>
-	<Form>
-		<NumberField label="Amount" min={maxBid + 1} value={maxBid + 1}>
-			<MinaToken slot="trailing" />
-		</NumberField>
-		<button type="submit">Place Bid</button>
-	</Form>
+	<div slot="header" class="typography">
+		<h2>Place your Bid</h2>
+	</div>
+	<div class="m-2">
+		<Form>
+			<NumberField label="Amount" name="amount" min={maxBid} value={maxBid} step={1e-6}>
+				<MinaToken slot="trailing" />
+			</NumberField>
+			<button use:press class="filled p-2" type="submit">Place Bid</button>
+		</Form>
+	</div>
 </Dialog>
