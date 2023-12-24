@@ -18,6 +18,7 @@ export function press(
 	if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return { destroy: () => {} };
 
 	let pressSpring = spring(0, { stiffness: 0.5, damping: 0.5 });
+	let unsubscriber = pressSpring.subscribe((t) => config.press(el, t));
 
 	const onpress = (ev: unknown) => {
 		if (ev instanceof KeyboardEvent && ev.code !== 'Enter' && ev.code !== 'Space') return;
@@ -30,12 +31,12 @@ export function press(
 		pressSpring.damping = 0.25;
 		pressSpring.set(0);
 	};
-
-	let unsubscriber = pressSpring.subscribe((t) => config.press(el, t));
 	const handleVisibilityChange = () => {
 		if (document.hidden) {
+			// stop spring
 			unsubscriber();
 		} else {
+			// reinitialize a new spring
 			pressSpring = spring(0, { stiffness: 0.5, damping: 0.5 });
 			unsubscriber = pressSpring.subscribe((t) => config.press(el, t));
 		}
@@ -49,6 +50,7 @@ export function press(
 	el.addEventListener('pointerdown', onpress);
 	return {
 		destroy: () => {
+			el.style.transform = '';
 			unsubscriber();
 			document.removeEventListener('visibilitychange', handleVisibilityChange);
 			el.removeEventListener('keydown', onpress);

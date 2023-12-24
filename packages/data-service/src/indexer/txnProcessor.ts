@@ -47,11 +47,15 @@ export class TxnProcessor {
       console.log("nftData", nftData);
       if (nftData) {
         const nftCount = await this.dataSource.getNftCount(collectionAddr);
+        // remove las word from nftData.name
         if (nftCount === 0) {
           const collectionData: CollectionPart = {
             address: collectionAddr,
             liveAuctionCount: 0,
-            name: nftData.collectionName || nftData.name || "",
+            name:
+              nftData.collectionName ||
+              nftData.name?.split(" ").slice(0, -1).join(" ") ||
+              "",
             description:
               nftData.collectionDescription || nftData.description || "",
           };
@@ -63,6 +67,8 @@ export class TxnProcessor {
         }
         await this.dataSource.createNFT(collectionAddr, 0, {
           name: nftData.name || "",
+          imgUrl:
+            nftData.img || nftData.imgUri || nftData.image || nftData.imageUri,
           dataHash: hash,
           idx: nftCount,
           locked: false,

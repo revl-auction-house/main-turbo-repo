@@ -13,19 +13,21 @@
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 <dialog bind:this={dialog} on:close on:click|self={() => dialog.close()}>
 	<!-- svelte-ignore a11y-no-static-element-interactions -->
-	<div on:click|stopPropagation>
-		<div class="flex">
-			<div>
-				<slot name="header" />
+	{#if showModal}
+		<div on:click|stopPropagation>
+			<div class="flex">
+				<div>
+					<slot name="header" />
+				</div>
+				<button use:press class="p-2 ml-auto" on:click={() => dialog.close()}>
+					<slot name="close">
+						<XIcon class="w-6 h-6 stroke-neutral-lighter" />
+					</slot>
+				</button>
 			</div>
-			<button class="p-2 ml-auto" on:click={() => dialog.close()}>
-				<slot name="close">
-					<XIcon class="w-6 h-6 stroke-neutral-lighter" />
-				</slot>
-			</button>
+			<slot />
 		</div>
-		<slot />
-	</div>
+	{/if}
 </dialog>
 
 <style lang="scss">

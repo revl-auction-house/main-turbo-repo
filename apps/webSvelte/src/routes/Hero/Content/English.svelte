@@ -83,10 +83,29 @@
 	</div>
 	<div class="m-2">
 		<Form>
-			<NumberField label="Amount" name="amount" min={maxBid} value={maxBid} step={1e-6}>
-				<MinaToken slot="trailing" />
-			</NumberField>
-			<button use:press class="filled p-2" type="submit">Place Bid</button>
+			<div class="card typography">
+				<h5 class="justify-between">
+					Highest Bid
+
+					<h4>
+						{maxBid}
+						<MinaToken class="w-4 h-4 self-baseline" />
+					</h4>
+				</h5>
+				<h5 class="justify-between">
+					Balance
+
+					<h4>
+						{maxBid}
+						<MinaToken class="w-4 h-4 self-baseline" />
+					</h4>
+				</h5>
+				<hr />
+				<NumberField label="Bid Amount" name="amount" min={maxBid} value={maxBid} step={1e-6}>
+					<MinaToken slot="trailing" />
+				</NumberField>
+				<button use:press class="filled primary p-2" type="submit">Place Bid</button>
+			</div>
 		</Form>
 	</div>
 </Dialog>
