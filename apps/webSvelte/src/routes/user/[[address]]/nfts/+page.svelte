@@ -2,7 +2,7 @@
 	import { Nfts } from '$lib/data';
 	import { press } from '$lib/actions/interaction';
 	import { inViewClass } from '$lib/actions/observers';
-	import NftCard from '../NFTCard.svelte';
+	import NftCard from '$lib/components/NFTCard/NFTCard.svelte';
 	import type { PageData } from './$houdini';
 	import { onMount } from 'svelte';
 

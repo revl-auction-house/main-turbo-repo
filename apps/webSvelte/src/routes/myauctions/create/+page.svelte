@@ -1,5 +1,5 @@
 <script lang="ts">
-	import AuctionForm from './AuctionForm/AuctionForm.svelte';
+	import AuctionForm from '$lib/components/AuctionForm/AuctionForm.svelte';
 </script>
 
 <header-config data-floating-search-bar="false" />

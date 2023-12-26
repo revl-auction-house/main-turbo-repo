@@ -7,22 +7,29 @@
 	import NumberField from '$lib/components/forms/NumberField.svelte';
 	import MinaToken from '$lib/icons/MinaToken.svelte';
 	import Form from '$lib/components/forms/Form.svelte';
+	import AuctionCard from '$lib/components/AuctionCard/AuctionCard.svelte';
 
 	export let auction: Auction;
 	$: auctionType = auction.type as EnglishAuction;
 
 	$: bidCount = auctionType.bidCount;
+	$: src = auction.nft.imgUrl;
+	$: nftname = auction.nft.name;
+	$: id = auction.nft.idx;
 	$: maxBid = auctionType.maxBid;
+	$: mybid = maxBid;
 	$: maxBidder = auctionType.maxBidder;
 	$: endTime = auctionType.endTime;
 	$: remaining = endTime - $currentTime;
 	$: timeLeft = formatTimeDifference(remaining);
 
+	$: balance = 100;
+
 	$: details = [
 		{
 			name: 'Type',
 			value: 'English',
-			width: '8ch'
+			width: '12ch'
 		},
 		// {
 		// 	name: '# Bids',
@@ -32,7 +39,7 @@
 		{
 			name: 'Highest Bid',
 			value: maxBid,
-			width: '8ch'
+			width: '12ch'
 		},
 		// {
 		// 	name: 'Highest Bidder',
@@ -79,32 +86,46 @@
 	}}
 >
 	<div slot="header" class="typography">
-		<h2>Place your Bid</h2>
+		<h2>Place your Bid for</h2>
 	</div>
 	<div class="m-2">
 		<Form>
-			<div class="card typography">
-				<h5 class="justify-between">
-					Highest Bid
-
-					<h4>
-						{maxBid}
-						<MinaToken class="w-4 h-4 self-baseline" />
-					</h4>
-				</h5>
-				<h5 class="justify-between">
-					Balance
-
-					<h4>
-						{maxBid}
-						<MinaToken class="w-4 h-4 self-baseline" />
-					</h4>
-				</h5>
+			<div class="card typography min-w-[400px] max-w-[600px]">
+				<AuctionCard {auction} />
 				<hr />
-				<NumberField label="Bid Amount" name="amount" min={maxBid} value={maxBid} step={1e-6}>
+				<div class="card grid-cols-3">
+					<div>
+						<h5>You have</h5>
+						<h3>
+							{balance.toFixed(6)}<MinaToken class="w-4 h-4" />
+						</h3>
+					</div>
+					<div>
+						<h5>Paying</h5>
+						<h3>
+							{mybid.toFixed(6)}<MinaToken class="w-4 h-4" />
+						</h3>
+					</div>
+					<div>
+						<h5>Remaining</h5>
+						<h3>
+							{(balance - mybid).toFixed(6)}<MinaToken class="w-4 h-4" />
+						</h3>
+					</div>
+				</div>
+				<NumberField
+					label="Bid Amount"
+					name="amount"
+					min={maxBid}
+					max={balance}
+					bind:value={mybid}
+					step={1e-6}
+				>
 					<MinaToken slot="trailing" />
 				</NumberField>
-				<button use:press class="filled primary p-2" type="submit">Place Bid</button>
+				<h3>
+					<button use:press class="w-full filled primary p-2" type="submit"> Place Bid </button>
+				</h3>
 			</div>
 		</Form>
 	</div>

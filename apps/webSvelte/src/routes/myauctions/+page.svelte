@@ -3,15 +3,14 @@
 	import { inViewClass } from '$lib/actions/observers';
 	import { Auctions } from '$lib/data';
 	import { get } from 'svelte/store';
-	import AuctionCard from '../AuctionCard/AuctionCard.svelte';
+	import AuctionCard from '$lib/components/AuctionCard/AuctionCard.svelte';
 	import type { PageData } from './$houdini';
 	import { onMount } from 'svelte';
 
 	export let data: PageData;
-	$: ({ UserAuctions } = data);
 
 	onMount(() => {
-		console.log('MyAuctions', $UserAuctions.data);
+		console.log('MyAuctions', data);
 	});
 	let filter = 'live';
 </script>

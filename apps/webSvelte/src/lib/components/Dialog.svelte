@@ -6,12 +6,19 @@
 
 	let dialog: HTMLDialogElement;
 
-	$: if (dialog && showModal) dialog.showModal();
+	$: if (dialog && showModal) {
+		dialog.showModal();
+		document.body.classList.add('overflow-hidden');
+		document.body.classList.add('pr-2');
+	} else {
+		document.body.classList.remove('overflow-hidden');
+		document.body.classList.remove('pr-2');
+	}
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-<dialog bind:this={dialog} on:close on:click|self={() => dialog.close()}>
+<dialog bind:this={dialog} on:close>
 	<!-- svelte-ignore a11y-no-static-element-interactions -->
 	{#if showModal}
 		<div on:click|stopPropagation>
@@ -36,27 +43,16 @@
         bg-background rounded-md shadow-primary/20 shadow-lg;
 		&::backdrop {
 			pointer-events: none;
+
 			@apply bg-background-darker/80;
+
+			animation: fade 0.2s ease-out;
 		}
 		div {
 			@apply p-2;
 		}
 		button {
 			display: block;
-		}
-		&[open] {
-			animation: zoom 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-		}
-		&::backdrop {
-			animation: fade 0.2s ease-out;
-		}
-	}
-	@keyframes zoom {
-		from {
-			transform: scale(0.95);
-		}
-		to {
-			transform: scale(1);
 		}
 	}
 	@keyframes fade {

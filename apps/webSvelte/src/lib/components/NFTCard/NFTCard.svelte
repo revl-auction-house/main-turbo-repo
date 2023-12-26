@@ -42,11 +42,11 @@
 	</div>
 	<div class="col-span-2">
 		{#if auctionId}
-			<a use:press href="/myauction/{auctionId}" tabindex="0" class="link-button accent">
+			<a use:press href="/myauctions/{auctionId}" tabindex="0" class="link-button accent">
 				In Auction
 			</a>
 		{:else}
-			<a use:press href="/myauction/create" tabindex="0" class="link-button primary">
+			<a use:press href="/myauctions/create" tabindex="0" class="link-button primary">
 				Create Auction
 			</a>
 		{/if}

@@ -69,5 +69,15 @@
 			text-card-foreground-lighter 
 			stroke-card-foreground-lighter;
 		}
+		hr {
+			@apply m-2 outline-none border-none bg-gradient-to-r 
+			from-transparent via-primary/50 to-transparent
+		 	h-[1px];
+		}
+		vr {
+			@apply m-2 outline-none border-none bg-gradient-to-b 
+			from-transparent via-primary/50 to-transparent
+		 	w-[1px];
+		}
 	}
 }

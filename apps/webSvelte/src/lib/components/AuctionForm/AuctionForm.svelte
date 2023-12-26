@@ -9,7 +9,7 @@
 	import Blind from './Blind.svelte';
 	import { fade } from 'svelte/transition';
 	import '$lib/styles/card.scss';
-	
+
 	import Form from '$lib/components/forms/Form.svelte';
 
 	let auction = JSON.parse(JSON.stringify(Auctions[0]));
@@ -119,7 +119,7 @@
 					</label>
 				{/each}
 			</div>
-			<div class="pt-6 grid grid-cols-2 gap-3">
+			<div class="pt-6 grid gap-3">
 				{#key selectedAuctionType}
 					<div>
 						<svelte:component this={selectedAuctionType.form.component} bind:isValid />
