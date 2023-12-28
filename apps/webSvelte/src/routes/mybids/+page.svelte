@@ -2,7 +2,7 @@
 	import { press } from '$lib/actions/interaction';
 	import { inViewClass } from '$lib/actions/observers';
 	import { Bids } from '$lib/data';
-	import BidCard from './BidCard/BidCard.svelte';
+	import BidCard from '$lib/components/BidCard/BidCard.svelte';
 
 	let filter = 'live';
 </script>

@@ -17,6 +17,8 @@
 	$: elaspedTime = $currentTime - auction.startTime;
 	$: currentPrice = Math.max(startPrice - (decayRate / hour) * elaspedTime, minPrice);
 	$: timeLeftForMinPrice = Math.max(0, (startPrice - minPrice) / (decayRate / hour) - elaspedTime);
+
+	$: bidAmount = 0.224;
 </script>
 
 <div>
@@ -30,20 +32,8 @@
 </div>
 
 <div>
-	<h5>Est. Price</h5>
-	<h4>
-		{currentPrice.toFixed(4)}
-		<MinaToken class="w-6 h-6 self-center" />
-	</h4>
-	<!-- <h6>
-		{#if minPrice == currentPrice}
-			@ Min Price
-		{:else}
-			<TrendingDown class="w-4 h-4 self-center" />
-			<h5>{decayRate} <MinaToken class="w-4 h-4 self-center" /></h5>
-			per hr
-		{/if}
-	</h6> -->
+	<h5>Bid Amount</h5>
+	<h4>{bidAmount}<MinaToken class="w-4 h-4 self-center" /></h4>
 </div>
 
 <!-- <div>

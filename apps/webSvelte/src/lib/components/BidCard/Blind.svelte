@@ -23,6 +23,7 @@
 	$: elapsed = $currentTime - auction.startTime;
 	$: progress = elapsed / duration;
 
+	$: bidAmount = 0.224;
 	$: phase = 'bidding';
 </script>
 
@@ -36,24 +37,10 @@
 	<h4>Blind 1st Price</h4>
 </div>
 
-{#if phase == 'reveal'}
-	<div>
-		<h5>Highest Bid</h5>
-		<h4>
-			{maxBid || 'N/A'}
-			<MinaToken class="w-6 h-6 self-center" />
-		</h4>
-		<!-- <h6>
-			by <h5>{formatEllipsis(maxBidder, 8) || 'N/A'}</h5>
-		</h6> -->
-	</div>
-{:else}
-	<div>
-		<h5># Bids</h5>
-		<h4>{bidCount}</h4>
-		<!-- <h6>so far</h6> -->
-	</div>
-{/if}
+<div>
+	<h5>Bid Amount</h5>
+	<h4>{bidAmount}<MinaToken class="w-4 h-4 self-center" /></h4>
+</div>
 
 <!-- <div>
 	<h5># Bids</h5>
@@ -72,7 +59,14 @@
 	</div>
 {/if}
 
-<div>
-	<h5>Progress</h5>
-	<h4>{(progress * 100).toFixed(2)}%</h4>
+<div class="flex items-end">
+	<button use:press class="button colored-primary grid place-content-center">
+		<h2>reveal</h2>
+	</button>
 </div>
+
+<style>
+	.button {
+		@apply whitespace-nowrap justify-center p-2 rounded-xl w-full;
+	}
+</style>

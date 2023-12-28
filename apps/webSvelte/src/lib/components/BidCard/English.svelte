@@ -21,6 +21,8 @@
 	$: duration = endTime - auction.startTime;
 	$: elapsed = $currentTime - auction.startTime;
 	$: progress = elapsed / duration;
+
+	let bidAmount = 0.224;
 </script>
 
 <div>
@@ -34,14 +36,8 @@
 </div>
 
 <div>
-	<h5>Highest Bid</h5>
-	<h4>
-		{maxBid}
-		<MinaToken class="w-4 h-4 self-center" />
-	</h4>
-	<!-- <h6>
-		by {formatEllipsis(maxBidder, 8)}
-	</h6> -->
+	<h5>Bid Amount</h5>
+	<h4>{bidAmount}<MinaToken class="w-4 h-4 self-center" /></h4>
 </div>
 
 <div>
@@ -50,8 +46,14 @@
 </div>
 
 <div>
-	<h5># Bids</h5>
-	<h4>{bidCount}</h4>
+	<h5>Highest Bid</h5>
+	<h4>
+		{maxBid}
+		<MinaToken class="w-4 h-4 self-center" />
+	</h4>
+	<!-- <h6>
+		by {formatEllipsis(maxBidder, 8)}
+	</h6> -->
 </div>
 
 <!-- <div>

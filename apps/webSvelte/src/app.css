@@ -8,18 +8,18 @@
 		@apply overflow-y-scroll;
 		@apply bg-background text-neutral-lighter;
 	}
-	body::-webkit-scrollbar {
+	*::-webkit-scrollbar {
 		@apply w-2;
 	}
 
-	body::-webkit-scrollbar-track {
+	*::-webkit-scrollbar-track {
 		@apply bg-background-darker;
 	}
 
-	body::-webkit-scrollbar-thumb {
+	*::-webkit-scrollbar-thumb {
 		@apply bg-primary rounded-xl shadow-lg;
 	}
-	body::-webkit-scrollbar-thumb:hover {
+	*::-webkit-scrollbar-thumb:hover {
 		@apply bg-white;
 	}
 	* {
