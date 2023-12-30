@@ -130,7 +130,6 @@
 				<button
 					disabled={isValid == false}
 					use:press
-					type="submit"
 					class="flex-1 button colored-primary disabled:brightness-[0.3] disabled:pointer-events-none disabled:cursor-not-allowed"
 				>
 					Create Auction

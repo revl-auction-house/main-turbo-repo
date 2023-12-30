@@ -24,17 +24,17 @@
 		{
 			name: 'Type',
 			value: 'Dutch',
-			width: '12ch'
+			width: '16ch'
 		},
 		{
 			name: 'Current Price',
 			value: currentPrice.toPrecision(6),
-			width: '12ch'
+			width: '16ch'
 		},
 		// {
 		// 	name: 'Min Price',
 		// 	value: minPrice.toPrecision(4),
-		// 	width: '12ch'
+		// 	width: '16ch'
 		// },
 		{
 			name: 'Min Price in',
@@ -62,7 +62,6 @@
 {/each}
 <button
 	use:press
-	type="button"
 	on:click={() => (showPlaceBidModal = true)}
 	class="px-8 py-4 rounded-xl
 	font-semibold block text-2xl text-center

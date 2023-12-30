@@ -29,7 +29,7 @@
 		{
 			name: 'Type',
 			value: 'English',
-			width: '12ch'
+			width: '16ch'
 		},
 		// {
 		// 	name: '# Bids',
@@ -39,7 +39,7 @@
 		{
 			name: 'Highest Bid',
 			value: maxBid,
-			width: '12ch'
+			width: '16ch'
 		},
 		// {
 		// 	name: 'Highest Bidder',
@@ -71,7 +71,6 @@
 {/each}
 <button
 	use:press
-	type="button"
 	on:click={() => (showPlaceBidModal = true)}
 	class="px-8 py-4 rounded-xl
 	font-semibold block text-2xl text-center

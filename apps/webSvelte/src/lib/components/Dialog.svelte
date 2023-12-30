@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { press } from '$lib/actions/interaction';
 	import { XIcon } from 'lucide-svelte';
 
@@ -8,11 +9,15 @@
 
 	$: if (dialog && showModal) {
 		dialog.showModal();
-		document.body.classList.add('overflow-hidden');
-		document.body.classList.add('pr-2');
+		if (browser) {
+			document.body.classList.add('overflow-hidden');
+			document.body.classList.add('pr-2');
+		}
 	} else {
-		document.body.classList.remove('overflow-hidden');
-		document.body.classList.remove('pr-2');
+		if (browser) {
+			document.body.classList.remove('overflow-hidden');
+			document.body.classList.remove('pr-2');
+		}
 	}
 </script>
 

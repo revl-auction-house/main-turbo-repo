@@ -20,12 +20,12 @@
 		{
 			name: 'Type',
 			value: 'Blind 1st Price',
-			width: '12ch'
+			width: '16ch'
 		},
 		{
 			name: '#Bids',
 			value: bidCount,
-			width: '12ch'
+			width: '16ch'
 		},
 		{
 			name: 'Ends in',
@@ -55,7 +55,6 @@
 {/each}
 <button
 	use:press
-	type="button"
 	on:click={() => (showPlaceBidModal = true)}
 	class="px-8 py-4 rounded-xl
 	font-semibold block text-2xl text-center
