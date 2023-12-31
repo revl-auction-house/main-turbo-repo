@@ -18,6 +18,7 @@
 	onMount(async () => {
 		connectWallet = (await import('$lib/stores/wallet.store')).connectWallet;
 	});
+	const removeTrailingSlash = (url: string) => (url.length > 1 ? url.replace(/\/$/, '') : url);
 </script>
 
 <svelte:window
@@ -41,7 +42,7 @@
 						<a
 							use:press
 							href={link.url}
-							class:active={$page.url.pathname === link.url}
+							class:active={$page.url.pathname === removeTrailingSlash(link.url)}
 							class="block rounded px-3 py-2 text-center text-neutral hover:text-accent"
 						>
 							{link.name}

@@ -4,13 +4,13 @@
 	import { Bids } from '$lib/data';
 	import BidCard from '$lib/components/BidCard/BidCard.svelte';
 
-	let filter = 'live';
+	let filter = 'ongoing';
 </script>
 
 <header-config data-floating-search-bar="false" />
 
 <section class="container mx-auto layout">
-	{#if filter === 'live'}
+	{#if filter === 'ongoing'}
 		{#each Bids as bid}
 			<div
 				use:inViewClass
@@ -37,9 +37,9 @@
 			<button
 				use:press
 				on:click={() => {
-					filter = 'live';
+					filter = 'ongoing';
 				}}
-				disabled={filter === 'live'}
+				disabled={filter === 'ongoing'}
 				class="
                     
                      text-xl font-semibold
@@ -47,14 +47,14 @@
                      disabled:bg-neutral-lighter disabled:text-black
                 "
 			>
-				Live
+				Ongoing
 			</button>
 			<button
 				use:press
 				on:click={() => {
-					filter = 'ended';
+					filter = 'past';
 				}}
-				disabled={filter === 'ended'}
+				disabled={filter === 'past'}
 				class="
                 
                  text-xl font-semibold
@@ -62,7 +62,7 @@
                  disabled:bg-neutral-lighter disabled:text-black
             "
 			>
-				Ended
+				Past
 			</button>
 		</div>
 	</div>
