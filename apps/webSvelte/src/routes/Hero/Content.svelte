@@ -20,7 +20,7 @@
 
 <div in:flyup out:fadeout class="absolute bottom-6 left-3 right-3 select-none">
 	<div class="inline-flex gap-4 items-baseline">
-		<div class="text-6xl font-bold text-neutral-lighter">{name}</div>
+		<div class="text-6xl font-bold text-white">{name}</div>
 		<div class="text-2xl font-bold text-neutral">#{id}</div>
 	</div>
 	<div class="flex justify-end items-end gap-4 mt-4">

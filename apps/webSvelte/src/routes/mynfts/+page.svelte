@@ -28,7 +28,7 @@
 	{/each}
 </section>
 
-<footer class="sticky bottom-0 right-0 left-0 bg-background-darker">
+<!-- <footer class="sticky bottom-0 right-0 left-0 bg-background-darker">
 	<div class="container mx-auto p-4">
 		<div class="flex items-baseline gap-3">
 			<button
@@ -63,7 +63,7 @@
 			</button>
 		</div>
 	</div>
-</footer>
+</footer> -->
 
 <style lang="scss">
 	.layout {

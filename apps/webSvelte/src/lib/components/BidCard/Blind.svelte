@@ -5,7 +5,15 @@
 	import { currentTime } from '$lib/components/time.store';
 	import MinaToken from '$lib/icons/MinaToken.svelte';
 	import { press } from '$lib/actions/interaction';
-	import { Info } from 'lucide-svelte';
+	import {
+		CheckCheckIcon,
+		CheckCircle,
+		CheckSquare,
+		Circle,
+		Info,
+		Square,
+		UserRoundCheck
+	} from 'lucide-svelte';
 
 	export let bid: Bid;
 	$: auction = bid.auction;
@@ -25,6 +33,8 @@
 
 	$: bidAmount = 0.224;
 	$: phase = 'bidding';
+
+	$: autoReveal = false;
 </script>
 
 <div>
@@ -59,11 +69,31 @@
 	</div>
 {/if}
 
-<div class="flex items-end">
-	<button use:press class="button colored-primary grid place-content-center">
-		<h2>reveal</h2>
-	</button>
-</div>
+{#if phase == 'reveal'}
+	<div class="flex items-end">
+		<button use:press class="button colored-primary grid place-content-center">
+			<h2>reveal</h2>
+		</button>
+	</div>
+{:else}
+	<div>
+		<h5>Auto Reveal</h5>
+		<button
+			use:press
+			on:click={() => {
+				autoReveal = !autoReveal;
+			}}
+		>
+			<h4>
+				{#if autoReveal}
+					<CheckSquare class="self-center h-4 w-4 stroke-primary" />enabled
+				{:else}
+					<Square class="self-center h-4 w-4 stroke-white" />disabled
+				{/if}
+			</h4>
+		</button>
+	</div>
+{/if}
 
 <style>
 	.button {

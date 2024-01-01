@@ -3,6 +3,7 @@ import { writable, type Writable } from 'svelte/store';
 export const wallet: Writable<string> = writable();
 
 export async function connectWallet() {
+	console.log('connectWallet');
 	if (!mina) {
 		throw new Error('Auro wallet not installed');
 	}

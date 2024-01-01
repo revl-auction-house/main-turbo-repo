@@ -1,5 +1,5 @@
-query UserNfts($owner: String!) {
-	nfts(owner: $owner) {
+query UserNfts($address: String!) {
+	nfts(owner: $address) {
 		idx
 		name
 		imgUrl

@@ -1,9 +1,9 @@
-import type { UserAuctionsVariables } from './$houdini';
-import { error } from '@sveltejs/kit';
+import type { UserAuctionsVariables } from '../$houdini';
+import { redirect } from '@sveltejs/kit';
 
 export const _UserAuctionsVariables: UserAuctionsVariables = (event) => {
 	if (event.params.address === undefined) {
-		throw error(400, 'no creator provided');
+		throw redirect(302, '/connect');
 	}
 	return {
 		creator: event.params.address

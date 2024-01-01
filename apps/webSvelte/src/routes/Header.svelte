@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { formatEllipsis } from '$lib/formatting';
 	import Wallet from './Wallet.svelte';
 	import { page } from '$app/stores';
 	import { focus, press } from '$lib/actions/interaction';
@@ -6,12 +7,13 @@
 	import { Search } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import Dropdown from '$lib/components/Dropdown.svelte';
+	import { wallet } from '$lib/stores/wallet.store';
 
 	let links = [
 		{ name: 'Live Auctions', url: '/' },
-		{ name: 'My Auctions', url: '/myauctions/' },
-		{ name: 'My Bids', url: '/mybids/' },
-		{ name: 'My NFTS', url: '/mynfts/' }
+		{ name: 'My Auctions', url: '/myauctions' },
+		{ name: 'My Bids', url: '/mybids' },
+		{ name: 'My NFTS', url: '/mynfts' }
 	];
 	let searchbar: HTMLInputElement;
 	let connectWallet: any;
@@ -42,7 +44,8 @@
 						<a
 							use:press
 							href={link.url}
-							class:active={$page.url.pathname === removeTrailingSlash(link.url)}
+							class:active={($page.url.pathname.includes(link.url) && link.url !== '/') ||
+								($page.url.pathname === '/' && link.url === '/')}
 							class="block rounded px-3 py-2 text-center text-neutral hover:text-accent"
 						>
 							{link.name}
@@ -50,16 +53,17 @@
 					</li>
 				{/each}
 			</ul>
-			<Dropdown on:open={connectWallet}>
-				<div
+			<Dropdown>
+				<button
 					slot="trigger"
 					use:press
+					on:click={connectWallet}
 					class="w-40 py-4 rounded-xl
 					 font-semibold block text-2xl text-center
 					colored-primary shadow-lg shadow-primary/30"
 				>
-					Connect
-				</div>
+					{$wallet ? formatEllipsis($wallet, 8) : 'Connect'}
+				</button>
 				<div slot="dropdown">
 					<Wallet />
 				</div>
