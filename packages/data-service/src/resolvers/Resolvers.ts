@@ -62,6 +62,9 @@ export const Query: QueryResolvers<{ dataSource: DataSource }> = {
     );
     return x;
   },
+  auction: async (_, { id }, { dataSource }): Promise<any> => {
+    return dataSource.getAuction(id);
+  },
   userBids: async (
     _,
     { address, skip = 0, count = 10 },
@@ -99,7 +102,10 @@ export const Auction: AuctionResolvers<{ dataSource: DataSource }> = {
   nft: async (parent: any, _, { dataSource }): Promise<any> => {
     // console.log("Auction | resolver", parent);
     if ("collectionAddress" in parent && "nftIdx" in parent) {
-      return await dataSource.getNFT(parent.collectionAddress, parent.nftIdx);
+      return await dataSource.getNFT(
+        parent.collectionAddress,
+        Number(parent.nftIdx)
+      );
     }
   },
   auctionData: async (parent: any, _, { dataSource }): Promise<any> => {
