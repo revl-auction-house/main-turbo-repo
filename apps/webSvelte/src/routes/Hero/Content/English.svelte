@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Auction, EnglishAuction } from '$lib/api';
 	import { formatTimeDifference } from '$lib/formatting';
-	import { currentTime } from '$lib/components/time.store';
+	import { currentTime } from '$lib/stores/time.store';
 	import { press } from '$lib/actions/interaction';
 	import Dialog from '$lib/components/Dialog.svelte';
 	import NumberField from '$lib/components/forms/NumberField.svelte';

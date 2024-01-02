@@ -4,23 +4,27 @@
 	import { page } from '$app/stores';
 	import { focus, press } from '$lib/actions/interaction';
 	import Logo from '$lib/icons/Logo.svelte';
-	import { Search } from 'lucide-svelte';
+	import {
+		ArrowBigDownIcon,
+		ArrowDownIcon,
+		ArrowDownNarrowWide,
+		ChevronDown,
+		Search
+	} from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import Dropdown from '$lib/components/Dropdown.svelte';
 	import { wallet } from '$lib/stores/wallet.store';
 
 	let links = [
-		{ name: 'Live Auctions', url: '/' },
-		{ name: 'My Auctions', url: '/myauctions' },
-		{ name: 'My Bids', url: '/mybids' },
-		{ name: 'My NFTS', url: '/mynfts' }
+		{ name: 'My Auctions', url: 'auctions' },
+		{ name: 'My Bids', url: 'bids' },
+		{ name: 'My NFTS', url: 'nfts' }
 	];
 	let searchbar: HTMLInputElement;
 	let connectWallet: any;
 	onMount(async () => {
 		connectWallet = (await import('$lib/stores/wallet.store')).connectWallet;
 	});
-	const removeTrailingSlash = (url: string) => (url.length > 1 ? url.replace(/\/$/, '') : url);
 </script>
 
 <svelte:window
@@ -32,20 +36,29 @@
 		}
 	}}
 />
-<header class="sticky top-0 z-50">
+<header class="sticky top-0 left-0 right-0 z-50">
 	<nav class="bg-background-darker">
 		<div class="relative container p-2 mx-auto flex justify-between items-center">
 			<a class="w-40 py-4 text-2xl font-semibold block text-center" href="/">
 				<Logo />
 			</a>
 			<ul class=" flex justify-center items-center rounded-xl text-xl font-medium">
+				<li>
+					<a
+						use:press
+						href="/"
+						class:active={$page.url.pathname === '/'}
+						class="block rounded px-3 py-2 text-center text-neutral hover:text-accent"
+					>
+						Live Auctions
+					</a>
+				</li>
 				{#each links as link}
 					<li>
 						<a
 							use:press
-							href={link.url}
-							class:active={($page.url.pathname.includes(link.url) && link.url !== '/') ||
-								($page.url.pathname === '/' && link.url === '/')}
+							href={$wallet ? `/user/${$wallet}/${link.url}` : '/connect'}
+							class:active={$page.url.pathname.includes(link.url)}
 							class="block rounded px-3 py-2 text-center text-neutral hover:text-accent"
 						>
 							{link.name}
@@ -53,21 +66,38 @@
 					</li>
 				{/each}
 			</ul>
-			<Dropdown>
+			{#if $wallet}
+				<Dropdown>
+					<button
+						slot="trigger"
+						use:press
+						on:click={connectWallet}
+						class="w-40 py-4 rounded-xl
+					font-semibold block text-2xl text-center
+					colored-primary shadow-lg shadow-primary/30"
+					>
+						<div class="flex gap-2 px-2">
+							<span class="flex-1">
+								{formatEllipsis($wallet, 7)}
+							</span>
+							<ChevronDown class="self-center w-6 flex-none" />
+						</div>
+					</button>
+					<div slot="dropdown">
+						<Wallet />
+					</div>
+				</Dropdown>
+			{:else}
 				<button
-					slot="trigger"
 					use:press
 					on:click={connectWallet}
 					class="w-40 py-4 rounded-xl
-					 font-semibold block text-2xl text-center
+					font-semibold block text-2xl text-center
 					colored-primary shadow-lg shadow-primary/30"
 				>
-					{$wallet ? formatEllipsis($wallet, 8) : 'Connect'}
+					Connect
 				</button>
-				<div slot="dropdown">
-					<Wallet />
-				</div>
-			</Dropdown>
+			{/if}
 		</div>
 	</nav>
 	<search-bar class="relative -z-10 w-full flex gap-1">

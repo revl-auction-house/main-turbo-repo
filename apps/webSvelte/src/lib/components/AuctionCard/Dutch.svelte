@@ -2,7 +2,7 @@
 	import { fade } from 'svelte/transition';
 	import { press } from '$lib/actions/interaction';
 	import type { Auction, DutchAuction } from '$lib/api';
-	import { currentTime, hour } from '$lib/components/time.store';
+	import { currentTime, hour } from '$lib/stores/time.store';
 	import { formatEllipsis, formatTimeDifference } from '$lib/formatting';
 	import MinaToken from '$lib/icons/MinaToken.svelte';
 	import { HelpCircle, Info, TrendingDown } from 'lucide-svelte';

@@ -1,0 +1,2 @@
+export const CHAIN_START_TIME = 1704136123326;
+export const CHAIN_BLOCK_TIME = 5 * 1000;

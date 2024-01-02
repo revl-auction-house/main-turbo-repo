@@ -1,43 +1,45 @@
 <script lang="ts">
-	import { Nfts } from '$lib/data';
 	import { press } from '$lib/actions/interaction';
 	import { inViewClass } from '$lib/actions/observers';
-	import NftCard from '$lib/components/NFTCard/NFTCard.svelte';
-	import type { PageData } from './$houdini';
-	import { onMount } from 'svelte';
+	import { Bids } from '$lib/data';
+	import BidCard from '$lib/components/BidCard/BidCard.svelte';
 
-	export let data: PageData;
-	$: ({ UserNfts } = data);
-
-	onMount(() => {
-		console.log('MyAuctions', $UserNfts.data);
-	});
-
-	let filter = 'live';
+	let filter = 'ongoing';
 </script>
 
 <header-config data-floating-search-bar="false" />
 
 <section class="container mx-auto layout">
-	{#each Nfts as nft}
-		<div
-			use:inViewClass
-			class="transition-[opacity,transform] opacity-0 scale-90 in-view:opacity-100 in-view:scale-100"
-		>
-			<NftCard {nft} />
-		</div>
-	{/each}
+	{#if filter === 'ongoing'}
+		{#each Bids as bid}
+			<div
+				use:inViewClass
+				class="mx-auto transition-[opacity,transform] opacity-0 scale-90 in-view:opacity-100 in-view:scale-100"
+			>
+				<BidCard {bid} />
+			</div>
+		{/each}
+	{:else}
+		{#each Bids as bid}
+			<div
+				use:inViewClass
+				class="mx-auto transition-[opacity,transform] opacity-0 scale-90 in-view:opacity-100 in-view:scale-100"
+			>
+				<BidCard {bid} />
+			</div>
+		{/each}
+	{/if}
 </section>
 
-<!-- <footer class="sticky bottom-0 right-0 left-0 bg-background-darker">
+<footer class="sticky bottom-0 right-0 left-0 bg-background-darker">
 	<div class="container mx-auto p-4">
 		<div class="flex items-baseline gap-3">
 			<button
 				use:press
 				on:click={() => {
-					filter = 'live';
+					filter = 'ongoing';
 				}}
-				disabled={filter === 'live'}
+				disabled={filter === 'ongoing'}
 				class="
                     
                      text-xl font-semibold
@@ -45,14 +47,14 @@
                      disabled:bg-neutral-lighter disabled:text-black
                 "
 			>
-				Live
+				Ongoing
 			</button>
 			<button
 				use:press
 				on:click={() => {
-					filter = 'ended';
+					filter = 'past';
 				}}
-				disabled={filter === 'ended'}
+				disabled={filter === 'past'}
 				class="
                 
                  text-xl font-semibold
@@ -60,20 +62,18 @@
                  disabled:bg-neutral-lighter disabled:text-black
             "
 			>
-				Ended
+				Past
 			</button>
 		</div>
 	</div>
-</footer> -->
+</footer>
 
 <style lang="scss">
 	.layout {
-		--3: 394px;
-		--2: 580px;
 		@apply grid w-fit gap-4 p-4 place-content-center place-items-center;
-		grid-template-columns: repeat(auto-fill, minmax(var(--3), 1fr));
+		grid-template-columns: repeat(auto-fill, minmax(540px, 1fr));
 		> * {
-			@apply w-[var(--3)];
+			@apply w-[540px];
 		}
 	}
 </style>

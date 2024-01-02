@@ -1,6 +1,6 @@
 <script lang="ts">
 	import '$lib/styles/Forms.scss';
-	import { day, hour, minute } from '../time.store';
+	import { day, hour, minute } from '../../stores/time.store';
 	import NumberField from './NumberField.svelte';
 	export let label: string;
 	export let name: string;

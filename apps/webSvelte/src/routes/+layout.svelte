@@ -1,6 +1,6 @@
 <script lang="ts">
 	import '../app.css';
-	import { start as startTimeStore } from '$lib/components/time.store';
+	import { start as startTimeStore } from '$lib/stores/time.store';
 	import { setupIO, setupMO } from '$lib/actions/observers';
 	import { register } from 'swiper/element/bundle';
 	import { onMount } from 'svelte';

@@ -4,6 +4,14 @@ query UserAuctions($creator: String!) {
 		ended
 		startTime
 		id
+		nft {
+			name
+			imgUrl
+			idx
+			collection {
+				name
+			}
+		}
 		winningBid {
 			amount
 			bidder

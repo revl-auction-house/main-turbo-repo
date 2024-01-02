@@ -1,0 +1,14 @@
+query UserBids($creator: String!) {
+	userBids(address: $creator) {
+		amount
+		auction {
+			nft {
+				name
+				idx
+				imgUrl
+			}
+		}
+		bidder
+		timestamp
+	}
+}

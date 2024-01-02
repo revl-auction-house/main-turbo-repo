@@ -2,7 +2,7 @@
 	import { overflowingClass } from '$lib/actions/utils';
 	import type { Auction, BlindAuction } from '$lib/api';
 	import { formatEllipsis, formatTimeDifference } from '$lib/formatting';
-	import { currentTime } from '$lib/components/time.store';
+	import { currentTime } from '$lib/stores/time.store';
 	import MinaToken from '$lib/icons/MinaToken.svelte';
 	import { press } from '$lib/actions/interaction';
 	import { Info } from 'lucide-svelte';

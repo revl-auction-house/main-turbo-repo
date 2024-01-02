@@ -1,46 +1,60 @@
 <script lang="ts">
 	import { press } from '$lib/actions/interaction';
 	import { inViewClass } from '$lib/actions/observers';
-	import { Auctions } from '$lib/data';
-	import { get } from 'svelte/store';
 	import AuctionCard from '$lib/components/AuctionCard/AuctionCard.svelte';
-	import type { PageData } from './$houdini';
 	import { onMount } from 'svelte';
+	import type { PageData } from './$houdini';
+	import type { UserAuctions$result } from '$houdini';
 
 	export let data: PageData;
 	$: ({ UserAuctions } = data);
-
+	type Auction = UserAuctions$result['auctions'][number];
+	let auctions: Auction[] = [],
+		liveAuctions: Auction[] = [],
+		endedAuctions: Auction[] = [];
 	onMount(() => {
-		console.log('MyAuctions', $UserAuctions.data);
+		auctions = $UserAuctions.data?.auctions || [];
+		liveAuctions = auctions.filter((auction) => auction.ended === false);
+		endedAuctions = auctions.filter((auction) => auction.ended === true);
 	});
 	let filter = 'live';
 </script>
 
 <header-config data-floating-search-bar="false" />
 
-<section class="container mx-auto layout">
-	{#if filter === 'live'}
-		{#each Auctions as auction}
-			<div
-				use:inViewClass
-				class="mx-auto transition-[opacity,transform] opacity-0 scale-90 in-view:opacity-100 in-view:scale-100"
-			>
-				<AuctionCard {auction} />
-			</div>
-		{/each}
+{#if filter === 'live'}
+	{#if liveAuctions.length == 0}
+		<div class="error">No Live Auctions</div>
 	{:else}
-		{#each Auctions as auction}
-			<div
-				use:inViewClass
-				class="mx-auto transition-[opacity,transform] opacity-0 scale-90 in-view:opacity-100 in-view:scale-100"
-			>
-				<AuctionCard {auction} />
-			</div>
+		{#each liveAuctions as auction}
+			<section class="container mx-auto layout">
+				<div
+					use:inViewClass
+					class="mx-auto transition-[opacity,transform] opacity-0 scale-90 in-view:opacity-100 in-view:scale-100"
+				>
+					<AuctionCard {auction} />
+				</div>
+			</section>
 		{/each}
 	{/if}
-</section>
+{:else if filter === 'ended'}
+	{#if endedAuctions.length == 0}
+		<div class="error">No Ended Auctions</div>
+	{:else}
+		{#each endedAuctions as auction}
+			<section class="container mx-auto layout">
+				<div
+					use:inViewClass
+					class="mx-auto transition-[opacity,transform] opacity-0 scale-90 in-view:opacity-100 in-view:scale-100"
+				>
+					<AuctionCard {auction} />
+				</div>
+			</section>
+		{/each}
+	{/if}
+{/if}
 
-<footer class="sticky bottom-0 right-0 left-0 bg-background-darker">
+<footer class="fixed bottom-0 right-0 left-0 bg-background-darker">
 	<div class="container mx-auto p-4">
 		<div class="flex items-baseline gap-3">
 			<button
@@ -78,6 +92,10 @@
 </footer>
 
 <style lang="scss">
+	.error {
+		height: 33vh;
+		@apply grid place-content-center text-center text-2xl font-semibold;
+	}
 	.layout {
 		@apply grid w-fit gap-4 p-4 place-content-center place-items-center;
 		grid-template-columns: repeat(auto-fill, minmax(540px, 1fr));

@@ -1,25 +1,25 @@
 <script lang="ts">
 	import type { Auction, EnglishAuction } from '$lib/api';
 	import { formatEllipsis, formatTimeDifference } from '$lib/formatting';
-	import { currentTime } from '$lib/components/time.store';
+	import { currentTime } from '$lib/stores/time.store';
 	import MinaToken from '$lib/icons/MinaToken.svelte';
 	import { Info } from 'lucide-svelte';
 	import { press } from '$lib/actions/interaction';
+	import type { UserAuctions$result } from '$houdini';
+	import { CHAIN_BLOCK_TIME, CHAIN_START_TIME } from '../../../constants';
 
-	export let auction: Auction;
-	$: auctionType = auction.type as EnglishAuction;
-
-	$: nftName = auction.nft.name;
-	$: nftIdx = auction.nft.idx;
-	$: bidCount = auctionType.bidCount;
-	$: maxBid = auctionType.maxBid;
-	$: maxBidder = auctionType.maxBidder;
-	$: endTime = auctionType.endTime;
+	export let auction: UserAuctions$result['auctions'][number];
+	$: auctionType = auction.auctionType;
+	$: auctionData = auction.auctionData;
+	console.log(auctionData);
+	$: bidCount = 10;
+	$: maxBid = auction.winningBid?.amount || -1;
+	//@ts-expect-error
+	$: startTime = Number(auctionType.startTime) * CHAIN_BLOCK_TIME + CHAIN_START_TIME;
+	//@ts-expect-error
+	$: endTime = Number(auctionData.endTime) * CHAIN_BLOCK_TIME + CHAIN_START_TIME;
 	$: remaining = endTime - $currentTime;
 	$: timeLeft = formatTimeDifference(remaining);
-	$: duration = endTime - auction.startTime;
-	$: elapsed = $currentTime - auction.startTime;
-	$: progress = elapsed / duration;
 </script>
 
 <div>
@@ -38,9 +38,6 @@
 		{maxBid}
 		<MinaToken class="w-4 h-4 self-center" />
 	</h4>
-	<!-- <h6>
-		by {formatEllipsis(maxBidder, 8)}
-	</h6> -->
 </div>
 
 <div>
@@ -52,8 +49,3 @@
 	<h5># Bids</h5>
 	<h4>{bidCount}</h4>
 </div>
-
-<!-- <div>
-	<h5>Progress</h5>
-	<h4>{(progress * 100).toFixed(2)}%</h4>
-</div> -->

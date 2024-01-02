@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Bid, Auction, EnglishAuction } from '$lib/api';
 	import { formatEllipsis, formatTimeDifference } from '$lib/formatting';
-	import { currentTime } from '$lib/components/time.store';
+	import { currentTime } from '$lib/stores/time.store';
 	import MinaToken from '$lib/icons/MinaToken.svelte';
 	import { Info } from 'lucide-svelte';
 	import { press } from '$lib/actions/interaction';
