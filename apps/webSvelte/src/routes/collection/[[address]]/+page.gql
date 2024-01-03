@@ -1,4 +1,4 @@
-query MyQuery($address: String = "") {
+query Collection($address: String = "") {
 	collection(address: $address) {
 		description
 		floorPrice

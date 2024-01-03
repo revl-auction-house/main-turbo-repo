@@ -6,10 +6,11 @@
 	import { onMount } from 'svelte';
 	import Header from './Header.svelte';
 	import '$lib/styles/typography.scss';
+	import { init as initWalletStore } from '$lib/stores/wallet.store';
 
 	onMount(async () => {
 		await import('reflect-metadata');
-
+		initWalletStore();
 		startTimeStore();
 		setupIO();
 		setupMO();

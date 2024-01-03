@@ -13,10 +13,13 @@
 	import { overflowingClass } from '$lib/actions/utils';
 	export let auction: UserAuctions$result['auctions'][number];
 	//common to all auction types
-	$: src = auction.nft.imgUrl;
-	$: name = formatEllipsis(auction.nft.name, 16);
-	$: id = auction.nft.idx;
-	$: typename = auction.auctionType;
+	let src: string, name: string, id: number, typename: string;
+	$: if (auction) {
+		src = auction.nft.imgUrl || '';
+		name = formatEllipsis(auction.nft.name, 16);
+		id = auction.nft.idx;
+		typename = auction.auctionType;
+	}
 </script>
 
 <div class="card typography layout">

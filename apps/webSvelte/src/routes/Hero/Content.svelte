@@ -4,7 +4,7 @@
 	import { fade, fly } from 'svelte/transition';
 	import English from './Content/English.svelte';
 	import Dutch from './Content/Dutch.svelte';
-	import Blindv2 from './Content/Blindv2.svelte';
+	import Blindv2 from './Content/Blind2.svelte';
 	import type { BannerAuctions$result } from '$houdini';
 
 	export let auction: BannerAuctions$result['auctions'][number];
