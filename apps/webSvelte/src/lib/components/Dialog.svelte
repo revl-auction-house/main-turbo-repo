@@ -27,7 +27,7 @@
 	<!-- svelte-ignore a11y-no-static-element-interactions -->
 	{#if showModal}
 		<div on:click|stopPropagation>
-			<div class="flex">
+			<div class="sticky top-0 flex p-4 bg-card z-50">
 				<div>
 					<slot name="header" />
 				</div>
@@ -37,15 +37,20 @@
 					</slot>
 				</button>
 			</div>
-			<slot />
+			<div class="overflow-y-auto">
+				<slot />
+			</div>
 		</div>
 	{/if}
 </dialog>
 
 <style lang="scss">
 	dialog {
-		@apply border-none ring-2 ring-inset ring-primary text-neutral
-        bg-background rounded-md shadow-primary/20 shadow-lg;
+		&::-webkit-scrollbar {
+			width: 0;
+		}
+		@apply relative border-none ring-2 ring-primary text-neutral
+        	bg-card rounded-md shadow-primary/20 shadow-lg;
 		&::backdrop {
 			pointer-events: none;
 
@@ -53,8 +58,8 @@
 
 			animation: fade 0.2s ease-out;
 		}
-		div {
-			@apply p-2;
+		> div {
+			@apply relative;
 		}
 		button {
 			display: block;

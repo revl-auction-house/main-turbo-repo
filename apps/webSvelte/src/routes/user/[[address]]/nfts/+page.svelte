@@ -1,25 +1,28 @@
 <script lang="ts">
-	import { Nfts } from '$lib/data';
 	import { press } from '$lib/actions/interaction';
 	import { inViewClass } from '$lib/actions/observers';
 	import NftCard from '$lib/components/NFTCard/NFTCard.svelte';
 	import type { PageData } from './$houdini';
+	import type { UserNfts$result } from '$houdini';
 	import { onMount } from 'svelte';
+	import AuctionForm from '$lib/components/AuctionForm/AuctionForm.svelte';
 
 	export let data: PageData;
 	$: ({ UserNfts } = data);
-
+	let nfts: UserNfts$result['nfts'] = [];
 	onMount(() => {
-		console.log('MyAuctions', $UserNfts.data);
+		console.log('UserNfts', $UserNfts.data);
+		nfts = $UserNfts.data?.nfts || [];
 	});
-
-	let filter = 'live';
 </script>
 
 <header-config data-floating-search-bar="false" />
 
+{#if nfts.length === 0}
+	<div class="error">Found 0 NFTs</div>
+{/if}
 <section class="container mx-auto layout">
-	{#each Nfts as nft}
+	{#each nfts as nft}
 		<div
 			use:inViewClass
 			class="transition-[opacity,transform] opacity-0 scale-90 in-view:opacity-100 in-view:scale-100"
@@ -67,6 +70,10 @@
 </footer> -->
 
 <style lang="scss">
+	.error {
+		height: 33vh;
+		@apply grid place-content-center text-center text-2xl font-semibold;
+	}
 	.layout {
 		--3: 394px;
 		--2: 580px;

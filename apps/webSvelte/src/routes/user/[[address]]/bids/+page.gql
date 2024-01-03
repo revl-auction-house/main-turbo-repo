@@ -1,7 +1,8 @@
-query UserBids($creator: String!) {
-	userBids(address: $creator) {
+query UserBids($address: String!) {
+	userBids(address: $address) {
 		amount
 		auction {
+			auctionType
 			nft {
 				name
 				idx

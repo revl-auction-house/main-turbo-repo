@@ -1,19 +1,21 @@
 <script lang="ts">
 	import { formatEllipsis } from '$lib/formatting';
 	import Blind from './Content/Blind.svelte';
-	import { Auctions } from '$lib/data';
 	import { fade, fly } from 'svelte/transition';
 	import English from './Content/English.svelte';
 	import Dutch from './Content/Dutch.svelte';
 	import Blindv2 from './Content/Blindv2.svelte';
+	import type { BannerAuctions$result } from '$houdini';
 
-	export let auction = Auctions[0];
+	export let auction: BannerAuctions$result['auctions'][number];
 
-	//common to all auction types
-	$: name = formatEllipsis(auction.nft.name, 16);
-	$: id = auction.nft.idx;
-	$: typename = auction.type.typename;
-
+	let name: string, id: number, typename: string;
+	$: if (auction) {
+		//common to all auction types
+		name = formatEllipsis(auction.nft.name, 16);
+		id = auction.nft.idx;
+		typename = auction.auctionType;
+	}
 	const flyup = (node: Element) => fly(node, { duration: 150, y: 100, delay: 150 });
 	const fadeout = (node: Element) => fade(node, { duration: 150 });
 </script>
@@ -24,13 +26,13 @@
 		<div class="text-2xl font-bold text-neutral">#{id}</div>
 	</div>
 	<div class="flex justify-end items-end gap-4 mt-4">
-		{#if typename == 'EnglishAuction'}
+		{#if typename == 'english'}
 			<English {auction} />
-		{:else if typename == 'DutchAuction'}
+		{:else if typename == 'dutch'}
 			<Dutch {auction} />
-		{:else if typename == 'BlindAuction'}
+		{:else if typename == 'blindFirstPrice'}
 			<Blind {auction} />
-		{:else if typename == 'BlindSecondHighestAuction'}
+		{:else if typename == 'blindSecondPrice'}
 			<Blindv2 {auction} />
 		{/if}
 	</div>

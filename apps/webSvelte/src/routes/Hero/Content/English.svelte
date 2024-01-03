@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { Auction, EnglishAuction } from '$lib/api';
 	import { formatTimeDifference } from '$lib/formatting';
 	import { currentTime } from '$lib/stores/time.store';
 	import { press } from '$lib/actions/interaction';
@@ -8,22 +7,29 @@
 	import MinaToken from '$lib/icons/MinaToken.svelte';
 	import Form from '$lib/components/forms/Form.svelte';
 	import AuctionCard from '$lib/components/AuctionCard/AuctionCard.svelte';
+	import type { BannerAuctions$result } from '$houdini';
+	import { CHAIN_BLOCK_TIME, CHAIN_START_TIME } from '../../../constants';
 
-	export let auction: Auction;
-	$: auctionType = auction.type as EnglishAuction;
+	export let auction: BannerAuctions$result['auctions'][number];
 
-	$: bidCount = auctionType.bidCount;
-	$: src = auction.nft.imgUrl;
-	$: nftname = auction.nft.name;
-	$: id = auction.nft.idx;
-	$: maxBid = auctionType.maxBid;
-	$: mybid = maxBid;
-	$: maxBidder = auctionType.maxBidder;
-	$: endTime = auctionType.endTime;
-	$: remaining = endTime - $currentTime;
+	let bidCount: number,
+		maxBid: number,
+		mybid: number,
+		maxBidder: string,
+		endTime: number,
+		remaining: number,
+		timeLeft: string,
+		balance: number;
+	$: if (auction) {
+		//@ts-expect-error
+		({ bidCount, endTime } = auction.auctionData);
+		maxBid = Number(auction.winningBid?.amount);
+		maxBidder = auction.winningBid?.bidder || '-';
+	}
+	$: remaining = endTime * CHAIN_BLOCK_TIME + CHAIN_START_TIME - $currentTime;
 	$: timeLeft = formatTimeDifference(remaining);
 
-	$: balance = 100;
+	balance = 100; //TODO
 
 	$: details = [
 		{

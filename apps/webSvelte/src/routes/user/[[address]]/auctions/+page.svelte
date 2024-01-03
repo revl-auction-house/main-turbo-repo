@@ -24,7 +24,7 @@
 
 {#if filter === 'live'}
 	{#if liveAuctions.length == 0}
-		<div class="error">No Live Auctions</div>
+		<div class="error">Found 0 live auctions</div>
 	{:else}
 		{#each liveAuctions as auction}
 			<section class="container mx-auto layout">
@@ -39,7 +39,7 @@
 	{/if}
 {:else if filter === 'ended'}
 	{#if endedAuctions.length == 0}
-		<div class="error">No Ended Auctions</div>
+		<div class="error">You have no Auctions which ended</div>
 	{:else}
 		{#each endedAuctions as auction}
 			<section class="container mx-auto layout">

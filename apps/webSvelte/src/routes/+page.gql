@@ -1,5 +1,6 @@
-query UserAuctions($address: String!) {
-	auctions(creator: $address) {
+# TODO use banner auctions
+query BannerAuctions {
+	auctions(onlyLive: true, count: 10) {
 		auctionType
 		ended
 		startTime

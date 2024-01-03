@@ -1,25 +1,34 @@
 <script lang="ts">
-	import type { Auction, DutchAuction, EnglishAuction } from '$lib/api';
 	import { formatTimeDifference } from '$lib/formatting';
 	import { currentTime, hour } from '$lib/stores/time.store';
 	import { press } from '$lib/actions/interaction';
 	import Dialog from '$lib/components/Dialog.svelte';
-	import NumberField from '$lib/components/forms/NumberField.svelte';
 	import MinaToken from '$lib/icons/MinaToken.svelte';
 	import Form from '$lib/components/forms/Form.svelte';
 	import AuctionCard from '$lib/components/AuctionCard/AuctionCard.svelte';
+	import type { BannerAuctions$result } from '$houdini';
+	import { CHAIN_BLOCK_TIME, CHAIN_START_TIME } from '../../../constants';
 
-	export let auction: Auction;
-	$: auctionType = auction.type as DutchAuction;
+	export let auction: BannerAuctions$result['auctions'][number];
 
-	$: balance = 100;
-
-	$: decayRate = auctionType.decayRate;
-	$: startPrice = auctionType.startPrice;
-	$: minPrice = auctionType.minPrice;
-	$: elaspedTime = $currentTime - auction.startTime;
-	$: currentPrice = Math.max(startPrice - (decayRate / hour) * elaspedTime, minPrice);
+	let decayRate: number,
+		startPrice: number,
+		minPrice: number,
+		elaspedTime: number,
+		currentPrice: number,
+		timeLeftForMinPrice: number;
+	$: if (auction) {
+		//@ts-expect-error
+		({ decayRate, minPrice, startPrice } = auction.auctionData);
+	}
+	$: elaspedTime = $currentTime - (Number(auction.startTime) * CHAIN_BLOCK_TIME + CHAIN_START_TIME);
+	$: currentPrice = Math.max(
+		startPrice - decayRate * Math.floor(elaspedTime / CHAIN_BLOCK_TIME),
+		minPrice
+	);
 	$: timeLeftForMinPrice = Math.max(0, (startPrice - minPrice) / (decayRate / hour) - elaspedTime);
+	$: balance = 100; //TODO
+
 	$: details = [
 		{
 			name: 'Type',

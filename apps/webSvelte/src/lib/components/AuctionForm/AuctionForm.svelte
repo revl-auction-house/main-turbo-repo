@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { overflowingClass } from '$lib/actions/utils';
 	import { focus, press } from '$lib/actions/interaction';
-	import { Auctions, Collections } from '$lib/data';
 	import MinaToken from '$lib/icons/MinaToken.svelte';
 	import { ArrowUpRightIcon } from 'lucide-svelte';
 	import English from './English.svelte';
@@ -11,13 +10,15 @@
 	import '$lib/styles/card.scss';
 
 	import Form from '$lib/components/forms/Form.svelte';
+	import type { UserNfts$result } from '$houdini';
 
-	let auction = JSON.parse(JSON.stringify(Auctions[0]));
-	$: name = auction.nft.name;
-	$: collection = Collections[0];
-	$: id = auction.nft.idx;
-	$: src = auction.nft.imgUrl;
-	$: typename = auction.type.typename;
+	export let nft: UserNfts$result['nfts'][number];
+	// let auction = JSON.parse(JSON.stringify(Auctions[0]))
+	let src = nft.imgUrl;
+	let name = nft.collection.name;
+	let id = nft.idx;
+	let floor = nft.collection.floorPrice;
+	let bought = '-'; //TODO;
 
 	let auctionsTypes = [
 		{
@@ -48,6 +49,7 @@
 			}
 		}
 	];
+	let typename = 'Blind';
 
 	$: selectedAuctionType = auctionsTypes.find((type) => type.value == typename) || auctionsTypes[0];
 
@@ -55,88 +57,86 @@
 </script>
 
 <Form>
-	<section class="container mx-auto grid gap-3 justify-center">
-		<div class="card typography max-w-[600px]">
-			<div class="col-span-full grid gap-3 grid-cols-3">
-				<img
-					class="flex-col row-span-3"
+	<div class="card typography max-w-[650px]">
+		<div class="col-span-full grid gap-3 grid-cols-3">
+			<img
+				class="flex-col row-span-3"
+				use:press
+				{src}
+				loading="lazy"
+				alt=""
+				crossorigin="anonymous"
+			/>
+			<h4 class="col-span-2">
+				<a
 					use:press
-					{src}
-					loading="lazy"
-					alt=""
-					crossorigin="anonymous"
-				/>
-				<h4 class="col-span-2">
-					<a
-						use:press
-						href="collection/{name}"
-						tabindex="-1"
-						use:overflowingClass
-						class="min-w-0 w-fit overflowing:mask-right"
-					>
-						<ArrowUpRightIcon class="w-4 h-4 flex-none" />
-						<h2>{name}</h2>
-					</a>
-					<h4>#{id}</h4>
-				</h4>
-				<div>
-					<h5>Bought</h5>
-					<h4>{10.02}<MinaToken class="w-4 h-4" /></h4>
-				</div>
-				<div>
-					<h5>Floor</h5>
-					<h4>{10.5}<MinaToken class="w-4 h-4" /></h4>
-				</div>
-				<div>
-					<h5>Volume</h5>
-					<h4>{102.5}<MinaToken class="w-4 h-4" /></h4>
-				</div>
-				<div>
-					<h5>Live Auctions</h5>
-					<h4>{12}</h4>
-				</div>
-			</div>
-			<hr class="col-span-full my-3" />
-			<h5 class="col-span-full justify-center">Select auction type</h5>
-			<div class="grid grid-cols-3 gap-3">
-				{#each auctionsTypes as auctionType}
-					<input
-						on:change={(e) => {
-							typename = auctionType.value;
-						}}
-						type="radio"
-						id={auctionType.value}
-						name="auctionType"
-						value={auctionType.value}
-						checked={typename == auctionType.value}
-					/>
-					<label class="" use:press tabindex="-1" for={auctionType.value}>
-						{#if auctionType.tag}
-							<div class="tag">{auctionType.tag}</div>
-						{/if}
-						<h3>{auctionType.label}</h3>
-						<h6>{auctionType.sublabel}</h6>
-					</label>
-				{/each}
-			</div>
-			<div class="pt-6 grid gap-3">
-				{#key selectedAuctionType}
-					<div>
-						<svelte:component this={selectedAuctionType.form.component} bind:isValid />
-					</div>
-				{/key}
-			</div>
-			<div class="grid">
-				<button
-					disabled={isValid == false}
-					use:press
-					class="flex-1 button colored-primary disabled:brightness-[0.3] disabled:pointer-events-none disabled:cursor-not-allowed"
+					href="/collection/{name}"
+					tabindex="-1"
+					use:overflowingClass
+					class="min-w-0 w-fit overflowing:mask-right"
 				>
-					Create Auction
-				</button>
+					<ArrowUpRightIcon class="w-4 h-4 flex-none" />
+					<h2>{name}</h2>
+				</a>
+				<h4>#{id}</h4>
+			</h4>
+			<div>
+				<h5>Bought</h5>
+				<h4>{bought || '-'}<MinaToken class="w-4 h-4" /></h4>
+			</div>
+			<div>
+				<h5>Floor</h5>
+				<h4>{floor || '-'}<MinaToken class="w-4 h-4" /></h4>
+			</div>
+			<div>
+				<h5>Volume</h5>
+				<h4>{102.5}<MinaToken class="w-4 h-4" /></h4>
+			</div>
+			<div>
+				<h5>Live Auctions</h5>
+				<h4>{12}</h4>
 			</div>
 		</div>
-	</section>
+		<hr class="col-span-full my-3" />
+		<h5 class="col-span-full justify-center">Select auction type</h5>
+		<div class="grid grid-cols-3 gap-3">
+			{#each auctionsTypes as auctionType}
+				<input
+					on:change={(e) => {
+						typename = auctionType.value;
+					}}
+					type="radio"
+					id={auctionType.value}
+					name="auctionType"
+					value={auctionType.value}
+					checked={typename == auctionType.value}
+				/>
+				<label class="" use:press tabindex="-1" for={auctionType.value}>
+					{#if auctionType.tag}
+						<div class="tag">{auctionType.tag}</div>
+					{/if}
+					<h3>{auctionType.label}</h3>
+					<h6>{auctionType.sublabel}</h6>
+				</label>
+			{/each}
+		</div>
+		<div class="pt-6 grid gap-3">
+			{#key selectedAuctionType}
+				<div>
+					<svelte:component this={selectedAuctionType.form.component} bind:isValid />
+				</div>
+			{/key}
+		</div>
+		<div class="grid">
+			<button
+				disabled={isValid == false}
+				use:press
+				class="flex-1 button colored-primary disabled:brightness-[0.3] disabled:pointer-events-none disabled:cursor-not-allowed"
+			>
+				Create Auction
+			</button>
+		</div>
+	</div>
 </Form>
 
 <style lang="scss">
@@ -144,8 +144,6 @@
 		* {
 			contain: none;
 		}
-		@apply min-w-[720px];
-		@apply my-16;
 		@apply bg-card;
 		input[type='radio'] {
 			@apply hidden;
@@ -153,7 +151,7 @@
 		input:checked + label {
 			@apply ring-0 colored-primary;
 			* {
-				@apply text-neutral-lighter;
+				@apply text-white;
 			}
 		}
 		label {

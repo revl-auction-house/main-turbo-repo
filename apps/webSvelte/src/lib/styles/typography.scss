@@ -63,7 +63,8 @@
             text-card-foreground-darker
             stroke-card-foreground-darker;
 		}
-		a {
+		a,
+		button {
 			@apply gap-1;
 			@apply text-xl leading-[32px] font-medium 
 			text-card-foreground-lighter 

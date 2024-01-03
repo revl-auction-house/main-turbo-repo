@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { Auctions } from '$lib/data';
 	//Swiper
 	import 'swiper/css';
 	import { Swiper } from 'swiper/core';
@@ -8,7 +7,9 @@
 	import { ArrowLeft, ArrowRight } from 'lucide-svelte';
 	import Content from './Content.svelte';
 	import Background from './Background.svelte';
+	import type { BannerAuctions$result } from '$houdini';
 
+	export let auctions: BannerAuctions$result['auctions'];
 	let swiper: Swiper;
 	const initializer = (el: HTMLElement) => {
 		const [sm, md, lg, xl, xxl] = Object.values(themeConfig.screens).map((bp) => parseInt(bp));
@@ -58,12 +59,15 @@
 			selectedIndex = swiper.activeIndex;
 		});
 	};
-	let selectedIndex = 1;
-
-	let images = Auctions.map((auction) => auction.nft.imgUrl);
-	//get low res background image
-	$: bgImgUrl = Auctions[selectedIndex].nft.imgUrl;
-	$: selectedAuction = Auctions[selectedIndex];
+	let selectedIndex = 0;
+	let images: string[];
+	let bgImgUrl: string, selectedAuction: BannerAuctions$result['auctions'][number];
+	$: if (auctions) {
+		images = auctions.map((auction) => auction.nft.imgUrl || '');
+		//get low res background image
+		bgImgUrl = auctions[selectedIndex]?.nft.imgUrl || '';
+		selectedAuction = auctions[selectedIndex];
+	}
 </script>
 
 <div class="hero pt-24 mx-auto">

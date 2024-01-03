@@ -1,19 +1,23 @@
 <script lang="ts">
-	import type { Auction, BlindAuction, DutchAuction, EnglishAuction } from '$lib/api';
 	import { formatTimeDifference } from '$lib/formatting';
-	import { currentTime, hour } from '$lib/stores/time.store';
+	import { currentTime } from '$lib/stores/time.store';
 	import { press } from '$lib/actions/interaction';
 	import Dialog from '$lib/components/Dialog.svelte';
 	import NumberField from '$lib/components/forms/NumberField.svelte';
 	import MinaToken from '$lib/icons/MinaToken.svelte';
 	import Form from '$lib/components/forms/Form.svelte';
 	import AuctionCard from '$lib/components/AuctionCard/AuctionCard.svelte';
+	import type { BannerAuctions$result } from '$houdini';
+	import { CHAIN_BLOCK_TIME, CHAIN_START_TIME } from '../../../constants';
 
-	export let auction: Auction;
-	$: auctionType = auction.type as BlindAuction;
-	$: bidCount = auctionType.bidCount;
-	$: endTime = auctionType.endTime;
-	$: remaining = endTime - $currentTime;
+	export let auction: BannerAuctions$result['auctions'][number];
+	let endTime: string, revealTime: string, revealedBidCount: number, sealedBidCount: number;
+	$: if (auction) {
+		//@ts-expect-error
+		({ endTime, revealTime, revealedBidCount, sealedBidCount } = auction.auctionData);
+	}
+	$: bidCount = sealedBidCount;
+	$: remaining = Number(endTime) * CHAIN_BLOCK_TIME + CHAIN_START_TIME - $currentTime;
 	$: timeLeft = formatTimeDifference(remaining);
 
 	$: details = [
@@ -34,7 +38,7 @@
 		}
 	];
 
-	$: balance = 100;
+	$: balance = 100; //TODO
 
 	let showPlaceBidModal = false;
 	let mybid = 0;

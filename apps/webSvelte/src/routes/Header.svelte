@@ -71,7 +71,6 @@
 					<button
 						slot="trigger"
 						use:press
-						on:click={connectWallet}
 						class="w-40 py-4 rounded-xl
 					font-semibold block text-2xl text-center
 					colored-primary shadow-lg shadow-primary/30"

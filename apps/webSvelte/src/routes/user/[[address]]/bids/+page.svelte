@@ -1,37 +1,54 @@
 <script lang="ts">
 	import { press } from '$lib/actions/interaction';
 	import { inViewClass } from '$lib/actions/observers';
-	import { Bids } from '$lib/data';
 	import BidCard from '$lib/components/BidCard/BidCard.svelte';
+	import type { UserBids$result } from '$houdini';
+	import type { PageData } from './$houdini';
+	import { onMount } from 'svelte';
 
+	export let data: PageData;
+	$: ({ UserBids } = data);
+	let bids: UserBids$result['userBids'] = [];
+	onMount(() => {
+		console.log('UserBids', $UserBids.data);
+		bids = $UserBids.data?.userBids || [];
+	});
 	let filter = 'ongoing';
 </script>
 
 <header-config data-floating-search-bar="false" />
 
-<section class="container mx-auto layout">
-	{#if filter === 'ongoing'}
-		{#each Bids as bid}
-			<div
-				use:inViewClass
-				class="mx-auto transition-[opacity,transform] opacity-0 scale-90 in-view:opacity-100 in-view:scale-100"
-			>
-				<BidCard {bid} />
-			</div>
-		{/each}
-	{:else}
-		{#each Bids as bid}
-			<div
-				use:inViewClass
-				class="mx-auto transition-[opacity,transform] opacity-0 scale-90 in-view:opacity-100 in-view:scale-100"
-			>
-				<BidCard {bid} />
-			</div>
-		{/each}
+{#if filter === 'ongoing'}
+	{#if bids.length === 0}
+		<div class="error">Found 0 bids, on Live Auctions</div>
 	{/if}
-</section>
+	{#each bids as bid}
+		<section class="container mx-auto layout">
+			<div
+				use:inViewClass
+				class="mx-auto transition-[opacity,transform] opacity-0 scale-90 in-view:opacity-100 in-view:scale-100"
+			>
+				<BidCard {bid} />
+			</div>
+		</section>
+	{/each}
+{:else}
+	{#if bids.length === 0}
+		<div class="error">You have no past bids</div>
+	{/if}
+	{#each bids as bid}
+		<section class="container mx-auto layout">
+			<div
+				use:inViewClass
+				class="mx-auto transition-[opacity,transform] opacity-0 scale-90 in-view:opacity-100 in-view:scale-100"
+			>
+				<BidCard {bid} />
+			</div>
+		</section>
+	{/each}
+{/if}
 
-<footer class="sticky bottom-0 right-0 left-0 bg-background-darker">
+<footer class="fixed bottom-0 right-0 left-0 bg-background-darker">
 	<div class="container mx-auto p-4">
 		<div class="flex items-baseline gap-3">
 			<button
@@ -69,6 +86,10 @@
 </footer>
 
 <style lang="scss">
+	.error {
+		height: 33vh;
+		@apply grid place-content-center text-center text-2xl font-semibold;
+	}
 	.layout {
 		@apply grid w-fit gap-4 p-4 place-content-center place-items-center;
 		grid-template-columns: repeat(auto-fill, minmax(540px, 1fr));

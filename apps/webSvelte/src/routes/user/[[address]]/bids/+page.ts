@@ -1,11 +1,11 @@
-import type { UserAuctionsVariables } from '../$houdini';
+import type { UserBidsVariables } from './$houdini';
 import { redirect } from '@sveltejs/kit';
 
-export const _UserAuctionsVariables: UserAuctionsVariables = (event) => {
+export const _UserBidsVariables: UserBidsVariables = (event) => {
 	if (event.params.address === undefined) {
 		throw redirect(302, '/connect');
 	}
 	return {
-		creator: event.params.address
+		address: event.params.address
 	};
 };

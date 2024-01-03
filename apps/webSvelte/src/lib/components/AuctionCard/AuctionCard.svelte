@@ -3,7 +3,7 @@
 	import English from './English.svelte';
 	import Dutch from './Dutch.svelte';
 	import Blind from './Blind.svelte';
-	import Blindv2 from './Blindv2.svelte';
+	import Blind2 from './Blind2.svelte';
 	import { press } from '$lib/actions/interaction';
 	import { ArrowUpRightIcon } from 'lucide-svelte';
 	import type { UserAuctions$result } from '$houdini';
@@ -24,7 +24,7 @@
 	<h4 class="col-span-2">
 		<a
 			use:press
-			href="collection/{name}"
+			href="/collection/{name}"
 			tabindex="-1"
 			use:overflowingClass
 			class="min-w-0 w-fit overflow-hidden overflowing:mask-right"
@@ -36,12 +36,12 @@
 	</h4>
 	{#if typename == 'english'}
 		<English {auction} />
-		<!-- {:else if typename == 'DutchAuction'}
+		<!-- {:else if typename == 'dutch'}
 		<Dutch {auction} />
-	{:else if typename == 'BlindAuction'}
+	{:else if typename == 'blindFirstPrice'}
 		<Blind {auction} />
-	{:else if typename == 'BlindSecondHighestAuction'}
-		<Blindv2 {auction} /> -->
+	{:else if typename == 'blindSecondPrice'}
+		<Blind2 {auction} /> -->
 	{/if}
 </div>
 
