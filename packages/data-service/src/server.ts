@@ -12,7 +12,9 @@ const typeDefs = readFileSync("./src/schema.graphql", "utf8");
 const schema = createSchema({ typeDefs, resolvers });
 console.log(`Using ${process.env.DATA_STORAGE} for data storage`);
 const dataSource: DataSource =
-  process.env.DATA_STORAGE === "mongo" ? new MongoDB() : new LocalDataSource();
+  process.env.DATA_STORAGE === "mongo"
+    ? new MongoDB()
+    : new LocalDataSource(200);
 const yoga = createYoga({ schema, context: { dataSource } });
 const server = createServer(yoga);
 

@@ -7,7 +7,7 @@ dotenv.config();
 
 async function fetchBlock(
   height: number,
-  url = "http://127.0.0.1:8080/graphql"
+  url = process.env.GRAPHQL_URL || "http://127.0.0.1:8080/graphql"
 ) {
   // console.log("fetching ...", height);
   const response = await fetch(url, {

@@ -6,6 +6,10 @@ import { NftPart, CollectionPart, AuctionPart, BidPart } from "./types";
 const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
 
+/**
+ * - uses a local file for persistance storage
+ * ! concurrent writes not supported.
+ */
 export class LocalDataSource implements DataSource {
   private readonly filename: string;
   private dirty = false;
@@ -35,8 +39,13 @@ export class LocalDataSource implements DataSource {
     bids: [],
   };
 
-  constructor(filename = ".local_DB") {
+  constructor(readInverval = -1, filename = ".local_DB") {
     this.filename = filename;
+    if (readInverval > 0) {
+      setInterval(() => {
+        this.loaded = false;
+      }, readInverval);
+    }
   }
   public async getCollection(address: string) {
     await this.readFile();
@@ -251,6 +260,7 @@ export class LocalDataSource implements DataSource {
   private async readFile() {
     if (this.loaded) return;
     try {
+      console.log("Reading data from file");
       const dataString = await readFile(this.filename, "utf-8");
       this.data = JSON.parse(dataString);
       this.loaded = true;

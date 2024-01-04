@@ -6,11 +6,14 @@
  */
 import { localHostClient as client } from "chain";
 import { PrivateKey, UInt64, UInt32, Poseidon, Encoding } from "O1js";
-import { LocalDataSource, MongoDB } from "./dataSource";
+import { DataSource, LocalDataSource, MongoDB } from "./dataSource";
 import { NFTKey } from "chain/dist/NFT";
+import * as dotenv from "dotenv";
 
-// const dataSource = new LocalDataSource();
-const dataSource = new MongoDB();
+dotenv.config();
+console.log(`Using ${process.env.DATA_STORAGE} for data storage`);
+const dataSource: DataSource =
+  process.env.DATA_STORAGE === "mongo" ? new MongoDB() : new LocalDataSource();
 
 await client.start();
 // const bs: any = client.resolve("BlockStorage");
@@ -21,7 +24,7 @@ const user0PvtKey = PrivateKey.fromBase58(
 const user0 = user0PvtKey.toPublicKey();
 // let user0Nonce = 0;
 const user1PvtKey = PrivateKey.fromBase58(
-  "EKDuCpShU5cH87r2YJZj854JH8aPHZ98X9ztRd1oyzb1PVhAyw1E"
+  "EKE9XSSgZwPpnw1UHT5i75xLBe42fdHHVHjJ6xQoDM3Tw9tDTTp4"
 );
 const user1 = user1PvtKey.toPublicKey();
 // (client as any).setSigner(user0PvtKey);
@@ -47,7 +50,9 @@ await tx.send();
 // wait for next block
 await new Promise((r) => setTimeout(r, 9999));
 
-// user0 mints and nft
+/********************************
+ *  user0 mints and nft
+ ********************************/
 const nftjson = {
   attributes: [
     {
@@ -92,35 +97,42 @@ await tx.send();
 // wait for next block
 await new Promise((r) => setTimeout(r, 9999));
 
-// user0 starts a engAuction
-let auctionIdNFT0: UInt64;
-console.log("starting auction for NFT0");
-tx = await client.transaction(user0, () => {
-  auctionIdNFT0 = engAuction.start(
-    NFTKey.from(user0, UInt32.from(0)),
-    UInt64.from(1000)
-  );
-});
-await tx.sign();
-await tx.send();
+/********************************
+ * user0 starts a engAuction
+ ********************************/
 
-// wait for next block
-await new Promise((r) => setTimeout(r, 9999));
+// let auctionIdNFT0: UInt64;
+// console.log("starting auction for NFT0");
+// tx = await client.transaction(user0, () => {
+//   auctionIdNFT0 = engAuction.start(
+//     NFTKey.from(user0, UInt32.from(0)),
+//     UInt64.from(1000)
+//   );
+// });
+// await tx.sign();
+// await tx.send();
 
-// User1 places a EngBid
-console.log("placing bid for NFT0");
-inMemorySigner.config.signer = user1PvtKey;
-tx = await client.transaction(user1, () => {
-  engAuction.placeBid(auctionIdNFT0, UInt64.from(100));
-});
-await tx.sign();
-await tx.send();
+// // wait for next block
+// await new Promise((r) => setTimeout(r, 9999));
 
-await new Promise((r) => setTimeout(r, 9999));
+/********************************
+ * User1 places a EngBid
+ ********************************/
+// console.log("placing bid for NFT0");
+// inMemorySigner.config.signer = user1PvtKey;
+// tx = await client.transaction(user1, () => {
+//   engAuction.placeBid(auctionIdNFT0, UInt64.from(100));
+// });
+// await tx.sign();
+// await tx.send();
+
+// await new Promise((r) => setTimeout(r, 9999));
 // let balance = await client.query.runtime.Balances.balances.get(user0);
 // console.log("Bal: ", balance?.toBigInt());
 
-// user1 mints a nft collection
+/********************************
+ * user1 mints a nft collection
+ ********************************/
 const nftJsons = [
   {
     description: "Just Chill",

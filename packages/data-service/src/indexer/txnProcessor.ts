@@ -167,7 +167,7 @@ export class TxnProcessor {
       );
       let auctionId = await this.dataSource.getAuctionCount();
       const creator = data.sender;
-      console.log("start Eng Auc", nftKey, nftKey.id);
+      console.log("start Eng Auc", nftKey, durationStr);
       const auction: AuctionPart = {
         id: auctionId.toString(),
         collectionAddress: nftKey.collection,
