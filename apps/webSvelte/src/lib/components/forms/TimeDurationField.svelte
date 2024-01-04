@@ -17,7 +17,7 @@
 	let hourisValid = false;
 	let minuteisValid = false;
 
-	$: isValid = durationInMs >= 0 && (dayisValid || hourisValid || minuteisValid);
+	$: isValid = durationInMs > 0 && (dayisValid || hourisValid || minuteisValid);
 </script>
 
 <h5 class="typography form-label">{label}</h5>

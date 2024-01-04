@@ -39,12 +39,12 @@
 	</h4>
 	{#if typename == 'english'}
 		<English {auction} />
-		<!-- {:else if typename == 'dutch'}
+	{:else if typename == 'dutch'}
 		<Dutch {auction} />
 	{:else if typename == 'blindFirstPrice'}
 		<Blind {auction} />
 	{:else if typename == 'blindSecondPrice'}
-		<Blind2 {auction} /> -->
+		<Blind2 {auction} />
 	{/if}
 </div>
 

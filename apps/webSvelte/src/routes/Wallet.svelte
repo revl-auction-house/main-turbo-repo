@@ -8,13 +8,18 @@
 	import { ArrowBigLeft, ArrowBigRight, DotIcon } from 'lucide-svelte';
 	// import { load, userBalances } from '$lib/stores/balance.store';
 	import { onMount } from 'svelte';
+	import { get } from 'svelte/store';
 
-	let publicBal: bigint | undefined = 20000n;
-	let privateBal: bigint | undefined = 100n;
+	let publicBal: bigint | undefined;
+	let privateBal: bigint | undefined;
+	let mintTokens: () => Promise<void>;
 	onMount(async () => {
-		const { userBalances, load } = await import('$lib/stores/balance.store');
-		load($wallet);
-		// publicBal = get(userBalances)[$wallet];
+		const { userBalances, load, mint } = await import('$lib/stores/balance.store');
+		if ($wallet) {
+			load($wallet);
+			publicBal = get(userBalances)[$wallet];
+			mintTokens = mint;
+		}
 	});
 
 	let showDepositModal = false;
@@ -34,7 +39,7 @@
 	<div class="grid layout">
 		<div class="balance">
 			L2 Public Balance
-			<span>{publicBal}</span>
+			<span>{publicBal || '---'}</span>
 		</div>
 		<div class="transfer">
 			<button use:press on:click={openDepositModal} class="right hover:colored-primary">
@@ -48,11 +53,11 @@
 		</div>
 		<div class="balance">
 			L2 Private Balance
-			<span>{privateBal}</span>
+			<span>{privateBal || '****'}</span>
 		</div>
 	</div>
 	<div class="mint-action">
-		<button use:press> Mint Free Test Tokens</button>
+		<button use:press on:click={mintTokens}> Mint Free Test Tokens</button>
 	</div>
 </div>
 

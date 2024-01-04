@@ -15,10 +15,14 @@
 	export let nft: UserNfts$result['nfts'][number];
 	// let auction = JSON.parse(JSON.stringify(Auctions[0]))
 	let src = nft.imgUrl;
-	let name = nft.collection.name;
+	let name = nft.name;
+	let collectionAddress = nft.collection.address;
+	let collectionName = nft.collection.name;
 	let id = nft.idx;
 	let floor = nft.collection.floorPrice;
 	let bought = '-'; //TODO;
+	let volume = 0; //TODO;
+	let liveCount = 0; //TODO;
 
 	let auctionsTypes = [
 		{
@@ -67,19 +71,22 @@
 				alt=""
 				crossorigin="anonymous"
 			/>
-			<h4 class="col-span-2">
+			<div class="col-span-2">
+				<h2>
+					<span use:overflowingClass class="min-w-0 w-fit overflowing:mask-right">{name}</span>
+					<h2>#{id}</h2>
+				</h2>
 				<a
 					use:press
-					href="/collection/{name}"
+					href="/collection/{collectionAddress}"
 					tabindex="-1"
 					use:overflowingClass
 					class="min-w-0 w-fit overflowing:mask-right"
 				>
+					<h4>{collectionName}</h4>
 					<ArrowUpRightIcon class="w-4 h-4 flex-none" />
-					<h2>{name}</h2>
 				</a>
-				<h4>#{id}</h4>
-			</h4>
+			</div>
 			<div>
 				<h5>Bought</h5>
 				<h4>{bought || '-'}<MinaToken class="w-4 h-4" /></h4>
@@ -90,11 +97,11 @@
 			</div>
 			<div>
 				<h5>Volume</h5>
-				<h4>{102.5}<MinaToken class="w-4 h-4" /></h4>
+				<h4>{volume || '-'}<MinaToken class="w-4 h-4" /></h4>
 			</div>
 			<div>
 				<h5>Live Auctions</h5>
-				<h4>{12}</h4>
+				<h4>{liveCount || '-'}</h4>
 			</div>
 		</div>
 		<hr class="col-span-full my-3" />
@@ -123,18 +130,14 @@
 		<div class="pt-6 grid gap-3">
 			{#key selectedAuctionType}
 				<div>
-					<svelte:component this={selectedAuctionType.form.component} bind:isValid />
+					<svelte:component
+						this={selectedAuctionType.form.component}
+						bind:isValid
+						{collectionAddress}
+						nftIdx={id}
+					/>
 				</div>
 			{/key}
-		</div>
-		<div class="grid">
-			<button
-				disabled={isValid == false}
-				use:press
-				class="flex-1 button colored-primary disabled:brightness-[0.3] disabled:pointer-events-none disabled:cursor-not-allowed"
-			>
-				Create Auction
-			</button>
 		</div>
 	</div>
 </Form>
@@ -170,11 +173,5 @@
 				@apply bg-neutral-darkest/20;
 			}
 		}
-	}
-
-	.button {
-		@apply px-6 py-3 rounded-xl text-neutral-lighter;
-		@apply flex justify-center items-center;
-		@apply font-semibold text-2xl;
 	}
 </style>

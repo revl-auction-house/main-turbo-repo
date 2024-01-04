@@ -38,7 +38,7 @@
 <div>
 	<h5>Highest Bid</h5>
 	<h4>
-		{maxBid}
+		{maxBid || 0}
 		<MinaToken class="w-4 h-4 self-center" />
 	</h4>
 </div>

@@ -1,11 +1,14 @@
 <script lang="ts">
+	import { press } from '$lib/actions/interaction';
 	import NumberField from '$lib/components/forms/NumberField.svelte';
 	import MinaToken from '$lib/icons/MinaToken.svelte';
+
+	export let isValid = false;
+	export let collectionAddress: string, nftIdx: number;
 
 	let startPrice: number;
 	let decayRate: number;
 	let minPrice: number;
-	export let isValid = false;
 	let startPriceIsValid = false;
 	let decayRateIsValid = false;
 	let minPriceIsValid = false;
@@ -45,3 +48,21 @@
 		<MinaToken slot="trailing" class="w-6 h-6" />
 	</NumberField>
 </div>
+
+<div class="grid">
+	<button
+		disabled={isValid == false}
+		use:press
+		class="flex-1 button colored-primary disabled:brightness-[0.3] disabled:pointer-events-none disabled:cursor-not-allowed"
+	>
+		Create Auction
+	</button>
+</div>
+
+<style>
+	.button {
+		@apply px-6 py-3 rounded-xl text-neutral-lighter;
+		@apply flex justify-center items-center;
+		@apply font-semibold text-2xl;
+	}
+</style>
