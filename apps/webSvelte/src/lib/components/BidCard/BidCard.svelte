@@ -17,6 +17,8 @@
 	//common to all auction types
 	$: src = bid.auction.nft.imgUrl;
 	$: name = formatEllipsis(bid.auction.nft.name, 16);
+	$: collectionName = bid.auction.nft.collection.name;
+	$: collectionAddress = bid.auction.nft.collection.address;
 	$: id = bid.auction.nft.idx;
 	$: typename = bid.auction.auctionType;
 </script>
@@ -24,18 +26,17 @@
 <div class="card typography layout">
 	<img class="row-span-3" use:press {src} loading="lazy" alt="" crossorigin="anonymous" />
 	<h4 class="col-span-2">
+		<div class="text-5xl font-bold text-white">{name}</div>
 		<a
 			use:press
-			href="collection/{name}"
-			tabindex="-1"
-			use:overflowingClass
-			class="min-w-0 w-fit overflow-hidden overflowing:mask-right"
+			href="/collection/{collectionAddress}"
+			class="inline-flex text-2xl font-bold text-neutral"
 		>
-			<ArrowUpRightIcon class="w-4 h-4 flex-none" />
-			<h2>{name}</h2>
+			{collectionName}
+			<ArrowUpRightIcon class="w-8 h-8 flex-none" />
 		</a>
-		<h4>#{id}</h4>
 	</h4>
+
 	{#if typename == 'english'}
 		<English {bid} />
 	{:else if typename == 'dutch'}

@@ -8,7 +8,7 @@
 
 	import type { UserAuctions$result } from '$houdini';
 	import { CHAIN_BLOCK_TIME, CHAIN_START_TIME } from '../../../constants';
-	export let auction: UserAuctions$result['auctions'][number];
+	export let auction: Pick<UserAuctions$result['auctions'][number], 'auctionData' | 'startTime'>;
 	let endTime: string, revealTime: string, revealedBidCount: number, sealedBidCount: number;
 	$: if (auction) {
 		//@ts-expect-error

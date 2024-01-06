@@ -11,12 +11,22 @@
 	import '$lib/styles/card.scss';
 
 	import { overflowingClass } from '$lib/actions/utils';
-	export let auction: UserAuctions$result['auctions'][number];
+	export let auction: Pick<
+		UserAuctions$result['auctions'][number],
+		'nft' | 'auctionType' | 'auctionData' | 'winningBid' | 'startTime'
+	>;
 	//common to all auction types
-	let src: string, name: string, id: number, typename: string;
+	let src: string,
+		name: string,
+		id: number,
+		typename: string,
+		collectionAddress: string,
+		collectionName: string;
 	$: if (auction) {
 		src = auction.nft.imgUrl || '';
 		name = formatEllipsis(auction.nft.name, 16);
+		collectionName = auction.nft.collection.name;
+		collectionAddress = auction.nft.collection.address;
 		id = auction.nft.idx;
 		typename = auction.auctionType;
 	}
@@ -25,17 +35,19 @@
 <div class="card typography layout">
 	<img class="row-span-3" use:press {src} loading="lazy" alt="" crossorigin="anonymous" />
 	<h4 class="col-span-2">
-		<a
-			use:press
-			href="/collection/{name}"
-			tabindex="-1"
-			use:overflowingClass
-			class="min-w-0 w-fit overflow-hidden overflowing:mask-right"
-		>
-			<ArrowUpRightIcon class="w-4 h-4 flex-none" />
-			<h2>{name}</h2>
-		</a>
-		<h4>#{id}</h4>
+		<div>
+			<div class="text-2xl font-bold text-white">{name}</div>
+			<a
+				use:press
+				href="/collection/{collectionAddress}"
+				tabindex="-1"
+				use:overflowingClass
+				class="min-w-0 w-fit overflow-hidden overflowing:mask-right"
+			>
+				<h3 class="text-xl text-neutral">{collectionName}</h3>
+				<ArrowUpRightIcon class="w-6 h-6 flex-none" />
+			</a>
+		</div>
 	</h4>
 	{#if typename == 'english'}
 		<English {auction} />

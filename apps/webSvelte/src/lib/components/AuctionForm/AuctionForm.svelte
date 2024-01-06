@@ -74,7 +74,6 @@
 			<div class="col-span-2">
 				<h2>
 					<span use:overflowingClass class="min-w-0 w-fit overflowing:mask-right">{name}</span>
-					<h2>#{id}</h2>
 				</h2>
 				<a
 					use:press

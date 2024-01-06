@@ -11,6 +11,8 @@ query BannerAuctions {
 			idx
 			collection {
 				name
+				address
+				floorPrice
 			}
 		}
 		winningBid {

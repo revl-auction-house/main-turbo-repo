@@ -6,7 +6,7 @@
 	import { press } from '$lib/actions/interaction';
 	import type { UserAuctions$result } from '$houdini';
 	import { CHAIN_BLOCK_TIME, CHAIN_START_TIME } from '../../../constants';
-	export let auction: UserAuctions$result['auctions'][number];
+	export let auction: Pick<UserAuctions$result['auctions'][number], 'auctionData' | 'winningBid'>;
 
 	let bidCount: number,
 		maxBid: number,

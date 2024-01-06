@@ -9,6 +9,8 @@ query UserAuctions($address: String!) {
 			imgUrl
 			idx
 			collection {
+				address
+				floorPrice
 				name
 			}
 		}

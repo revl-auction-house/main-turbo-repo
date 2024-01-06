@@ -24,12 +24,12 @@
 		{
 			name: 'Type',
 			value: 'Blind 2nd Price',
-			width: '16ch'
+			width: '8ch'
 		},
 		{
 			name: '#Bids',
 			value: bidCount,
-			width: '16ch'
+			width: '8ch'
 		},
 		{
 			name: 'Ends in',
@@ -83,19 +83,19 @@
 					<div>
 						<h5>You have</h5>
 						<h3>
-							{balance.toFixed(6)}<MinaToken class="w-4 h-4" />
+							{balance.toFixed(3)}<MinaToken class="w-4 h-4" />
 						</h3>
 					</div>
 					<div>
 						<h5>Paying</h5>
 						<h3>
-							{mybid.toFixed(6)}<MinaToken class="w-4 h-4" />
+							{mybid.toFixed(3)}<MinaToken class="w-4 h-4" />
 						</h3>
 					</div>
 					<div>
 						<h5>Remaining</h5>
 						<h3>
-							{(balance - mybid).toFixed(6)}<MinaToken class="w-4 h-4" />
+							{(balance - mybid).toFixed(3)}<MinaToken class="w-4 h-4" />
 						</h3>
 					</div>
 				</div>

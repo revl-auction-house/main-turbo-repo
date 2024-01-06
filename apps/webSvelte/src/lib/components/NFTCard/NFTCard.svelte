@@ -10,8 +10,9 @@
 	import Dialog from '../Dialog.svelte';
 
 	export let nft: UserNfts$result['nfts'][number];
-	const name = nft.collection.name;
+	const name = nft.name;
 	const collectionAddress = nft.collection.address;
+	const collectionName = nft.collection.name;
 	const id = nft.idx;
 	const src = nft.imgUrl;
 
@@ -25,21 +26,17 @@
 <div class="card typography layout">
 	<img class="row-span-3" use:press {src} loading="lazy" alt="" crossorigin="anonymous" />
 	<h4 class="col-span-2">
-		<a
-			use:press
-			href="/collection/{collectionAddress}"
-			tabindex="-1"
-			use:overflowingClass
-			class="min-w-0 w-fit overflow-hidden overflowing:mask-right"
-		>
-			<ArrowUpRightIcon class="w-4 h-4 flex-none" />
-			<h2>{name}</h2>
-		</a>
-		<h4>#{id}</h4>
+		<div>
+			<div class="text-2xl font-bold text-white">{name}</div>
+			<a use:press href="/collection/{collectionAddress}" class="inline-flex text-xl text-neutral">
+				{collectionName}
+				<ArrowUpRightIcon class="w-6 h-6 flex-none" />
+			</a>
+		</div>
 	</h4>
 
 	<div>
-		<h5>Bought</h5>
+		<h5>Bought For</h5>
 		<h4>{bought || '-'}<MinaToken class="w-4 h-4 flex-none" /></h4>
 	</div>
 	<div>
@@ -47,10 +44,8 @@
 		<h4>{floor || '-'}<MinaToken class="w-4 h-4 flex-none" /></h4>
 	</div>
 	<div class="col-span-2">
-		{#if nft.locked && auctionId}
-			<a use:press href="/myauctions/{auctionId}" tabindex="0" class="button accent">
-				In Auction
-			</a>
+		{#if nft.locked}
+			<a use:press href="auctions/" tabindex="0" class="button accent"> In Auction </a>
 		{:else}
 			<button
 				use:press

@@ -6,24 +6,35 @@
 	import Dutch from './Content/Dutch.svelte';
 	import Blindv2 from './Content/Blind2.svelte';
 	import type { BannerAuctions$result } from '$houdini';
+	import { ArrowUpRightIcon } from 'lucide-svelte';
+	import { press } from '$lib/actions/interaction';
 
 	export let auction: BannerAuctions$result['auctions'][number];
 
-	let name: string, id: number, typename: string;
+	let name: string, id: number, typename: string, collectionName: string, collectionAddress: string;
 	$: if (auction) {
 		//common to all auction types
 		name = formatEllipsis(auction.nft.name, 16);
 		id = auction.nft.idx;
 		typename = auction.auctionType;
+		collectionName = auction.nft.collection.name;
+		collectionAddress = auction.nft.collection.address;
 	}
 	const flyup = (node: Element) => fly(node, { duration: 150, y: 100, delay: 150 });
 	const fadeout = (node: Element) => fade(node, { duration: 150 });
 </script>
 
 <div in:flyup out:fadeout class="absolute bottom-6 left-3 right-3 select-none">
-	<div class="inline-flex gap-4 items-baseline">
-		<div class="text-6xl font-bold text-white">{name}</div>
-		<div class="text-2xl font-bold text-neutral">#{id}</div>
+	<div class="gap-4 items-baseline">
+		<div class="text-5xl font-bold text-white">{name}</div>
+		<a
+			use:press
+			href="/collection/{collectionAddress}"
+			class="inline-flex text-2xl font-bold text-neutral"
+		>
+			{collectionName}
+			<ArrowUpRightIcon class="w-8 h-8 flex-none" />
+		</a>
 	</div>
 	<div class="flex justify-end items-end gap-4 mt-4">
 		{#if typename == 'english'}

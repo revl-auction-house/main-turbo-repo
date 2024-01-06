@@ -6,7 +6,6 @@
 	import MinaToken from '$lib/icons/MinaToken.svelte';
 	import { wallet } from '$lib/stores/wallet.store';
 	import { ArrowBigLeft, ArrowBigRight, DotIcon } from 'lucide-svelte';
-	// import { load, userBalances } from '$lib/stores/balance.store';
 	import { onMount } from 'svelte';
 	import { get } from 'svelte/store';
 

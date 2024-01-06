@@ -9,6 +9,9 @@
 	import AuctionCard from '$lib/components/AuctionCard/AuctionCard.svelte';
 	import type { BannerAuctions$result } from '$houdini';
 	import { CHAIN_BLOCK_TIME, CHAIN_START_TIME } from '../../../constants';
+	import { wallet } from '$lib/stores/wallet.store';
+	import { onMount } from 'svelte';
+	import { get } from 'svelte/store';
 
 	export let auction: BannerAuctions$result['auctions'][number];
 
@@ -19,7 +22,7 @@
 		endTime: number,
 		remaining: number,
 		timeLeft: string,
-		balance: number;
+		balance: string | undefined;
 	$: if (auction) {
 		//@ts-expect-error
 		({ bidCount, endTime } = auction.auctionData);
@@ -29,13 +32,18 @@
 	$: remaining = endTime * CHAIN_BLOCK_TIME + CHAIN_START_TIME - $currentTime;
 	$: timeLeft = formatTimeDifference(remaining);
 
-	balance = 100; //TODO
+	onMount(async () => {
+		const { userBalances } = await import('$lib/stores/balance.store');
+		if ($wallet) {
+			balance = get(userBalances)[$wallet]?.toString();
+		}
+	});
 
 	$: details = [
 		{
 			name: 'Type',
 			value: 'English',
-			width: '16ch'
+			width: '8ch'
 		},
 		// {
 		// 	name: '# Bids',
@@ -45,7 +53,7 @@
 		{
 			name: 'Highest Bid',
 			value: maxBid,
-			width: '16ch'
+			width: '8ch'
 		},
 		// {
 		// 	name: 'Highest Bidder',
@@ -71,7 +79,7 @@
 			class="text-neutral-lighter font-bold text-2xl overflow-hidden overflow-ellipsis"
 			style="width:{detail.width}"
 		>
-			{detail.value}
+			{detail.value || '- - -'}
 		</div>
 	</div>
 {/each}
@@ -102,19 +110,19 @@
 					<div>
 						<h5>You have</h5>
 						<h3>
-							{balance ? balance.toFixed(6) : '-'}<MinaToken class="w-4 h-4" />
+							{balance || '-'}<MinaToken class="w-4 h-4" />
 						</h3>
 					</div>
 					<div>
 						<h5>Paying</h5>
 						<h3>
-							{mybid ? mybid.toFixed(6) : '-'}<MinaToken class="w-4 h-4" />
+							{mybid ? mybid.toFixed(3) : '-'}<MinaToken class="w-4 h-4" />
 						</h3>
 					</div>
 					<div>
 						<h5>Remaining</h5>
 						<h3>
-							{balance && mybid ? (balance - mybid).toFixed(6) : '-'}<MinaToken class="w-4 h-4" />
+							{balance || '-'}<MinaToken class="w-4 h-4" />
 						</h3>
 					</div>
 				</div>
@@ -122,7 +130,7 @@
 					label="Bid Amount"
 					name="amount"
 					min={maxBid}
-					max={balance}
+					max={balance ? Number(balance) : 0}
 					bind:value={mybid}
 					step={1e-6}
 				>

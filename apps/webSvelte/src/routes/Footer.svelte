@@ -1,80 +1,26 @@
 <footer class=" bg-background-darker">
 	<div class="mx-auto w-full max-w-screen-xl">
-		<div class="grid grid-cols-1 gap-8 px-4 py-6 md:grid-cols-3 lg:py-8">
+		<hr class="py-2" />
+		<div class="grid grid-cols-1 gap-8 px-4 md:grid-cols-3">
 			<div>
-				<h2 class="mb-8 text-5xl font-medium text-white">Logo</h2>
-				<ul class="text-2xl font-normal text-neutral">
-					<li class="mb-4">
-						<a href="#" class=" hover:underline">
-							Address{' '}
-						</a>
-					</li>
-				</ul>
+				<h2 class="mb-8 text-5xl font-medium text-white hidden md:block">Logo</h2>
+			</div>
+			<div class="mb-8 text-xl font-semibold text-center text-neutral-lighter">
+				<div>
+					Built with <a href="https://twitter.com/proto_kit" class="underline">Proto-kit</a>
+				</div>
+				<div>Secured by <a href="https://twitter.com/MinaProtocol" class="underline">Mina</a></div>
 			</div>
 			<div>
-				<h2 class="mb-8 text-4xl font-semibold text-neutral-lighter">Quick links</h2>
-				<ul class="grid grid-cols-2 gap-y-6 text-2xl font-normal text-neutral">
-					<li class="">
-						<a href="#" class="hover:underline"> Home </a>
-					</li>
-					<li class="">
-						<a href="#" class="hover:underline"> Privacy policy </a>
-					</li>
-					<li class="">
-						<a href="#" class="hover:underline"> About us </a>
-					</li>
-					<li class="">
-						<a href="#" class="hover:underline"> Cookie policy </a>
-					</li>
-					<li class="md:col-span-2">
-						<a href="#" class="hover:underline"> Token </a>
-					</li>
-					<li class="">
-						<a href="#" class="hover:underline"> Blogs </a>
-					</li>
-				</ul>
-			</div>
-			<div>
-				<h2 class="mb-8 text-lg font-semibold text-neutral-lighter">Join our community</h2>
-				<ul class="grid grid-cols-4 gap-y-6">
-					<li class="">
-						<a href="#" class="hover:underline">
-							<img src="/img/Linkedin.png" alt="" class="h-[60px] w-[60px] object-cover" />
-						</a>
-					</li>
-					<li class="">
+				<ul class="grid grid-cols-2 gap-y-6 float-right">
+					<li class="px-4">
 						<a href="#" class="hover:underline">
 							<img src="/img/Discord.png" alt="" class="h-[60px] w-[60px] object-cover" />
 						</a>
 					</li>
-					<li class="">
+					<li class="px-4">
 						<a href="#" class="hover:underline">
 							<img src="/img/Twitter.png" alt="" class="h-[60px] w-[60px] object-cover" />
-						</a>
-					</li>
-					<li class="">
-						<a href="#" class="hover:underline">
-							<img src="/img/Instagram.png" alt="" class="h-[60px] w-[60px] object-cover" />
-						</a>
-					</li>
-					<li class="">
-						<a href="#" class="hover:underline">
-							<img src="/img/Youtube.png" alt="" class="h-[60px] w-[60px] object-cover" />
-						</a>
-					</li>
-					<li class="">
-						<a href="#" class="hover:underline">
-							<img src="/img/Twitch.png" alt="" class="h-[60px] w-[60px] object-cover" />
-						</a>
-					</li>
-					<li class="">
-						<a href="#" class="hover:underline">
-							<img src="/img/Tiktok.png" alt="" class="h-[60px] w-[60px] object-cover" />
-						</a>
-					</li>
-					<li class="">
-						<a href="#" class="hover:underline">
-							<img src="/img/Facebook.png" alt="" class="h-[60px] w-[60px] object-cover" />
 						</a>
 					</li>
 				</ul>
