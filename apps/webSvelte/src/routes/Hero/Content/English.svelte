@@ -102,19 +102,19 @@
 					<div>
 						<h5>You have</h5>
 						<h3>
-							{balance.toFixed(6)}<MinaToken class="w-4 h-4" />
+							{balance ? balance.toFixed(6) : '-'}<MinaToken class="w-4 h-4" />
 						</h3>
 					</div>
 					<div>
 						<h5>Paying</h5>
 						<h3>
-							{mybid.toFixed(6)}<MinaToken class="w-4 h-4" />
+							{mybid ? mybid.toFixed(6) : '-'}<MinaToken class="w-4 h-4" />
 						</h3>
 					</div>
 					<div>
 						<h5>Remaining</h5>
 						<h3>
-							{(balance - mybid).toFixed(6)}<MinaToken class="w-4 h-4" />
+							{balance && mybid ? (balance - mybid).toFixed(6) : '-'}<MinaToken class="w-4 h-4" />
 						</h3>
 					</div>
 				</div>

@@ -41,7 +41,7 @@
 		label="Set Min Price"
 		name="minPrice"
 		step={1e-6}
-		min={startPrice}
+		max={startPrice}
 		bind:value={minPrice}
 		bind:isValid={minPriceIsValid}
 	>

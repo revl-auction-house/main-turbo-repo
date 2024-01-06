@@ -10,13 +10,14 @@
 	$: if (dialog && showModal) {
 		dialog.showModal();
 		if (browser) {
-			document.body.classList.add('overflow-hidden');
-			document.body.classList.add('pr-2');
+			// document.body.dataset.scrollHeightBeforeModal = document.body.scrollHeight.toString();
+			// document.body.classList.add('overflow-hidden');
+			// document.body.classList.add('pr-2');
 		}
 	} else {
 		if (browser) {
-			document.body.classList.remove('overflow-hidden');
-			document.body.classList.remove('pr-2');
+			// document.body.classList.remove('overflow-hidden');
+			// document.body.classList.remove('pr-2');
 		}
 	}
 </script>
@@ -49,7 +50,7 @@
 		&::-webkit-scrollbar {
 			width: 0;
 		}
-		@apply relative border-none ring-2 ring-primary text-neutral
+		@apply fixed m-auto border-none ring-2 ring-primary text-neutral
         	bg-card rounded-md shadow-primary/20 shadow-lg;
 		&::backdrop {
 			pointer-events: none;
