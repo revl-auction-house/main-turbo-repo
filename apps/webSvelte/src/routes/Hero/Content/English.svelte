@@ -33,10 +33,8 @@
 	$: timeLeft = formatTimeDifference(remaining);
 
 	onMount(async () => {
-		const { userBalances } = await import('$lib/stores/balance.store');
-		if ($wallet) {
-			balance = get(userBalances)[$wallet]?.toString();
-		}
+		const { userBalance } = await import('$lib/stores/balance.store');
+		balance = get(userBalance)?.toString(); // TODO divide by 10eDECIMALS
 	});
 
 	$: details = [

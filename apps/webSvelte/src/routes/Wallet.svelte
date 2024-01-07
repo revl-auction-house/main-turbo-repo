@@ -13,12 +13,10 @@
 	let privateBal: bigint | undefined;
 	let mintTokens: () => Promise<void>;
 	onMount(async () => {
-		const { userBalances, load, mint } = await import('$lib/stores/balance.store');
-		if ($wallet) {
-			load($wallet);
-			publicBal = get(userBalances)[$wallet];
-			mintTokens = mint;
-		}
+		const { userBalance, load, mint } = await import('$lib/stores/balance.store');
+		load();
+		publicBal = get(userBalance); // TODO divide by 10eDECIMALS
+		mintTokens = mint;
 	});
 
 	let showDepositModal = false;
@@ -41,11 +39,11 @@
 			<span>{publicBal || '---'}</span>
 		</div>
 		<div class="transfer">
-			<button use:press on:click={openDepositModal} class="right hover:colored-primary">
+			<button use:press on:click={openDepositModal} class="hover:colored-primary">
 				<span> DEPOSIT </span>
 				<ArrowBigRight class="w-8 h-8 stroke-white fill-white flex-none" />
 			</button>
-			<button use:press on:click={openWithdrawModal} class="left hover:colored-primary">
+			<button use:press on:click={openWithdrawModal} class="hover:colored-primary">
 				<ArrowBigLeft class="w-8 h-8 stroke-white fill-white flex-none" />
 				<span> WITHDRAW </span>
 			</button>
@@ -55,8 +53,30 @@
 			<span>{privateBal || '****'}</span>
 		</div>
 	</div>
-	<div class="mint-action">
+	<!-- <div class="mint-action">
 		<button use:press on:click={mintTokens}> Mint Free Test Tokens</button>
+	</div> -->
+	<div>
+		<div class="flex items-center p-4">
+			<h2 class=" text-2xl px-4">step 1:</h2>
+			Deposit, from Public Wallet
+			<button
+				use:press
+				class="hover:colored-primary bg-background-lighter shadow-lg p-2 rounded-lg flex justify-center items-center"
+			>
+				DEPOSIT
+			</button>
+		</div>
+		<div class="flex items-center p-4">
+			<h2 class=" text-2xl px-4">step 2:</h2>
+			Claim deposit after a while,<br /> wait longer for increased privacy
+			<button
+				use:press
+				class="hover:colored-primary bg-background-lighter shadow-lg p-2 rounded-lg flex justify-center items-center"
+			>
+				CLAIM
+			</button>
+		</div>
 	</div>
 </div>
 

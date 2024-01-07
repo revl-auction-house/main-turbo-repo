@@ -1,4 +1,5 @@
 import { writable, type Writable, get } from 'svelte/store';
+import { persisted } from 'svelte-persisted-store';
 import { clientStore } from './chainClient.store';
 import { Field, PrivateKey, PublicKey, UInt64 } from 'o1js';
 import {
@@ -8,12 +9,20 @@ import {
 	DepositProof,
 	WithdrawProof
 } from 'chain';
+import { wallet } from './wallet.store';
 
-export const privateBalances: Writable<{ [key: string]: bigint | undefined }> = writable({});
+export const privateBalance: Writable<bigint | undefined> = writable();
+const privateWalletKey = persisted('privateWalletKey', { pvKey: '' });
 
-export async function load(privateKey: string) {
+if (get(privateWalletKey).pvKey === '') {
+	privateWalletKey.set({ pvKey: PrivateKey.random().toBase58() });
+}
+
+export async function load() {
 	if (get(clientStore).loading) return;
+	if (get(privateWalletKey).pvKey === '') return;
 
+	const privateKey = get(privateWalletKey).pvKey;
 	const publicKey = PrivateKey.fromBase58(privateKey).toPublicKey();
 	const privateToken = get(clientStore).client.query.runtime.PrivateToken;
 	const ledgerEBalance = await privateToken.ledger.get(publicKey);
@@ -31,17 +40,25 @@ export async function load(privateKey: string) {
 				claims += claim.decrypt(PrivateKey.fromBase58(privateKey)).toBigInt();
 			}
 		}
-		const balances = get(privateBalances);
-		balances[publicKey.toBase58()] = ledgerBalance + claims;
-		privateBalances.set(balances);
+		privateBalance.set(ledgerBalance + claims);
 		return (ledgerBalance + claims).toString();
 	}
 }
 
+export function importKey(pvKey: string) {
+	privateWalletKey.set({ pvKey });
+}
+
+export function exportKey() {
+	return get(privateWalletKey).pvKey;
+}
+
 // runtime funcs deposit, addDeposit, addFirstClaim, addClaim, transfer*, withdraw
 
-export async function deposit(address: string, amount: number) {
+export async function deposit(amount: number) {
 	if (get(clientStore).loading) return;
+	const address = get(wallet);
+	if (address === undefined) return;
 	// deposit
 	const client = get(clientStore).client;
 	const privateToken = client.runtime.resolve('PrivateToken');
@@ -65,9 +82,11 @@ export async function deposit(address: string, amount: number) {
 /**
  * should be called some time after deposit to increase anonymity & privacy
  */
-export async function claimDeposit(privateKey: string) {
+export async function claimDeposit() {
 	if (get(clientStore).loading) return;
+	if (get(privateWalletKey).pvKey === '') return;
 
+	const privateKey = get(privateWalletKey).pvKey;
 	const client = get(clientStore).client;
 	const privateToken = client.runtime.resolve('PrivateToken');
 	const sender = PrivateKey.fromBase58(privateKey).toPublicKey();
@@ -90,8 +109,11 @@ export async function claimDeposit(privateKey: string) {
 	await tx2.send();
 }
 
-export async function withdraw(privateKey: string) {
+export async function withdraw() {
 	if (get(clientStore).loading) return;
+	if (get(privateWalletKey).pvKey === '') return;
+
+	const privateKey = get(privateWalletKey).pvKey;
 
 	const client = get(clientStore).client;
 	const privateToken = client.runtime.resolve('PrivateToken');

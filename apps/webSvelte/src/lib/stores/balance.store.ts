@@ -3,19 +3,19 @@ import { clientStore } from './chainClient.store';
 import { PublicKey, UInt64 } from 'o1js';
 import { wallet } from './wallet.store';
 
-export const userBalances: Writable<{ [key: string]: bigint | undefined }> = writable({});
+export const userBalance: Writable<bigint | undefined> = writable();
 
-export function load(address: string) {
+export function load() {
 	if (get(clientStore).loading) return;
 	console.log('balance.store | load');
+	const address = get(wallet);
+	if (address === undefined) return;
 
 	get(clientStore)
 		.client.query.runtime.Balances.balances.get(PublicKey.fromBase58(address))
-		.then((balance) => {
-			const balances = get(userBalances);
+		.then((balance: UInt64 | undefined) => {
 			console.log('balance', balance?.toBigInt());
-			balances[address] = balance?.toBigInt();
-			userBalances.set(balances);
+			userBalance.set(balance?.toBigInt());
 		});
 }
 
