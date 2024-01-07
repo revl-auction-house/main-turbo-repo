@@ -2,6 +2,9 @@ query UserBids($address: String!) {
 	userBids(address: $address) {
 		amount
 		auction {
+			id
+			ended
+			startTime
 			auctionType
 			nft {
 				name
@@ -11,6 +14,34 @@ query UserBids($address: String!) {
 					address
 					floorPrice
 					name
+				}
+			}
+			winningBid {
+				amount
+				bidder
+				timestamp
+			}
+			auctionData {
+				... on EnglishAuction {
+					bidCount
+					endTime
+				}
+				... on DutchAuction {
+					decayRate
+					minPrice
+					startPrice
+				}
+				... on BlindFirstPriceAuction {
+					endTime
+					revealTime
+					revealedBidCount
+					sealedBidCount
+				}
+				... on BlindSecondPriceAuction {
+					endTime
+					revealTime
+					revealedBidCount
+					sealedBidCount
 				}
 			}
 		}

@@ -22,7 +22,8 @@
 		endTime: number,
 		remaining: number,
 		timeLeft: string,
-		balance: string | undefined;
+		balance: string | undefined,
+		placeBid: () => void;
 	$: if (auction) {
 		//@ts-expect-error
 		({ bidCount, endTime } = auction.auctionData);
@@ -34,7 +35,12 @@
 
 	onMount(async () => {
 		const { userBalance } = await import('$lib/stores/balance.store');
+		const { bidEnglishAuction } = await import('$lib/stores/chainClient.store');
+		// TODO this is not reactive
 		balance = get(userBalance)?.toString(); // TODO divide by 10eDECIMALS
+		placeBid = () => {
+			bidEnglishAuction(Number(auction.id), BigInt(mybid));
+		};
 	});
 
 	$: details = [
@@ -135,7 +141,9 @@
 					<MinaToken slot="trailing" />
 				</NumberField>
 				<h3>
-					<button use:press class="w-full filled primary p-2" type="submit"> Place Bid </button>
+					<button use:press on:click={placeBid} class="w-full filled primary p-2" type="submit">
+						Place Bid
+					</button>
 				</h3>
 			</div>
 		</Form>

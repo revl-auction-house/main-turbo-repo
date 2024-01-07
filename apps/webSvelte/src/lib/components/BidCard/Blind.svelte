@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { overflowingClass } from '$lib/actions/utils';
-	import type { Auction, Bid, BlindAuction } from '$lib/api';
 	import { formatEllipsis, formatTimeDifference } from '$lib/formatting';
 	import { currentTime } from '$lib/stores/time.store';
 	import MinaToken from '$lib/icons/MinaToken.svelte';
@@ -14,10 +13,11 @@
 		Square,
 		UserRoundCheck
 	} from 'lucide-svelte';
+	import type { UserBids$result } from '$houdini';
 
-	export let bid: Bid;
+	export let bid: UserBids$result['userBids'][number];
 	$: auction = bid.auction;
-	$: auctionType = auction.type as BlindAuction;
+	$: auctionType = auction as BlindAuction;
 
 	$: nftName = auction.nft.name;
 	$: nftIdx = auction.nft.idx;

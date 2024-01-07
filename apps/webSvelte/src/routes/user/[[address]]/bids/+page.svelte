@@ -17,12 +17,11 @@
 </script>
 
 <header-config data-floating-search-bar="false" />
-
 {#if filter === 'ongoing'}
-	{#if bids.length === 0}
+	{#if bids.filter((b) => !b.auction.ended).length === 0}
 		<div class="error">Found 0 bids, on Live Auctions</div>
 	{/if}
-	{#each bids as bid}
+	{#each bids.filter((b) => !b.auction.ended) as bid}
 		<section class="container mx-auto layout">
 			<div
 				use:inViewClass
@@ -33,10 +32,10 @@
 		</section>
 	{/each}
 {:else}
-	{#if bids.length === 0}
+	{#if bids.filter((b) => b.auction.ended).length === 0}
 		<div class="error">You have no past bids</div>
 	{/if}
-	{#each bids as bid}
+	{#each bids.filter((b) => b.auction.ended) as bid}
 		<section class="container mx-auto layout">
 			<div
 				use:inViewClass

@@ -53,10 +53,10 @@
 			<span>{privateBal || '****'}</span>
 		</div>
 	</div>
-	<!-- <div class="mint-action">
+	<div class="mint-action">
 		<button use:press on:click={mintTokens}> Mint Free Test Tokens</button>
-	</div> -->
-	<div>
+	</div>
+	<!-- <div>
 		<div class="flex items-center p-4">
 			<h2 class=" text-2xl px-4">step 1:</h2>
 			Deposit, from Public Wallet
@@ -77,7 +77,7 @@
 				CLAIM
 			</button>
 		</div>
-	</div>
+	</div> -->
 </div>
 
 <Dialog
