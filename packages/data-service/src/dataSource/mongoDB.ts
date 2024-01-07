@@ -7,10 +7,11 @@ export class MongoDB implements DataSource {
   private client: mongoDB.MongoClient;
   private db: mongoDB.Db;
 
-  constructor() {
+  constructor(dropPrevious = false) {
     dotenv.config();
     this.client = new mongoDB.MongoClient(process.env.DB_CONN_STRING!);
     this.db = this.client.db(process.env.DB_NAME);
+    dropPrevious && this.db.dropDatabase();
     this.connectToDatabase();
   }
 

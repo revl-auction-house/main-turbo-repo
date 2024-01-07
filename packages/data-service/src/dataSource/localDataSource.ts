@@ -260,7 +260,7 @@ export class LocalDataSource implements DataSource {
   private async readFile() {
     if (this.loaded) return;
     try {
-      console.log("Reading data from file");
+      // console.log("Reading data from file");
       const dataString = await readFile(this.filename, "utf-8");
       this.data = JSON.parse(dataString);
       this.loaded = true;

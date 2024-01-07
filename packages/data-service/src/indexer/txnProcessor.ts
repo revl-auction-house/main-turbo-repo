@@ -67,7 +67,7 @@ export class TxnProcessor {
           console.log("created Collection", collectionData.name);
         }
         await this.dataSource.createNFT(collectionAddr, nftCount, {
-          name: nftData.name || "",
+          name: nftData.name || nftData.title || "",
           imgUrl:
             nftData.img || nftData.imgUri || nftData.image || nftData.imageUri,
           dataHash: hash,
@@ -76,7 +76,7 @@ export class TxnProcessor {
           owner: to,
           collectionAddress: collectionAddr,
         });
-        console.log("created Nft: ", nftData.name);
+        console.log("created Nft: ", nftData.name || nftData.title);
       } else {
         console.warn("nft data not found for hash: ", hash);
       }
@@ -119,6 +119,7 @@ export class TxnProcessor {
       // update nft
       this.dataSource.updateNFT(nftKey.collection, nftKey.id, {
         locked: true,
+        latestAuctionId: auctionId.toString(),
       });
     };
     this.processors[getMethodId("DutchAuctionModule", "bid")] = async (
@@ -186,6 +187,7 @@ export class TxnProcessor {
       // update nft
       this.dataSource.updateNFT(nftKey.collection, nftKey.id, {
         locked: true,
+        latestAuctionId: auctionId.toString(),
       });
     };
     this.processors[getMethodId("EnglishAuctionModule", "placeBid")] = async (
@@ -260,6 +262,7 @@ export class TxnProcessor {
         // update nft
         this.dataSource.updateNFT(nftKey.collection, nftKey.id, {
           locked: true,
+          latestAuctionId: auctionId.toString(),
         });
       };
     this.processors[
@@ -328,7 +331,8 @@ export class TxnProcessor {
     }
   }
 }
-function getMethodId(moduleName: string, methodName: string): string {
+
+export function getMethodId(moduleName: string, methodName: string): string {
   return Poseidon.hash([stringToField(moduleName), stringToField(methodName)])
     .toBigInt()
     .toString();
