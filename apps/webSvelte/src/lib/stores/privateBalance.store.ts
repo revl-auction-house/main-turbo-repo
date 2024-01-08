@@ -86,17 +86,18 @@ export async function claimDeposit() {
 	if (get(clientStore).loading) return;
 	if (get(privateWalletKey).pvKey === '') return;
 
-	const privateKey = get(privateWalletKey).pvKey;
+	const privateKey = PrivateKey.fromBase58(get(privateWalletKey).pvKey);
 	const client = get(clientStore).client;
 	const privateToken = client.runtime.resolve('PrivateToken');
-	const sender = PrivateKey.fromBase58(privateKey).toPublicKey();
+	const sender = privateKey.toPublicKey();
 	// step 1: addDeposit
 	// TODO get merkelWitness of
 	const depositProof = {} as DepositProof; // TODO generate proof using web worker
 	const tx1 = await client.transaction(sender, () => {
 		privateToken.addDeposit(depositProof);
 	});
-	await tx1.sign(); // TODO sign using a different wallet, change auro wallet to inmemory
+	tx1.transaction = tx1.transaction?.sign(privateKey); // sign using a different wallet other than auro
+	// await tx1.sign();
 	await tx1.send();
 	// step 2: addClaim / addFirstClaim
 
@@ -105,7 +106,7 @@ export async function claimDeposit() {
 	const tx2 = await client.transaction(sender, () => {
 		privateToken.addFirstClaim(ClaimKey.from(sender, UInt64.from(0)), claimProof);
 	});
-	await tx2.sign();
+	tx2.transaction = tx1.transaction?.sign(privateKey); // sign using a different wallet other than auro
 	await tx2.send();
 }
 

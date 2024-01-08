@@ -11,7 +11,9 @@ import * as dotenv from "dotenv";
 dotenv.config();
 console.log(`Using ${process.env.DATA_STORAGE} for data storage`);
 const dataSource: DataSource =
-  process.env.DATA_STORAGE === "mongo" ? new MongoDB() : new LocalDataSource();
+  process.env.DATA_STORAGE === "mongo"
+    ? await new MongoDB().connect()
+    : new LocalDataSource();
 await client.start();
 const inMemorySigner = client.resolve("Signer") as any;
 const balances = client.runtime.resolve("Balances");

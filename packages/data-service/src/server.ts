@@ -13,7 +13,7 @@ const schema = createSchema({ typeDefs, resolvers });
 console.log(`Using ${process.env.DATA_STORAGE} for data storage`);
 const dataSource: DataSource =
   process.env.DATA_STORAGE === "mongo"
-    ? new MongoDB()
+    ? await new MongoDB().connect()
     : new LocalDataSource(200);
 const yoga = createYoga({ schema, context: { dataSource } });
 const server = createServer(yoga);

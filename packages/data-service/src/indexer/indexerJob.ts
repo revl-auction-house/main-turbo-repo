@@ -52,7 +52,9 @@ let blockToIndex = 0;
 // Choose data source based on environment variable
 console.log(`Using ${process.env.DATA_STORAGE} for data storage`);
 const dataSource: DataSource =
-  process.env.DATA_STORAGE === "mongo" ? new MongoDB() : new LocalDataSource();
+  process.env.DATA_STORAGE === "mongo"
+    ? await new MongoDB().connect()
+    : new LocalDataSource();
 
 const txnProcessor = new TxnProcessor(dataSource);
 await txnProcessor.init();

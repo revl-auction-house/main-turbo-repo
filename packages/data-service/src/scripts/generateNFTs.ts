@@ -8,7 +8,7 @@ dotenv.config();
 console.log(`Using ${process.env.DATA_STORAGE} for data storage`);
 const dataSource: DataSource =
   process.env.DATA_STORAGE === "mongo"
-    ? new MongoDB(true)
+    ? await new MongoDB().connect()
     : new LocalDataSource();
 await client.start();
 
@@ -25,14 +25,14 @@ const minters = [
 const collectionSRCs = [
   {
     name: "Pudgy Penguins",
-    index: [1, 4],
+    index: [1, 6],
     baseUrl: `https://ipfs.io/ipfs/bafybeibc5sgo2plmjkq2tzmhrn54bk3crhnc23zd2msg4ea7a4pxrkgfna/{id}`,
     minterPvKey: minters[0],
   },
   {
-    name: "JeerGirls",
-    index: [1, 5],
-    baseUrl: `https://alienswap.xyz/alien-api/api/v1/public/mint/token/0xCf55F841D926EAB28126060A128eae7B59586DC1/{id}`,
+    name: "OrBs",
+    index: [1, 6],
+    baseUrl: `https://ipfs.io/ipfs/QmPNnrntpxCvhjgANPU2RVqTHWbGCAzuy4AozmUXCop41X/{id}`,
     minterPvKey: minters[1],
   },
   {
@@ -78,6 +78,7 @@ for (const collection of collectionSRCs) {
       },
       { nonce: minterNonce++ }
     );
+    console.log("txn hash: ", tx.transaction?.hash().toString());
     await tx.sign();
     await tx.send();
     // wait for next block

@@ -7,12 +7,10 @@ export class MongoDB implements DataSource {
   private client: mongoDB.MongoClient;
   private db: mongoDB.Db;
 
-  constructor(dropPrevious = false) {
+  constructor() {
     dotenv.config();
     this.client = new mongoDB.MongoClient(process.env.DB_CONN_STRING!);
     this.db = this.client.db(process.env.DB_NAME);
-    dropPrevious && this.db.dropDatabase();
-    this.connectToDatabase();
   }
 
   public async getNFT(collectionAddress: string, index: number) {
@@ -289,8 +287,13 @@ export class MongoDB implements DataSource {
     });
   }
 
-  private async connectToDatabase() {
+  public async connect(dropPrevious = false) {
     await this.client.connect();
     console.log(`Successfully connected to database: ${this.db.databaseName}`);
+    if (dropPrevious) {
+      await this.db.dropDatabase();
+      console.log("Dropped previous database");
+    }
+    return this;
   }
 }
