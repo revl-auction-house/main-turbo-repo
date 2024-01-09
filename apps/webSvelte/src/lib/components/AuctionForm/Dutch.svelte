@@ -2,9 +2,23 @@
 	import { press } from '$lib/actions/interaction';
 	import NumberField from '$lib/components/forms/NumberField.svelte';
 	import MinaToken from '$lib/icons/MinaToken.svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
 
 	export let isValid = false;
 	export let collectionAddress: string, nftIdx: number;
+
+	let create: () => Promise<void>;
+	const dispatch = createEventDispatcher();
+
+	onMount(async () => {
+		const { createEnglishAuction } = await import('$lib/stores/chainClient.store');
+		//TODO DUTCH AUCTION
+		create = async () => {
+			// createEnglishAuction(collectionAddress, nftIdx, biddingDuration / CHAIN_BLOCK_TIME);
+			//dispatch success
+			dispatch('success');
+		};
+	});
 
 	let startPrice: number;
 	let decayRate: number;
@@ -52,6 +66,7 @@
 <div class="grid">
 	<button
 		disabled={isValid == false}
+		on:click={create}
 		use:press
 		class="flex-1 button colored-primary disabled:brightness-[0.3] disabled:pointer-events-none disabled:cursor-not-allowed"
 	>

@@ -68,11 +68,17 @@
 	on:close={() => {
 		showCreateAuctionModal = false;
 	}}
+	let:dialog
 >
 	<div class="typography" slot="header">
 		<h2>Just a few steps away</h2>
 	</div>
-	<AuctionForm {nft} />
+	<AuctionForm
+		{nft}
+		on:success={() => {
+			dialog.close();
+		}}
+	/>
 </Dialog>
 
 <style lang="scss">

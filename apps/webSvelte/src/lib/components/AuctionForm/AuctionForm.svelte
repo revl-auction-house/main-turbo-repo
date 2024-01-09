@@ -11,6 +11,7 @@
 
 	import Form from '$lib/components/forms/Form.svelte';
 	import type { UserNfts$result } from '$houdini';
+	import { createEventDispatcher } from 'svelte';
 
 	export let nft: UserNfts$result['nfts'][number];
 	// let auction = JSON.parse(JSON.stringify(Auctions[0]))
@@ -23,6 +24,8 @@
 	let bought = '-'; //TODO;
 	let volume = 0; //TODO;
 	let liveCount = 0; //TODO;
+
+	const dispatch = createEventDispatcher();
 
 	let auctionsTypes = [
 		{
@@ -61,7 +64,7 @@
 </script>
 
 <Form>
-	<div class="card typography max-w-[650px]">
+	<div class="card typography w-[650px]">
 		<div class="col-span-full grid gap-3 grid-cols-3">
 			<img
 				class="flex-col row-span-3"
@@ -134,6 +137,9 @@
 						bind:isValid
 						{collectionAddress}
 						nftIdx={id}
+						on:success={() => {
+							dispatch('success');
+						}}
 					/>
 				</div>
 			{/key}

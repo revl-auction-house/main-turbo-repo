@@ -39,7 +39,7 @@
 				</button>
 			</div>
 			<div class="overflow-y-auto">
-				<slot />
+				<slot {dialog} />
 			</div>
 		</div>
 	{/if}
@@ -50,7 +50,7 @@
 		&::-webkit-scrollbar {
 			width: 0;
 		}
-		@apply fixed m-auto border-none ring-2 ring-primary text-neutral
+		@apply fixed m-auto border-none ring-2 ring-primary/30 text-neutral
         	bg-card rounded-md shadow-primary/20 shadow-lg;
 		&::backdrop {
 			@apply bg-background-darker/80;

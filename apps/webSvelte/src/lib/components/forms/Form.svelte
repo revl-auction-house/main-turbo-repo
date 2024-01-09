@@ -2,6 +2,6 @@
 	import '$lib/styles/forms.scss';
 </script>
 
-<form class="form-root form-reset typography">
+<form on:submit|preventDefault class="form-root form-reset typography">
 	<slot />
 </form>

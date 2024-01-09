@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { press } from '$lib/actions/interaction';
 	import TimeDurationField from '$lib/components/forms/TimeDurationField.svelte';
-	import { onMount } from 'svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
 	import { CHAIN_BLOCK_TIME } from '../../../constants';
 
 	export let isValid = false;
@@ -10,11 +10,15 @@
 	let biddingDuration: number; // in ms
 	let biddingDurationIsValid = false;
 	let create: () => Promise<void>;
+	const dispatch = createEventDispatcher();
 	$: isValid = biddingDurationIsValid;
 	onMount(async () => {
 		const { createEnglishAuction } = await import('$lib/stores/chainClient.store');
-		create = () =>
+		create = async () => {
 			createEnglishAuction(collectionAddress, nftIdx, biddingDuration / CHAIN_BLOCK_TIME);
+			//dispatch success
+			dispatch('success');
+		};
 	});
 </script>
 

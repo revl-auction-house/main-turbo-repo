@@ -89,7 +89,7 @@
 	</div>
 	<div class="m-2">
 		<Form>
-			<div class="card typography min-w-[400px] max-w-[600px]">
+			<div class="card typography w-[600px]">
 				<AuctionCard {auction} />
 				<div class="card grid-cols-3">
 					<div>
