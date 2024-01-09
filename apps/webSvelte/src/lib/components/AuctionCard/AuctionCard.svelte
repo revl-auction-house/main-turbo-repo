@@ -37,15 +37,11 @@
 	<h4 class="col-span-2">
 		<div>
 			<div class="text-2xl font-bold text-white">{name}</div>
-			<a
-				use:press
-				href="/collection/{collectionAddress}"
-				tabindex="-1"
-				use:overflowingClass
-				class="min-w-0 w-fit overflow-hidden overflowing:mask-right"
-			>
-				<h3 class="text-xl text-neutral">{collectionName}</h3>
-				<ArrowUpRightIcon class="w-6 h-6 flex-none" />
+			<a use:press href="/collection/{collectionAddress}" class="inline-flex text-lg text-neutral">
+				<h5>
+					{collectionName}
+					<ArrowUpRightIcon class="w-4 h-4 flex-none self-center" />
+				</h5>
 			</a>
 		</div>
 	</h4>
@@ -61,6 +57,9 @@
 </div>
 
 <style lang="scss">
+	img {
+		@apply w-full h-full bg-neutral-darker;
+	}
 	.layout {
 		overflow: hidden;
 		grid-auto-flow: column;

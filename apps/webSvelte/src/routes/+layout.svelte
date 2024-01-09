@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { Toaster } from 'svelte-french-toast';
 	import '../app.css';
 	import { start as startTimeStore } from '$lib/stores/time.store';
 	import { setupIO, setupMO } from '$lib/actions/observers';
@@ -18,5 +19,6 @@
 	});
 </script>
 
+<Toaster />
 <Header />
 <slot />

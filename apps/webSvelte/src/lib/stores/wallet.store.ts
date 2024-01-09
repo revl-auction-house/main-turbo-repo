@@ -1,6 +1,6 @@
 import { writable, type Writable, get } from 'svelte/store';
 // import type { PendingTransaction } from '@proto-kit/sequencer';
-// import toast from 'svelte-french-toast';
+import toast from 'svelte-french-toast';
 
 export const wallet: Writable<string | undefined> = writable(undefined);
 export const pendingTransactions: Writable<
@@ -74,10 +74,10 @@ export function addTransaction(transactionHash: string) {
 		]);
 	});
 	txnPromise;
-	// toast.promise(txnPromise, {
-	// 	loading: 'Saving...',
-	// 	success: 'Settings saved!',
-	// 	error: 'Could not save.'
-	// });
+	toast.promise(txnPromise, {
+		loading: 'Saving...',
+		success: 'Settings saved!',
+		error: 'Could not save.'
+	});
 	startPooling();
 }

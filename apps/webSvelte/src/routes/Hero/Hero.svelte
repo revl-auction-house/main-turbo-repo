@@ -101,7 +101,7 @@
 			<ArrowRight class="w-16 h-16 p-2 rounded-full colored-glass shadow-lg transition-colors" />
 		</span>
 	</div>
-	<div class="z-10 container mx-auto relative h-[200px]">
+	<div class="z-10 container mx-auto relative h-[220px]">
 		{#key selectedAuction}<Content auction={selectedAuction} />{/key}
 	</div>
 	<hidden class="swiper-slide-prev swiper-slide-active swiper-slide-next nav-button" />

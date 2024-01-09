@@ -29,8 +29,10 @@
 		<div>
 			<div class="text-xl font-bold text-white">{name}</div>
 			<a use:press href="/collection/{collectionAddress}" class="inline-flex text-lg text-neutral">
-				{collectionName}
-				<ArrowUpRightIcon class="w-6 h-6 flex-none" />
+				<h5>
+					{collectionName}
+					<ArrowUpRightIcon class="w-4 h-4 flex-none self-center" />
+				</h5>
 			</a>
 		</div>
 	</h4>
@@ -74,6 +76,9 @@
 </Dialog>
 
 <style lang="scss">
+	img {
+		@apply w-full h-full bg-neutral-darker;
+	}
 	.layout {
 		grid-template: 1fr auto auto / auto 6em 6em;
 	}

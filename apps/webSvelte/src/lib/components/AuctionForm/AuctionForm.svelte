@@ -78,12 +78,12 @@
 				<a
 					use:press
 					href="/collection/{collectionAddress}"
-					tabindex="-1"
-					use:overflowingClass
-					class="min-w-0 w-fit overflowing:mask-right"
+					class="inline-flex text-lg text-neutral"
 				>
-					<h4>{collectionName}</h4>
-					<ArrowUpRightIcon class="w-4 h-4 flex-none" />
+					<h5>
+						{collectionName}
+						<ArrowUpRightIcon class="w-4 h-4 flex-none self-center" />
+					</h5>
 				</a>
 			</div>
 			<div>
@@ -142,6 +142,9 @@
 </Form>
 
 <style lang="scss">
+	img {
+		@apply w-full h-full bg-neutral-darker;
+	}
 	.card {
 		* {
 			contain: none;

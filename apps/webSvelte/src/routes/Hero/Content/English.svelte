@@ -133,7 +133,7 @@
 				<NumberField
 					label="Bid Amount"
 					name="amount"
-					min={maxBid}
+					min={maxBid || 0}
 					max={balance ? Number(balance) : 0}
 					bind:value={mybid}
 					step={1e-6}

@@ -53,8 +53,6 @@
 		@apply fixed m-auto border-none ring-2 ring-primary text-neutral
         	bg-card rounded-md shadow-primary/20 shadow-lg;
 		&::backdrop {
-			pointer-events: none;
-
 			@apply bg-background-darker/80;
 
 			animation: fade 0.2s ease-out;

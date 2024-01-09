@@ -31,7 +31,7 @@ importers:
         version: 0.1.1-develop.340(@proto-kit/common@0.1.1-develop.340)(@proto-kit/protocol@0.1.1-develop.340)(o1js@0.13.1)(tsyringe@4.8.0)
       '@proto-kit/sdk':
         specifier: latest
-        version: 0.1.1-develop.340(@proto-kit/api@0.1.1-develop.340)(@proto-kit/common@0.1.1-develop.340)(@proto-kit/module@0.1.1-develop.340)(@proto-kit/protocol@0.1.1-develop.340)(@proto-kit/sequencer@0.1.1-develop.340)(graphql@16.8.1)(o1js@0.13.1)(reflect-metadata@0.1.13)(tsyringe@4.8.0)
+        version: 0.1.1-develop.340(@proto-kit/api@0.1.1-develop.340)(@proto-kit/common@0.1.1-develop.340)(@proto-kit/module@0.1.1-develop.340)(@proto-kit/protocol@0.1.1-develop.340)(@proto-kit/sequencer@0.1.1-develop.340)(graphql@16.6.0)(o1js@0.13.1)(reflect-metadata@0.1.13)(tsyringe@4.8.0)
       '@proto-kit/sequencer':
         specifier: latest
         version: 0.1.1-develop.340(@proto-kit/common@0.1.1-develop.340)(@proto-kit/module@0.1.1-develop.340)(@proto-kit/protocol@0.1.1-develop.340)(o1js@0.13.1)(tsyringe@4.8.0)
@@ -264,7 +264,7 @@ importers:
         version: 0.1.1-develop.340(@proto-kit/common@0.1.1-develop.340)(o1js@0.13.1)(tsyringe@4.8.0)
       '@proto-kit/sdk':
         specifier: latest
-        version: 0.1.1-develop.340(@proto-kit/api@0.1.1-develop.340)(@proto-kit/common@0.1.1-develop.340)(@proto-kit/module@0.1.1-develop.340)(@proto-kit/protocol@0.1.1-develop.340)(@proto-kit/sequencer@0.1.1-develop.340)(graphql@16.8.1)(o1js@0.13.1)(reflect-metadata@0.1.13)(tsyringe@4.8.0)
+        version: 0.1.1-develop.340(@proto-kit/api@0.1.1-develop.340)(@proto-kit/common@0.1.1-develop.340)(@proto-kit/module@0.1.1-develop.340)(@proto-kit/protocol@0.1.1-develop.340)(@proto-kit/sequencer@0.1.1-develop.340)(graphql@16.6.0)(o1js@0.13.1)(reflect-metadata@0.1.13)(tsyringe@4.8.0)
       '@proto-kit/sequencer':
         specifier: latest
         version: 0.1.1-develop.340(@proto-kit/common@0.1.1-develop.340)(@proto-kit/module@0.1.1-develop.340)(@proto-kit/protocol@0.1.1-develop.340)(o1js@0.13.1)(tsyringe@4.8.0)
@@ -409,6 +409,17 @@ importers:
   packages/tsconfig: {}
 
 packages:
+
+  /@0no-co/graphql.web@1.0.4(graphql@16.6.0):
+    resolution: {integrity: sha512-W3ezhHGfO0MS1PtGloaTpg0PbaT8aZSmmaerL7idtU5F7oCI+uu25k+MsMS31BVFlp4aMkHSrNRxiD72IlK8TA==}
+    peerDependencies:
+      graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
+    peerDependenciesMeta:
+      graphql:
+        optional: true
+    dependencies:
+      graphql: 16.6.0
+    dev: false
 
   /@0no-co/graphql.web@1.0.4(graphql@16.8.1):
     resolution: {integrity: sha512-W3ezhHGfO0MS1PtGloaTpg0PbaT8aZSmmaerL7idtU5F7oCI+uu25k+MsMS31BVFlp4aMkHSrNRxiD72IlK8TA==}
@@ -2861,7 +2872,7 @@ packages:
       '@proto-kit/common': 0.1.1-develop.340(o1js@0.13.1)(tsyringe@4.8.0)
       '@proto-kit/module': 0.1.1-develop.340(@proto-kit/common@0.1.1-develop.340)(@proto-kit/protocol@0.1.1-develop.340)(o1js@0.13.1)(tsyringe@4.8.0)
       '@proto-kit/protocol': 0.1.1-develop.340(@proto-kit/common@0.1.1-develop.340)(o1js@0.13.1)(tsyringe@4.8.0)
-      '@proto-kit/sdk': 0.1.1-develop.340(@proto-kit/api@0.1.1-develop.340)(@proto-kit/common@0.1.1-develop.340)(@proto-kit/module@0.1.1-develop.340)(@proto-kit/protocol@0.1.1-develop.340)(@proto-kit/sequencer@0.1.1-develop.340)(graphql@16.8.1)(o1js@0.13.1)(reflect-metadata@0.1.13)(tsyringe@4.8.0)
+      '@proto-kit/sdk': 0.1.1-develop.340(@proto-kit/api@0.1.1-develop.340)(@proto-kit/common@0.1.1-develop.340)(@proto-kit/module@0.1.1-develop.340)(@proto-kit/protocol@0.1.1-develop.340)(@proto-kit/sequencer@0.1.1-develop.340)(graphql@16.6.0)(o1js@0.13.1)(reflect-metadata@0.1.13)(tsyringe@4.8.0)
       '@proto-kit/sequencer': 0.1.1-develop.340(@proto-kit/common@0.1.1-develop.340)(@proto-kit/module@0.1.1-develop.340)(@proto-kit/protocol@0.1.1-develop.340)(o1js@0.13.1)(tsyringe@4.8.0)
       '@types/yargs': 17.0.29
       figlet: 1.7.0
@@ -2923,6 +2934,34 @@ packages:
       reflect-metadata: 0.1.13
       ts-mixer: 6.0.3
       tsyringe: 4.8.0
+    dev: false
+
+  /@proto-kit/sdk@0.1.1-develop.340(@proto-kit/api@0.1.1-develop.340)(@proto-kit/common@0.1.1-develop.340)(@proto-kit/module@0.1.1-develop.340)(@proto-kit/protocol@0.1.1-develop.340)(@proto-kit/sequencer@0.1.1-develop.340)(graphql@16.6.0)(o1js@0.13.1)(reflect-metadata@0.1.13)(tsyringe@4.8.0):
+    resolution: {integrity: sha512-oeJ9wzWfsxwSgU+fwuSTFzUp2XfwklB/SSFgyUzUYd9ZxlG5CjuSNlHlfN0Ng1DbDgP3bz6vMDSAs+s+busWpg==}
+    peerDependencies:
+      '@proto-kit/api': '*'
+      '@proto-kit/common': '*'
+      '@proto-kit/module': '*'
+      '@proto-kit/protocol': '*'
+      '@proto-kit/sequencer': '*'
+      o1js: 0.13.1
+      reflect-metadata: ^0.1.13
+      tsyringe: ^4.7.0
+    dependencies:
+      '@proto-kit/api': 0.1.1-develop.340(@proto-kit/common@0.1.1-develop.340)(@proto-kit/sequencer@0.1.1-develop.340)(o1js@0.13.1)(tsyringe@4.8.0)
+      '@proto-kit/common': 0.1.1-develop.340(o1js@0.13.1)(tsyringe@4.8.0)
+      '@proto-kit/module': 0.1.1-develop.340(@proto-kit/common@0.1.1-develop.340)(@proto-kit/protocol@0.1.1-develop.340)(o1js@0.13.1)(tsyringe@4.8.0)
+      '@proto-kit/protocol': 0.1.1-develop.340(@proto-kit/common@0.1.1-develop.340)(o1js@0.13.1)(tsyringe@4.8.0)
+      '@proto-kit/sequencer': 0.1.1-develop.340(@proto-kit/common@0.1.1-develop.340)(@proto-kit/module@0.1.1-develop.340)(@proto-kit/protocol@0.1.1-develop.340)(o1js@0.13.1)(tsyringe@4.8.0)
+      '@urql/core': 4.2.0(graphql@16.6.0)
+      comlink: 4.4.1
+      lodash: 4.17.21
+      loglevel: 1.8.1
+      o1js: 0.13.1
+      reflect-metadata: 0.1.13
+      tsyringe: 4.8.0
+    transitivePeerDependencies:
+      - graphql
     dev: false
 
   /@proto-kit/sdk@0.1.1-develop.340(@proto-kit/api@0.1.1-develop.340)(@proto-kit/common@0.1.1-develop.340)(@proto-kit/module@0.1.1-develop.340)(@proto-kit/protocol@0.1.1-develop.340)(@proto-kit/sequencer@0.1.1-develop.340)(graphql@16.8.1)(o1js@0.13.1)(reflect-metadata@0.1.13)(tsyringe@4.8.0):
@@ -4317,6 +4356,15 @@ packages:
   /@ungap/structured-clone@1.2.0:
     resolution: {integrity: sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==}
     dev: true
+
+  /@urql/core@4.2.0(graphql@16.6.0):
+    resolution: {integrity: sha512-GRkZ4kECR9UohWAjiSk2UYUetco6/PqSrvyC4AH6g16tyqEShA63M232cfbE1J9XJPaGNjia14Gi+oOqzp144w==}
+    dependencies:
+      '@0no-co/graphql.web': 1.0.4(graphql@16.6.0)
+      wonka: 6.3.4
+    transitivePeerDependencies:
+      - graphql
+    dev: false
 
   /@urql/core@4.2.0(graphql@16.8.1):
     resolution: {integrity: sha512-GRkZ4kECR9UohWAjiSk2UYUetco6/PqSrvyC4AH6g16tyqEShA63M232cfbE1J9XJPaGNjia14Gi+oOqzp144w==}

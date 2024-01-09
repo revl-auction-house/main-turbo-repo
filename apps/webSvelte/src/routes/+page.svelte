@@ -2,7 +2,6 @@
 	import { onMount } from 'svelte';
 	import Footer from './Footer.svelte';
 	import Hero from './Hero/Hero.svelte';
-	// import { Toaster } from 'svelte-french-toast';
 	import type { PageData } from './$houdini';
 	import type { BannerAuctions$result } from '$houdini';
 
@@ -19,5 +18,4 @@
 <!-- a empty black space to fill the void -->
 <div class="bg-background-darker h-96"></div>
 
-<!-- <Toaster /> -->
 <Footer />

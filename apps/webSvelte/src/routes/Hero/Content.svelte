@@ -25,15 +25,13 @@
 </script>
 
 <div in:flyup out:fadeout class="absolute bottom-6 left-3 right-3 select-none">
-	<div class="gap-4 items-baseline">
+	<div class="gap-4 items-baseline typography">
 		<div class="text-5xl font-bold text-white">{name}</div>
-		<a
-			use:press
-			href="/collection/{collectionAddress}"
-			class="inline-flex text-2xl font-bold text-neutral"
-		>
-			{collectionName}
-			<ArrowUpRightIcon class="w-8 h-8 flex-none" />
+		<a use:press href="/collection/{collectionAddress}" class="inline-flex text-lg text-neutral">
+			<h3 class="pt-2 opacity-80">
+				{collectionName}
+				<ArrowUpRightIcon class="w-5 h-5 flex-none self-center" />
+			</h3>
 		</a>
 	</div>
 	<div class="flex justify-end items-end gap-4 mt-4">

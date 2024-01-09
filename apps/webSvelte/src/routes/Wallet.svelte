@@ -7,17 +7,27 @@
 	import { wallet } from '$lib/stores/wallet.store';
 	import { ArrowBigLeft, ArrowBigRight, DotIcon } from 'lucide-svelte';
 	import { onMount } from 'svelte';
+	import toast from 'svelte-french-toast';
 	import { get } from 'svelte/store';
 	// import toast from 'toast';
 
 	let publicBal: bigint | undefined;
 	let privateBal: bigint | undefined;
-	let mintTokens: () => Promise<void>;
+	let mintTokens: () => void;
 	onMount(async () => {
 		const { userBalance, load, mint } = await import('$lib/stores/balance.store');
 		load();
 		publicBal = get(userBalance); // TODO divide by 10eDECIMALS, ALso this is not reactive
-		mintTokens = mint;
+		userBalance.subscribe((bal) => {
+			publicBal = bal; //this makes its reactive now :)
+		});
+		mintTokens = () => {
+			toast.promise(mint(), {
+				loading: 'minting...',
+				success: 'minted',
+				error: 'Error minting'
+			});
+		};
 	});
 
 	let showDepositModal = false;
