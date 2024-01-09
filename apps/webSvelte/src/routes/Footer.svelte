@@ -1,9 +1,13 @@
+<script>
+	import Logo from '$lib/icons/Logo.svelte';
+</script>
+
 <footer class=" bg-background-darker">
 	<div class="mx-auto w-full max-w-screen-xl">
 		<hr class="py-2" />
 		<div class="grid grid-cols-1 gap-8 px-4 md:grid-cols-3">
 			<div>
-				<h2 class="mb-8 text-5xl font-medium text-white hidden md:block">Logo</h2>
+				<Logo />
 			</div>
 			<div class="mb-8 text-xl font-semibold text-center text-neutral-lighter">
 				<div>
