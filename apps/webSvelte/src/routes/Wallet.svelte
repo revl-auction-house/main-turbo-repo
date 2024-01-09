@@ -8,6 +8,7 @@
 	import { ArrowBigLeft, ArrowBigRight, DotIcon } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import { get } from 'svelte/store';
+	// import toast from 'toast';
 
 	let publicBal: bigint | undefined;
 	let privateBal: bigint | undefined;
@@ -15,7 +16,7 @@
 	onMount(async () => {
 		const { userBalance, load, mint } = await import('$lib/stores/balance.store');
 		load();
-		publicBal = get(userBalance); // TODO divide by 10eDECIMALS
+		publicBal = get(userBalance); // TODO divide by 10eDECIMALS, ALso this is not reactive
 		mintTokens = mint;
 	});
 

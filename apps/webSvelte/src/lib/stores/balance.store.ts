@@ -1,7 +1,7 @@
 import { writable, type Writable, get } from 'svelte/store';
 import { clientStore } from './chainClient.store';
 import { PublicKey, UInt64 } from 'o1js';
-import { wallet } from './wallet.store';
+import { wallet, addTransaction } from './wallet.store';
 
 export const userBalance: Writable<bigint | undefined> = writable();
 
@@ -31,5 +31,6 @@ export async function mint() {
 	});
 	await tx.sign();
 	await tx.send();
+	tx.transaction && addTransaction(tx.transaction?.hash().toString());
 	console.log('mint tx:', { tx });
 }

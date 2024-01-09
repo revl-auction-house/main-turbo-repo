@@ -9,7 +9,7 @@ import {
 	DepositProof,
 	WithdrawProof
 } from 'chain';
-import { wallet } from './wallet.store';
+import { wallet, addTransaction } from './wallet.store';
 
 export const privateBalance: Writable<bigint | undefined> = writable();
 const privateWalletKey = persisted('privateWalletKey', { pvKey: '' });
@@ -77,6 +77,7 @@ export async function deposit(amount: number) {
 	});
 	await tx.sign();
 	await tx.send();
+	tx.transaction && addTransaction(tx.transaction?.hash().toString());
 }
 
 /**

@@ -1,6 +1,15 @@
-import { writable, type Writable } from 'svelte/store';
+import { writable, type Writable, get } from 'svelte/store';
+// import type { PendingTransaction } from '@proto-kit/sequencer';
+// import toast from 'svelte-french-toast';
 
 export const wallet: Writable<string | undefined> = writable(undefined);
+export const pendingTransactions: Writable<
+	{
+		hash: string;
+		state: string;
+		promise: { resolve: (value: unknown) => void; reject: (reason?: string) => void };
+	}[]
+> = writable([]);
 
 export async function init() {
 	if (!mina) {
@@ -10,6 +19,40 @@ export async function init() {
 	console.log('wallet.store | init ', accounts);
 	if (Array.isArray(accounts)) wallet.set(accounts[0]);
 }
+
+async function startPooling(poolingInterval = 1000) {
+	let txns = get(pendingTransactions);
+	if (txns.length === 0) return;
+
+	// fetch txn status
+	for (const txn of get(pendingTransactions)) {
+		const response = await fetch('http://localhost:8080/graphql', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				query: `query GetTxnState {
+							transactionState(hash: "${txn.hash}")
+						}`
+			})
+		});
+		const { data } = await response.json();
+		txn.state = data?.transactionState as string;
+		console.log('txn ', txn.hash.substring(0, 8) + '... :', txn.state, data);
+		// TODO remove form pendingTransactions if not pending
+		if (txn.state === 'unknown') {
+			// TODO change to `finalized`
+			txn.promise.resolve({});
+			// remove txn from txns
+			txns = txns.filter((t) => t.hash !== txn.hash);
+		}
+		// TODO reject on failure
+	}
+	pendingTransactions.set(txns);
+	setTimeout(startPooling, poolingInterval);
+}
+
 export async function connectWallet() {
 	console.log('connectWallet');
 	if (!mina) {
@@ -21,4 +64,20 @@ export async function connectWallet() {
 	const accounts = await mina.requestAccounts();
 	console.log('connectWallet', accounts);
 	if (Array.isArray(accounts)) wallet.set(accounts[0]);
+}
+
+export function addTransaction(transactionHash: string) {
+	const txnPromise = new Promise((resolve, reject) => {
+		pendingTransactions.update((transactions) => [
+			...transactions,
+			{ hash: transactionHash, state: 'pending', promise: { resolve, reject } }
+		]);
+	});
+	txnPromise;
+	// toast.promise(txnPromise, {
+	// 	loading: 'Saving...',
+	// 	success: 'Settings saved!',
+	// 	error: 'Could not save.'
+	// });
+	startPooling();
 }

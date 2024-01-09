@@ -41,6 +41,7 @@
 		"graphql": "^16.8.1",
 		"lucide-svelte": "^0.294.0",
 		"reflect-metadata": "^0.1.13",
+		"svelte-french-toast": "^1.2.0",
 		"svelte-persisted-store": "^0.8.1",
 		"swiper": "^11.0.5"
 	},

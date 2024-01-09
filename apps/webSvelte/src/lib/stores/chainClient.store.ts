@@ -1,6 +1,6 @@
 import { client } from 'chain';
 import { get, writable } from 'svelte/store';
-import { wallet } from './wallet.store';
+import { wallet, addTransaction } from './wallet.store';
 import { PublicKey, UInt32, UInt64 } from 'o1js';
 import { NFTKey } from 'chain/dist/NFT';
 export type Client = typeof client;
@@ -36,6 +36,7 @@ export async function createEnglishAuction(
 	});
 	await tx.sign();
 	await tx.send();
+	tx.transaction && addTransaction(tx.transaction?.hash().toString());
 	console.log('createEnglishAuction tx:', { tx });
 }
 
@@ -51,5 +52,6 @@ export async function bidEnglishAuction(auctionId: number, amount: bigint) {
 	});
 	await tx.sign();
 	await tx.send();
+	tx.transaction && addTransaction(tx.transaction?.hash().toString());
 	console.log('bidEnglishAuction tx:', { tx });
 }

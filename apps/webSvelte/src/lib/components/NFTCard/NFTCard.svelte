@@ -27,8 +27,8 @@
 	<img class="row-span-3" use:press {src} loading="lazy" alt="" crossorigin="anonymous" />
 	<h4 class="col-span-2">
 		<div>
-			<div class="text-2xl font-bold text-white">{name}</div>
-			<a use:press href="/collection/{collectionAddress}" class="inline-flex text-xl text-neutral">
+			<div class="text-xl font-bold text-white">{name}</div>
+			<a use:press href="/collection/{collectionAddress}" class="inline-flex text-lg text-neutral">
 				{collectionName}
 				<ArrowUpRightIcon class="w-6 h-6 flex-none" />
 			</a>
