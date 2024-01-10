@@ -49,7 +49,11 @@
 		top: calc(100% + 0.5em);
 		right: 0;
 		min-width: 100%;
-		@apply z-50 ring-2 ring-inset ring-primary
-        bg-background rounded-xl shadow-primary/20 shadow-lg;
+		@apply z-50 ring-inset ring-1 ring-primary/30
+        bg-background rounded-xl shadow-primary/30 shadow-lg;
+		&::backdrop {
+			@apply bg-background-darker/90;
+			animation: fade 0.2s ease-out;
+		}
 	}
 </style>

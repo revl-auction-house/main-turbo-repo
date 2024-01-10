@@ -50,11 +50,10 @@
 		&::-webkit-scrollbar {
 			width: 0;
 		}
-		@apply fixed m-auto border-none ring-2 ring-primary/30 text-neutral
-        	bg-card rounded-md shadow-primary/20 shadow-lg;
+		@apply fixed m-auto border-none ring-1 ring-primary/30 text-neutral
+        	bg-card rounded-md shadow-primary/30 shadow-lg;
 		&::backdrop {
-			@apply bg-background-darker/80;
-
+			@apply bg-background-darker/90;
 			animation: fade 0.2s ease-out;
 		}
 		> div {
