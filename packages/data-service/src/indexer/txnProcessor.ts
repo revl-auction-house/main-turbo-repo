@@ -1,5 +1,3 @@
-import { PrivateKey, Poseidon } from "O1js";
-import { stringToField } from "@proto-kit/protocol";
 import { ComputedTransactionJSON } from "./types";
 import * as dotenv from "dotenv";
 import { DataSource } from "../dataSource";
@@ -12,6 +10,7 @@ import {
 } from "../dataSource/types";
 import { DutchAuction } from "../resolvers/resolvers-types";
 import { addTask, endAuction } from "./indexerJob";
+import { getMethodId } from "./helpers";
 
 export class TxnProcessor {
   private processors: {
@@ -363,10 +362,4 @@ export class TxnProcessor {
       console.log(`skiping tx with methodId: ${methodId}`);
     }
   }
-}
-
-export function getMethodId(moduleName: string, methodName: string): string {
-  return Poseidon.hash([stringToField(moduleName), stringToField(methodName)])
-    .toBigInt()
-    .toString();
 }

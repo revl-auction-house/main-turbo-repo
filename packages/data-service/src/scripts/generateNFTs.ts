@@ -8,7 +8,7 @@ dotenv.config();
 console.log(`Using ${process.env.DATA_STORAGE} for data storage`);
 const dataSource: DataSource =
   process.env.DATA_STORAGE === "mongo"
-    ? await new MongoDB().connect()
+    ? await new MongoDB().connect(true)
     : new LocalDataSource();
 await client.start();
 
@@ -78,7 +78,7 @@ for (const collection of collectionSRCs) {
       },
       { nonce: minterNonce++ }
     );
-    console.log("txn hash: ", tx.transaction?.hash().toString());
+    // console.log("txn hash: ", tx.transaction?.hash().toString());
     await tx.sign();
     await tx.send();
     // wait for next block

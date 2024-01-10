@@ -6,7 +6,7 @@
 	<div class="mx-auto w-full max-w-screen-xl">
 		<hr class="py-2" />
 		<div class="grid grid-cols-1 gap-8 px-4 md:grid-cols-3">
-			<div>
+			<div class="px-4">
 				<Logo />
 			</div>
 			<div class="mb-8 text-xl font-semibold text-center text-neutral-lighter">

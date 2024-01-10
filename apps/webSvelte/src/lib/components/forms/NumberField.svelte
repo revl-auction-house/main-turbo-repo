@@ -9,7 +9,7 @@
 	export let max = Infinity;
 	export let isValid = false;
 
-	$: isValid = value != undefined && value >= min && value <= max;
+	$: isValid = value != undefined && value > min && value <= max;
 </script>
 
 <h5 class="form-label">{label}</h5>

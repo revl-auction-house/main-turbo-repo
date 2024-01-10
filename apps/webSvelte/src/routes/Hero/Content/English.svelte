@@ -37,7 +37,9 @@
 		const { userBalance } = await import('$lib/stores/balance.store');
 		const { bidEnglishAuction } = await import('$lib/stores/chainClient.store');
 		// TODO this is not reactive
-		balance = get(userBalance)?.toString(); // TODO divide by 10eDECIMALS
+		userBalance.subscribe((value) => {
+			balance = value?.toString(); // TODO divide by 10eDECIMALS
+		});
 		placeBid = () => {
 			bidEnglishAuction(Number(auction.id), BigInt(mybid));
 		};
@@ -126,7 +128,9 @@
 					<div>
 						<h5>Remaining</h5>
 						<h3>
-							{balance || '-'}<MinaToken class="w-4 h-4" />
+							{mybid ? (Number(balance) - mybid).toFixed(3) : balance || '-'}<MinaToken
+								class="w-4 h-4"
+							/>
 						</h3>
 					</div>
 				</div>

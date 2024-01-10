@@ -25,14 +25,16 @@
 
 <div class="card typography layout">
 	<img class="row-span-3" use:press {src} loading="lazy" alt="" crossorigin="anonymous" />
-	<h4 class="col-span-2">
-		<div class="text-5xl font-bold text-white">{name}</div>
-		<a use:press href="/collection/{collectionAddress}" class="inline-flex text-lg text-neutral">
-			<h5>
-				{collectionName}
-				<ArrowUpRightIcon class="w-4 h-4 flex-none self-center" />
-			</h5>
-		</a>
+	<h4 class="col-span-3">
+		<div>
+			<div class="text-2xl font-bold text-white">{name}</div>
+			<a use:press href="/collection/{collectionAddress}" class="inline-flex text-lg text-neutral">
+				<h5>
+					{collectionName}
+					<ArrowUpRightIcon class="w-4 h-4 flex-none self-center" />
+				</h5>
+			</a>
+		</div>
 	</h4>
 
 	{#if typename == 'english'}

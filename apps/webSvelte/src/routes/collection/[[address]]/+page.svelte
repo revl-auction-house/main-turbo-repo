@@ -24,7 +24,9 @@
 		class="container mx-auto typography max-w-full flex flex-col gap-4 floating-shadow rounded-lg px-16 py-8"
 	>
 		<h1>{collection.name}</h1>
-		<h5>{collection.description || '- - -'}</h5>
+		{#if collection.description}
+			<h5>{collection.description}</h5>
+		{/if}
 		<div class="flex gap-8">
 			<div>
 				<h6>floor</h6>
@@ -54,9 +56,9 @@
 							<h4 use:overflowingClass class="flex-1 overflow-hidden mask-right">
 								{nft.name || '- - -'}
 							</h4>
-							<!-- {#if nft.locked && nft.latestAuctionId} -->
-							<a href="#" tabindex="0" class="accent p-2 rounded-lg link"> In Auction </a>
-							<!-- {/if} -->
+							{#if nft.locked && nft.latestAuctionId}
+								<a href="#" tabindex="0" class="accent p-2 rounded-lg link"> In Auction </a>
+							{/if}
 						</h4>
 					</div>
 				</div>

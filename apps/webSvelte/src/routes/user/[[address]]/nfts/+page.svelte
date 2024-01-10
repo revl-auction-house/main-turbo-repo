@@ -6,6 +6,7 @@
 	import type { UserNfts$result } from '$houdini';
 	import { onMount } from 'svelte';
 	import AuctionForm from '$lib/components/AuctionForm/AuctionForm.svelte';
+	import Footer from '../../../Footer.svelte';
 
 	export let data: PageData;
 	$: ({ UserNfts } = data);

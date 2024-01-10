@@ -13,9 +13,11 @@
 		liveAuctions: Auction[] = [],
 		endedAuctions: Auction[] = [];
 	onMount(() => {
+		// TODO make this reactive, use UserAuctions.fetch()
 		auctions = $UserAuctions.data?.auctions || [];
 		liveAuctions = auctions.filter((auction) => auction.ended === false);
 		endedAuctions = auctions.filter((auction) => auction.ended === true);
+		// TODO show finalizing when auction ends
 	});
 	let filter = 'live';
 </script>
@@ -52,7 +54,6 @@
 		</section>
 	{/if}
 {/if}
-
 <footer class="fixed bottom-0 right-0 left-0 bg-background-darker">
 	<div class="container mx-auto p-4">
 		<div class="flex items-baseline gap-3">

@@ -23,7 +23,8 @@
     "generateDummyNFTs": "pnpm run build && node --experimental-specifier-resolution=node dist/src/scripts/generateNFTs",
     "startBot": "pnpm run build && node --experimental-specifier-resolution=node dist/src/scripts/bidderBot",
     "startIndexerJob": "pnpm run build && node --experimental-specifier-resolution=node dist/src/indexer/indexerJob",
-    "codegen": "graphql-codegen"
+    "codegen": "graphql-codegen",
+    "testDB": "pnpm run build && node --experimental-specifier-resolution=node dist/src/scripts/test"
   },
   "dependencies": {
     "dotenv": "^16.3.1",

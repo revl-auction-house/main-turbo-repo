@@ -5,7 +5,7 @@
 import { localHostClient as client } from "chain";
 import { PrivateKey, UInt64 } from "O1js";
 import { DataSource, LocalDataSource, MongoDB } from "../dataSource";
-import { getMethodId } from "../indexer/txnProcessor";
+import { getMethodId } from "../indexer/helpers";
 import * as dotenv from "dotenv";
 
 dotenv.config();
@@ -14,6 +14,9 @@ const dataSource: DataSource =
   process.env.DATA_STORAGE === "mongo"
     ? await new MongoDB().connect()
     : new LocalDataSource();
+
+console.log("starting bot");
+
 await client.start();
 const inMemorySigner = client.resolve("Signer") as any;
 const balances = client.runtime.resolve("Balances");
@@ -24,7 +27,6 @@ const pvKey = PrivateKey.fromBase58(
   "EKFPuyiVwaPNXhVRMQsykb7MCkwLw1k4888z7VnCxy7MSutYitvc"
 );
 const pubKey = pvKey.toPublicKey();
-
 inMemorySigner.config.signer = pvKey;
 
 await mintTokens(1e6);
@@ -56,7 +58,7 @@ async function start() {
                 const maxBid = (await dataSource.getAuction(auctionId))
                   ?.winningBid?.amount;
                 console.log("placing bid for auctionId: ", auctionId);
-                bid(Number(auctionId), Number(maxBid) || 100);
+                placeBid(Number(auctionId), Number(maxBid) || 100);
               }
             }, 1000 * 20);
           } else if (
@@ -65,12 +67,20 @@ async function start() {
             const [auctionId, bid] = tx.tx.argsJSON.map((arg: string) =>
               JSON.parse(arg)
             );
-            // place a higher bid after some time
-            console.log("out bidding auction: " + auctionId, bid);
-            setTimeout(async () => {
-              console.log("placing bid for auctionId: ", auctionId);
-              bid(Number(auctionId), Number(bid) + 50 || 100);
-            }, 1000 * 15);
+            const winningBid = (await dataSource.getAuction(auctionId))
+              ?.winningBid;
+            if (winningBid?.bidder !== pubKey.toBase58()) {
+              // place a higher bid after some time
+              console.log(
+                "out bidding auction: " + auctionId,
+                " with bid ",
+                bid
+              );
+              setTimeout(async () => {
+                console.log("placing bid for auctionId: ", auctionId);
+                placeBid(Number(auctionId), Number(bid) + 50 || 100);
+              }, 1000 * 15);
+            }
           }
         }
       }
@@ -156,7 +166,7 @@ async function fetchChainHeight(
   return data.network.block.height;
 }
 
-async function bid(id: number, amount: number) {
+async function placeBid(id: number, amount: number) {
   let tx = await client.transaction(pubKey, () => {
     auction.placeBid(UInt64.from(id), UInt64.from(amount));
   });
@@ -171,3 +181,6 @@ async function mintTokens(amt: number) {
   await tx.sign();
   await tx.send();
 }
+// function getMethodId(arg0: string, arg1: string) {
+//   return "";
+// }
