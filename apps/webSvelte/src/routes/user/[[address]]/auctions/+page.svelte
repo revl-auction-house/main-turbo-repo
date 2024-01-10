@@ -21,20 +21,18 @@
 </script>
 
 <header-config data-floating-search-bar="false" />
-
+<section class="container mx-auto layout">
 {#if filter === 'live'}
 	{#if liveAuctions.length == 0}
 		<div class="error">Found 0 live auctions</div>
 	{:else}
 		{#each liveAuctions as auction}
-			<section class="container mx-auto layout">
 				<div
 					use:inViewClass
 					class="mx-auto transition-[opacity,transform] opacity-0 scale-90 in-view:opacity-100 in-view:scale-100"
 				>
 					<AuctionCard {auction} />
 				</div>
-			</section>
 		{/each}
 	{/if}
 {:else if filter === 'ended'}
@@ -42,14 +40,12 @@
 		<div class="error">You have no Auctions which ended</div>
 	{:else}
 		{#each endedAuctions as auction}
-			<section class="container mx-auto layout">
 				<div
 					use:inViewClass
 					class="mx-auto transition-[opacity,transform] opacity-0 scale-90 in-view:opacity-100 in-view:scale-100"
 				>
 					<AuctionCard {auction} />
 				</div>
-			</section>
 		{/each}
 	{/if}
 {/if}
