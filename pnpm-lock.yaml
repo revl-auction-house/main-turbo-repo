@@ -177,9 +177,6 @@ importers:
       swiper:
         specifier: ^11.0.5
         version: 11.0.5
-      truncate-middle:
-        specifier: ^1.0.6
-        version: 1.0.6
     devDependencies:
       '@aurowallet/mina-provider':
         specifier: ^1.0.1

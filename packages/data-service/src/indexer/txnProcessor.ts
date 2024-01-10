@@ -91,7 +91,6 @@ export class TxnProcessor {
     /** DutchAuction */
     this.processors[getMethodId("DutchAuctionModule", "start")] = async (
       data,
-
       blockHeight
     ) => {
       const [nftKey, startPrice, decayRate, minPrice] = data.argsJSON.map(
@@ -121,10 +120,13 @@ export class TxnProcessor {
         locked: true,
         latestAuctionId: auctionId.toString(),
       });
+      // update collection
+      this.dataSource.incrementCollectionMetrics(nftKey.collection, {
+        liveAuctionCount: 1,
+      });
     };
     this.processors[getMethodId("DutchAuctionModule", "bid")] = async (
       data,
-
       blockHeight
     ) => {
       const [auctionId] = data.argsJSON.map((arg: string) => JSON.parse(arg));
@@ -155,12 +157,16 @@ export class TxnProcessor {
         locked: false,
         owner: bidder,
       });
+      // update collection
+      // TODO update floor, volume etc
+      this.dataSource.incrementCollectionMetrics(auc?.collectionAddress!, {
+        liveAuctionCount: -1,
+      });
     };
 
     /** EnglishAuction */
     this.processors[getMethodId("EnglishAuctionModule", "start")] = async (
       data,
-
       blockHeight
     ) => {
       const [nftKey, durationStr] = data.argsJSON.map((arg: string) =>
@@ -188,6 +194,10 @@ export class TxnProcessor {
       this.dataSource.updateNFT(nftKey.collection, nftKey.id, {
         locked: true,
         latestAuctionId: auctionId.toString(),
+      });
+      // update collection
+      this.dataSource.incrementCollectionMetrics(nftKey.collection, {
+        liveAuctionCount: 1,
       });
     };
     this.processors[getMethodId("EnglishAuctionModule", "placeBid")] = async (
@@ -230,6 +240,11 @@ export class TxnProcessor {
         locked: false,
         owner: auc?.winningBid?.bidder,
       });
+      // update collection
+      // TODO update floor, volume etc
+      this.dataSource.incrementCollectionMetrics(auc?.collectionAddress!, {
+        liveAuctionCount: -1,
+      });
     };
     /** Blind Auction 1st Price */
     this.processors[getMethodId("BlindFirstPriceAuctionModule", "start")] =
@@ -263,6 +278,10 @@ export class TxnProcessor {
         this.dataSource.updateNFT(nftKey.collection, nftKey.id, {
           locked: true,
           latestAuctionId: auctionId.toString(),
+        });
+        // update collection
+        this.dataSource.incrementCollectionMetrics(nftKey.collection, {
+          liveAuctionCount: 1,
         });
       };
     this.processors[
@@ -300,6 +319,7 @@ export class TxnProcessor {
           },
         });
         // TODO update bids
+        // this.dataSource.createBid(revealBidProof.auctionId, bidder, bid);
       };
     this.processors[getMethodId("BlindFirstPriceAuctionModule", "settle")] =
       async (data) => {
@@ -312,6 +332,11 @@ export class TxnProcessor {
         this.dataSource.updateNFT(auc?.collectionAddress!, auc?.nftIdx!, {
           locked: false,
           owner: auc?.winningBid?.bidder,
+        });
+        // update collection
+        // TODO update floor, volume etc
+        this.dataSource.incrementCollectionMetrics(auc?.collectionAddress!, {
+          liveAuctionCount: -1,
         });
       };
     // TODO Blind Second Price

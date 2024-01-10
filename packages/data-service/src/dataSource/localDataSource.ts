@@ -194,7 +194,7 @@ export class LocalDataSource implements DataSource {
     await this.writeData();
   }
 
-  async updateCollection(
+  async incrementCollectionMetrics(
     address: string,
     data: Partial<CollectionPart>
   ): Promise<void> {
@@ -202,9 +202,18 @@ export class LocalDataSource implements DataSource {
     if (!this.data.collections[address]) {
       Promise.reject("Collection not found");
     }
+    // increment the number properties of by amount specified
+    const newData: Partial<CollectionPart> = {};
+    type Metrics = keyof CollectionPart;
+    for (const key in data) {
+      if (typeof data[key as Metrics] === "number") {
+        // @ts-ignore
+        newData[key] = (this.data.collections[address][key] || 0) + data[key];
+      }
+    }
     this.data.collections[address] = {
       ...this.data.collections[address],
-      ...data,
+      ...newData,
     };
     this.dirty = true;
     await this.writeData();

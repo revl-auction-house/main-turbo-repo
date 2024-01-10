@@ -247,13 +247,17 @@ export class MongoDB implements DataSource {
       });
   }
 
-  public async updateCollection(
+  /**
+   * @param address
+   * @param data only for number type properties
+   */
+  public async incrementCollectionMetrics(
     address: string,
     data: Partial<CollectionPart>
   ): Promise<void> {
     await this.db
       .collection("collectionDetails")
-      .updateOne({ "_id.address": address }, { $set: data });
+      .updateOne({ "_id.address": address }, { $inc: data });
   }
 
   public async createAuction(id: string, data: AuctionPart): Promise<void> {

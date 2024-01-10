@@ -56,7 +56,7 @@ export interface DataSource {
   ): Promise<void>;
 
   createCollection(address: string, data: CollectionPart): Promise<void>;
-  updateCollection(
+  incrementCollectionMetrics(
     address: string,
     data: Partial<CollectionPart>
   ): Promise<void>;
