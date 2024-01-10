@@ -1,7 +1,6 @@
 import { writable, type Writable, get } from 'svelte/store';
 // import type { PendingTransaction } from '@proto-kit/sequencer';
 import toast from 'svelte-french-toast';
-
 export const wallet: Writable<string | undefined> = writable(undefined);
 export const pendingTransactions: Writable<
 	{
@@ -66,18 +65,22 @@ export async function connectWallet() {
 	if (Array.isArray(accounts)) wallet.set(accounts[0]);
 }
 
-export function addTransaction(transactionHash: string) {
+export function addTransaction(
+	transactionHash: string,
+	successMsg = 'Transaction successful',
+	onSuccess = () => {},
+	onError = () => {}
+) {
 	const txnPromise = new Promise((resolve, reject) => {
 		pendingTransactions.update((transactions) => [
 			...transactions,
 			{ hash: transactionHash, state: 'pending', promise: { resolve, reject } }
 		]);
 	});
-	txnPromise;
-	toast.promise(txnPromise, {
-		loading: 'Saving...',
-		success: 'Settings saved!',
-		error: 'Could not save.'
+	toast.promise(txnPromise.then(onSuccess).catch(onError), {
+		loading: 'Transaction sent',
+		success: successMsg,
+		error: 'Transaction failed'
 	});
 	startPooling();
 }

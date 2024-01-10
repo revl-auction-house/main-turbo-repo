@@ -3,6 +3,7 @@ import { get, writable } from 'svelte/store';
 import { wallet, addTransaction } from './wallet.store';
 import { PublicKey, UInt32, UInt64 } from 'o1js';
 import { NFTKey } from 'chain/dist/NFT';
+
 export type Client = typeof client;
 export const clientStore = writable({ loading: true, client });
 
@@ -36,7 +37,10 @@ export async function createEnglishAuction(
 	});
 	await tx.sign();
 	await tx.send();
-	tx.transaction && addTransaction(tx.transaction?.hash().toString());
+	tx.transaction &&
+		addTransaction(tx.transaction?.hash().toString(), 'Auction created', () => {
+			// TODO update UserAuctions Store ?
+		});
 	console.log('createEnglishAuction tx:', { tx });
 }
 
@@ -52,6 +56,6 @@ export async function bidEnglishAuction(auctionId: number, amount: bigint) {
 	});
 	await tx.sign();
 	await tx.send();
-	tx.transaction && addTransaction(tx.transaction?.hash().toString());
+	tx.transaction && addTransaction(tx.transaction?.hash().toString(), 'Bid was successful');
 	console.log('bidEnglishAuction tx:', { tx });
 }

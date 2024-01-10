@@ -7,9 +7,7 @@
 	import { wallet } from '$lib/stores/wallet.store';
 	import { ArrowBigLeft, ArrowBigRight, DotIcon } from 'lucide-svelte';
 	import { onMount } from 'svelte';
-	import toast from 'svelte-french-toast';
 	import { get } from 'svelte/store';
-	// import toast from 'toast';
 
 	let publicBal: bigint | undefined;
 	let privateBal: bigint | undefined;
@@ -21,13 +19,7 @@
 		userBalance.subscribe((bal) => {
 			publicBal = bal; //this makes its reactive now :)
 		});
-		mintTokens = () => {
-			toast.promise(mint(), {
-				loading: 'minting...',
-				success: 'minted',
-				error: 'Error minting'
-			});
-		};
+		mintTokens = mint;
 	});
 
 	let showDepositModal = false;

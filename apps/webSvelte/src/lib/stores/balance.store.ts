@@ -27,10 +27,14 @@ export async function mint() {
 	const client = get(clientStore).client;
 	const balances = client.runtime.resolve('Balances');
 	const tx = await client.transaction(PublicKey.fromBase58(sender), () => {
-		balances.addBalance(PublicKey.fromBase58(sender), UInt64.from(1000));
+		balances.addBalance(PublicKey.fromBase58(sender), UInt64.from(1000)); // TODO use 10^Decimals
 	});
 	await tx.sign();
 	await tx.send();
-	tx.transaction && addTransaction(tx.transaction?.hash().toString());
+	tx.transaction &&
+		addTransaction(tx.transaction?.hash().toString(), 'mint successful', () => {
+			// load userBalance
+			load();
+		});
 	console.log('mint tx:', { tx });
 }
