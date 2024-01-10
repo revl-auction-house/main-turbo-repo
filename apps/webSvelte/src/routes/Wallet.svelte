@@ -5,8 +5,9 @@
 	import NumberField from '$lib/components/forms/NumberField.svelte';
 	import MinaToken from '$lib/icons/MinaToken.svelte';
 	import { wallet } from '$lib/stores/wallet.store';
-	import { ArrowBigLeft, ArrowBigRight, DotIcon } from 'lucide-svelte';
+	import { ArrowBigLeft, ArrowBigRight, DotIcon, Heading5Icon } from 'lucide-svelte';
 	import { onMount } from 'svelte';
+	import toast from 'svelte-french-toast';
 	import { get } from 'svelte/store';
 
 	let publicBal: bigint | undefined;
@@ -22,17 +23,28 @@
 		mintTokens = mint;
 	});
 
+	//modals
 	let showDepositModal = false;
-	const openDepositModal = () => {
+	const deposit = () => {
 		showDepositModal = true;
 	};
-	let depositAmt = 0;
+	let depositAmt: number;
 
 	let showWithdrawModal = false;
-	const openWithdrawModal = () => {
+	const withdraw = () => {
 		showWithdrawModal = true;
 	};
-	let withdrawAmt = 0;
+
+	const claim = () => {
+		toast.error('Not implemented yet');
+	};
+	let withdrawAmt: number;
+
+	//tabs
+	let activeTab = 'Deposit';
+	let openTab = (tab: string) => {
+		activeTab = tab;
+	};
 </script>
 
 <div class="p-4">
@@ -42,11 +54,23 @@
 			<span>{publicBal || '---'}</span>
 		</div>
 		<div class="transfer">
-			<button use:press on:click={openDepositModal} class="hover:colored-primary">
+			<button
+				use:press
+				on:click={() => {
+					openTab('Deposit');
+				}}
+				class="hover:colored-primary"
+			>
 				<span> DEPOSIT </span>
 				<ArrowBigRight class="w-8 h-8 stroke-white fill-white flex-none" />
 			</button>
-			<button use:press on:click={openWithdrawModal} class="hover:colored-primary">
+			<button
+				use:press
+				on:click={() => {
+					openTab('Withdraw');
+				}}
+				class="hover:colored-primary"
+			>
 				<ArrowBigLeft class="w-8 h-8 stroke-white fill-white flex-none" />
 				<span> WITHDRAW </span>
 			</button>
@@ -59,28 +83,44 @@
 	<div class="mint-action">
 		<button use:press on:click={mintTokens}> Mint Free Test Tokens</button>
 	</div>
-	<!-- <div>
-		<div class="flex items-center p-4">
-			<h2 class=" text-2xl px-4">step 1:</h2>
-			Deposit, from Public Wallet
-			<button
-				use:press
-				class="hover:colored-primary bg-background-lighter shadow-lg p-2 rounded-lg flex justify-center items-center"
-			>
-				DEPOSIT
-			</button>
-		</div>
-		<div class="flex items-center p-4">
-			<h2 class=" text-2xl px-4">step 2:</h2>
-			Claim deposit after a while,<br /> wait longer for increased privacy
-			<button
-				use:press
-				class="hover:colored-primary bg-background-lighter shadow-lg p-2 rounded-lg flex justify-center items-center"
-			>
-				CLAIM
-			</button>
-		</div>
-	</div> -->
+	<div class="typography p-4 flex flex-col gap-4">
+		<hr />
+		{#if activeTab == 'Deposit'}
+			<h3>Deposit</h3>
+			<div class=" grid grid-cols-2 gap-8" style="grid-template-columns:auto 10rem;">
+				<h5 class="flex-col">
+					step 1:
+					<h4>Deposit, from Public Wallet</h4>
+				</h5>
+
+				<button use:press on:click={deposit} class="hover:colored-primary self-end">
+					<span> DEPOSIT </span>
+				</button>
+
+				<h5 class="flex-col">
+					step 2:
+					<h4>Claim deposit after a while</h4>
+					<h6>*wait longer for increased privacy</h6>
+				</h5>
+
+				<button use:press on:click={claim} class="hover:colored-primary self-end">
+					<span> CLAIM </span>
+				</button>
+			</div>
+		{:else if activeTab == 'Withdraw'}
+			<h3>Withdraw</h3>
+			<div class=" grid grid-cols-2 gap-8" style="grid-template-columns:auto 10rem;">
+				<h5 class="flex-col">
+					step 1:
+					<h4>Withdraw, to Public Wallet</h4>
+				</h5>
+
+				<button use:press on:click={withdraw} class="hover:colored-primary self-end">
+					<span> WITHDRAW </span>
+				</button>
+			</div>
+		{/if}
+	</div>
 </div>
 
 <Dialog
@@ -148,12 +188,6 @@
 		}
 		> .transfer {
 			@apply relative flex flex-col gap-2 justify-center items-center text-base font-semibold;
-			button {
-				@apply w-full bg-background-lighter shadow-lg p-2 rounded-lg flex justify-center items-center;
-				span {
-					@apply flex-1;
-				}
-			}
 		}
 		> .balance {
 			@apply flex flex-col justify-center items-center 
@@ -168,6 +202,12 @@
 		@apply m-4 flex justify-center;
 		button {
 			@apply px-6 py-3 rounded-lg colored-secondary text-base font-semibold;
+		}
+	}
+	button {
+		@apply w-full bg-background-lighter shadow-lg p-2 rounded-lg flex justify-center items-center;
+		span {
+			@apply flex-1;
 		}
 	}
 </style>

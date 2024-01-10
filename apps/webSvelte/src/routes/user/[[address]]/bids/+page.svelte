@@ -21,30 +21,30 @@
 	{#if bids.filter((b) => !b.auction.ended).length === 0}
 		<div class="error">Found 0 bids, on Live Auctions</div>
 	{/if}
-	{#each bids.filter((b) => !b.auction.ended) as bid}
-		<section class="container mx-auto layout">
+	<section class="container mx-auto layout">
+		{#each bids.filter((b) => !b.auction.ended) as bid}
 			<div
 				use:inViewClass
 				class="mx-auto transition-[opacity,transform] opacity-0 scale-90 in-view:opacity-100 in-view:scale-100"
 			>
 				<BidCard {bid} />
 			</div>
-		</section>
-	{/each}
+		{/each}
+	</section>
 {:else}
 	{#if bids.filter((b) => b.auction.ended).length === 0}
 		<div class="error">You have no past bids</div>
 	{/if}
-	{#each bids.filter((b) => b.auction.ended) as bid}
-		<section class="container mx-auto layout">
+	<section class="container mx-auto layout">
+		{#each bids.filter((b) => b.auction.ended) as bid}
 			<div
 				use:inViewClass
 				class="mx-auto transition-[opacity,transform] opacity-0 scale-90 in-view:opacity-100 in-view:scale-100"
 			>
 				<BidCard {bid} />
 			</div>
-		</section>
-	{/each}
+		{/each}
+	</section>
 {/if}
 
 <footer class="fixed bottom-0 right-0 left-0 bg-background-darker">
