@@ -218,21 +218,17 @@ export class MongoDB implements DataSource {
     idx: number,
     data: Partial<NftPart>
   ): Promise<void> {
-    await this.db
-      .collection<{
-        _id: { collectionAddress: string; index: number };
-      }>("nfts")
-      .updateOne(
-        {
-          _id: {
-            collectionAddress,
-            index: idx,
-          },
+    await this.db.collection("nfts").updateOne(
+      {
+        _id: {
+          collectionAddress,
+          index: idx,
         },
-        {
-          $set: data,
-        }
-      );
+      },
+      {
+        $set: data,
+      }
+    );
   }
 
   public async createCollection(

@@ -11,6 +11,7 @@ import {
   BlindFirstPriceAuctionPart,
 } from "../dataSource/types";
 import { DutchAuction } from "../resolvers/resolvers-types";
+import { addTask, endAuction } from "./indexerJob";
 
 export class TxnProcessor {
   private processors: {
@@ -84,7 +85,9 @@ export class TxnProcessor {
     this.processors[getMethodId("NFT", "transferSigned")] = async (data) => {
       const [to, nftKey] = data.argsJSON.map((arg: string) => JSON.parse(arg));
       // console.log("transferSigned", to, nftKey);
-      this.dataSource.updateNFT(nftKey.collection, nftKey.id, { owner: to });
+      this.dataSource.updateNFT(nftKey.collection, Number(nftKey.id), {
+        owner: to,
+      });
       console.log(nftKey);
     };
 
@@ -102,7 +105,7 @@ export class TxnProcessor {
       const auction: AuctionPart = {
         id: auctionId.toString(),
         collectionAddress: nftKey.collection,
-        nftIdx: nftKey.id,
+        nftIdx: Number(nftKey.id),
         auctionType: "dutch",
         auctionData: {
           id: auctionId.toString(),
@@ -116,7 +119,7 @@ export class TxnProcessor {
       };
       this.dataSource.createAuction(auctionId.toString(), auction);
       // update nft
-      this.dataSource.updateNFT(nftKey.collection, nftKey.id, {
+      this.dataSource.updateNFT(nftKey.collection, Number(nftKey.id), {
         locked: true,
         latestAuctionId: auctionId.toString(),
       });
@@ -178,7 +181,7 @@ export class TxnProcessor {
       const auction: AuctionPart = {
         id: auctionId.toString(),
         collectionAddress: nftKey.collection,
-        nftIdx: nftKey.id,
+        nftIdx: Number(nftKey.id),
         auctionType: "english",
         auctionData: {
           id: auctionId.toString(),
@@ -191,13 +194,18 @@ export class TxnProcessor {
       };
       this.dataSource.createAuction(auctionId.toString(), auction);
       // update nft
-      this.dataSource.updateNFT(nftKey.collection, nftKey.id, {
+      this.dataSource.updateNFT(nftKey.collection, Number(nftKey.id), {
         locked: true,
         latestAuctionId: auctionId.toString(),
       });
       // update collection
       this.dataSource.incrementCollectionMetrics(nftKey.collection, {
         liveAuctionCount: 1,
+      });
+
+      // TODO move logic to hooks
+      addTask(blockHeight + Number(durationStr), async () => {
+        await endAuction(auctionId);
       });
     };
     this.processors[getMethodId("EnglishAuctionModule", "placeBid")] = async (
@@ -259,7 +267,7 @@ export class TxnProcessor {
         const auction: AuctionPart = {
           id: auctionId.toString(),
           collectionAddress: nftKey.collection,
-          nftIdx: nftKey.id,
+          nftIdx: Number(nftKey.id),
           auctionType: "blindFirstPrice",
           auctionData: {
             id: auctionId.toString(),
@@ -275,7 +283,7 @@ export class TxnProcessor {
         };
         this.dataSource.createAuction(auctionId.toString(), auction);
         // update nft
-        this.dataSource.updateNFT(nftKey.collection, nftKey.id, {
+        this.dataSource.updateNFT(nftKey.collection, Number(nftKey.id), {
           locked: true,
           latestAuctionId: auctionId.toString(),
         });
