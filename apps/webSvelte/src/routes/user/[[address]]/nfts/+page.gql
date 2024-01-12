@@ -1,0 +1,16 @@
+query UserNfts($address: String!) {
+	nfts(owner: $address) {
+		idx
+		name
+		imgUrl
+		data
+		dataHash
+		latestAuctionId
+		locked
+		collection {
+			address
+			floorPrice
+			name
+		}
+	}
+}

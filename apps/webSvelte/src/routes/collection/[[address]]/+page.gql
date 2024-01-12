@@ -1,0 +1,19 @@
+query Collection($address: String = "") {
+	collection(address: $address) {
+		description
+		floorPrice
+		liveAuctionCount
+		name
+		volume
+		nfts {
+			data
+			dataHash
+			idx
+			imgUrl
+			locked
+			latestAuctionId
+			name
+			owner
+		}
+	}
+}

@@ -50,11 +50,20 @@ export const Query: QueryResolvers<{ dataSource: DataSource }> = {
   },
   auctions: async (
     _,
-    { creator, live = true, skip = 0, count = 10 },
+    { creator, onlyLive = true, skip = 0, count = 10 },
     { dataSource }
   ): Promise<any[]> => {
-    // console.log("query resolver | auctions: ", creator, live, skip, count);
-    return dataSource.getAuctions(creator!, live!, skip!, count!);
+    const x = dataSource.getAuctions(creator!, onlyLive!, skip!, count!);
+    console.log(
+      "query resolver | auctions: ",
+      (await x).length,
+      creator,
+      onlyLive
+    );
+    return x;
+  },
+  auction: async (_, { id }, { dataSource }): Promise<any> => {
+    return dataSource.getAuction(id);
   },
   userBids: async (
     _,
@@ -93,7 +102,10 @@ export const Auction: AuctionResolvers<{ dataSource: DataSource }> = {
   nft: async (parent: any, _, { dataSource }): Promise<any> => {
     // console.log("Auction | resolver", parent);
     if ("collectionAddress" in parent && "nftIdx" in parent) {
-      return await dataSource.getNFT(parent.collectionAddress, parent.nftIdx);
+      return await dataSource.getNFT(
+        parent.collectionAddress,
+        Number(parent.nftIdx)
+      );
     }
   },
   auctionData: async (parent: any, _, { dataSource }): Promise<any> => {

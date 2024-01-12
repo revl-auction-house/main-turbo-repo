@@ -1,5 +1,3 @@
-import { PrivateKey, Poseidon } from "O1js";
-import { stringToField } from "@proto-kit/protocol";
 import { ComputedTransactionJSON } from "./types";
 import * as dotenv from "dotenv";
 import { DataSource } from "../dataSource";
@@ -11,6 +9,8 @@ import {
   BlindFirstPriceAuctionPart,
 } from "../dataSource/types";
 import { DutchAuction } from "../resolvers/resolvers-types";
+import { addTask, endAuction } from "./indexerJob";
+import { getMethodId } from "./helpers";
 
 export class TxnProcessor {
   private processors: {
@@ -41,17 +41,22 @@ export class TxnProcessor {
     /** NFT */
     this.processors[getMethodId("NFT", "mint")] = async (data) => {
       const [to, hash] = data.argsJSON.map((arg: string) => JSON.parse(arg));
-      console.log("minting: ", to, hash);
+      // console.log("minting: ", to, hash);
       const collectionAddr = data.sender;
       const nftData = await this.dataSource.getValue(hash);
-      console.log("nftData", nftData);
+      // console.log("nftData", nftData);
       if (nftData) {
         const nftCount = await this.dataSource.getNftCount(collectionAddr);
+        console.log("nftCount", nftCount);
+        // remove las word from nftData.name
         if (nftCount === 0) {
           const collectionData: CollectionPart = {
             address: collectionAddr,
             liveAuctionCount: 0,
-            name: nftData.collectionName || nftData.name || "",
+            name:
+              nftData.collectionName ||
+              nftData.name?.split(" ").slice(0, -1).join(" ") ||
+              "",
             description:
               nftData.collectionDescription || nftData.description || "",
           };
@@ -59,17 +64,19 @@ export class TxnProcessor {
             collectionAddr,
             collectionData
           );
-          console.log("created Collection");
+          console.log("created Collection", collectionData.name);
         }
-        await this.dataSource.createNFT(collectionAddr, 0, {
-          name: nftData.name || "",
+        await this.dataSource.createNFT(collectionAddr, nftCount, {
+          name: nftData.name || nftData.title || "",
+          imgUrl:
+            nftData.img || nftData.imgUri || nftData.image || nftData.imageUri,
           dataHash: hash,
           idx: nftCount,
           locked: false,
           owner: to,
           collectionAddress: collectionAddr,
         });
-        console.log("created Nft: ", nftData.name);
+        console.log("created Nft: ", nftData.name || nftData.title);
       } else {
         console.warn("nft data not found for hash: ", hash);
       }
@@ -77,14 +84,15 @@ export class TxnProcessor {
     this.processors[getMethodId("NFT", "transferSigned")] = async (data) => {
       const [to, nftKey] = data.argsJSON.map((arg: string) => JSON.parse(arg));
       // console.log("transferSigned", to, nftKey);
-      this.dataSource.updateNFT(nftKey.collection, nftKey.id, { owner: to });
+      this.dataSource.updateNFT(nftKey.collection, Number(nftKey.id), {
+        owner: to,
+      });
       console.log(nftKey);
     };
 
     /** DutchAuction */
     this.processors[getMethodId("DutchAuctionModule", "start")] = async (
       data,
-
       blockHeight
     ) => {
       const [nftKey, startPrice, decayRate, minPrice] = data.argsJSON.map(
@@ -96,7 +104,7 @@ export class TxnProcessor {
       const auction: AuctionPart = {
         id: auctionId.toString(),
         collectionAddress: nftKey.collection,
-        nftIdx: nftKey.id,
+        nftIdx: Number(nftKey.id),
         auctionType: "dutch",
         auctionData: {
           id: auctionId.toString(),
@@ -110,13 +118,17 @@ export class TxnProcessor {
       };
       this.dataSource.createAuction(auctionId.toString(), auction);
       // update nft
-      this.dataSource.updateNFT(nftKey.collection, nftKey.id, {
+      this.dataSource.updateNFT(nftKey.collection, Number(nftKey.id), {
         locked: true,
+        latestAuctionId: auctionId.toString(),
+      });
+      // update collection
+      this.dataSource.incrementCollectionMetrics(nftKey.collection, {
+        liveAuctionCount: 1,
       });
     };
     this.processors[getMethodId("DutchAuctionModule", "bid")] = async (
       data,
-
       blockHeight
     ) => {
       const [auctionId] = data.argsJSON.map((arg: string) => JSON.parse(arg));
@@ -147,12 +159,16 @@ export class TxnProcessor {
         locked: false,
         owner: bidder,
       });
+      // update collection
+      // TODO update floor, volume etc
+      this.dataSource.incrementCollectionMetrics(auc?.collectionAddress!, {
+        liveAuctionCount: -1,
+      });
     };
 
     /** EnglishAuction */
     this.processors[getMethodId("EnglishAuctionModule", "start")] = async (
       data,
-
       blockHeight
     ) => {
       const [nftKey, durationStr] = data.argsJSON.map((arg: string) =>
@@ -160,11 +176,11 @@ export class TxnProcessor {
       );
       let auctionId = await this.dataSource.getAuctionCount();
       const creator = data.sender;
-      console.log("start Eng Auc", nftKey, nftKey.id);
+      console.log("start Eng Auc", nftKey, durationStr);
       const auction: AuctionPart = {
         id: auctionId.toString(),
         collectionAddress: nftKey.collection,
-        nftIdx: nftKey.id,
+        nftIdx: Number(nftKey.id),
         auctionType: "english",
         auctionData: {
           id: auctionId.toString(),
@@ -177,8 +193,18 @@ export class TxnProcessor {
       };
       this.dataSource.createAuction(auctionId.toString(), auction);
       // update nft
-      this.dataSource.updateNFT(nftKey.collection, nftKey.id, {
+      this.dataSource.updateNFT(nftKey.collection, Number(nftKey.id), {
         locked: true,
+        latestAuctionId: auctionId.toString(),
+      });
+      // update collection
+      this.dataSource.incrementCollectionMetrics(nftKey.collection, {
+        liveAuctionCount: 1,
+      });
+
+      // TODO move logic to hooks
+      addTask(blockHeight + Number(durationStr), async () => {
+        await endAuction(auctionId);
       });
     };
     this.processors[getMethodId("EnglishAuctionModule", "placeBid")] = async (
@@ -221,6 +247,11 @@ export class TxnProcessor {
         locked: false,
         owner: auc?.winningBid?.bidder,
       });
+      // update collection
+      // TODO update floor, volume etc
+      this.dataSource.incrementCollectionMetrics(auc?.collectionAddress!, {
+        liveAuctionCount: -1,
+      });
     };
     /** Blind Auction 1st Price */
     this.processors[getMethodId("BlindFirstPriceAuctionModule", "start")] =
@@ -235,7 +266,7 @@ export class TxnProcessor {
         const auction: AuctionPart = {
           id: auctionId.toString(),
           collectionAddress: nftKey.collection,
-          nftIdx: nftKey.id,
+          nftIdx: Number(nftKey.id),
           auctionType: "blindFirstPrice",
           auctionData: {
             id: auctionId.toString(),
@@ -251,8 +282,13 @@ export class TxnProcessor {
         };
         this.dataSource.createAuction(auctionId.toString(), auction);
         // update nft
-        this.dataSource.updateNFT(nftKey.collection, nftKey.id, {
+        this.dataSource.updateNFT(nftKey.collection, Number(nftKey.id), {
           locked: true,
+          latestAuctionId: auctionId.toString(),
+        });
+        // update collection
+        this.dataSource.incrementCollectionMetrics(nftKey.collection, {
+          liveAuctionCount: 1,
         });
       };
     this.processors[
@@ -290,6 +326,7 @@ export class TxnProcessor {
           },
         });
         // TODO update bids
+        // this.dataSource.createBid(revealBidProof.auctionId, bidder, bid);
       };
     this.processors[getMethodId("BlindFirstPriceAuctionModule", "settle")] =
       async (data) => {
@@ -302,6 +339,11 @@ export class TxnProcessor {
         this.dataSource.updateNFT(auc?.collectionAddress!, auc?.nftIdx!, {
           locked: false,
           owner: auc?.winningBid?.bidder,
+        });
+        // update collection
+        // TODO update floor, volume etc
+        this.dataSource.incrementCollectionMetrics(auc?.collectionAddress!, {
+          liveAuctionCount: -1,
         });
       };
     // TODO Blind Second Price
@@ -320,9 +362,4 @@ export class TxnProcessor {
       console.log(`skiping tx with methodId: ${methodId}`);
     }
   }
-}
-function getMethodId(moduleName: string, methodName: string): string {
-  return Poseidon.hash([stringToField(moduleName), stringToField(methodName)])
-    .toBigInt()
-    .toString();
 }

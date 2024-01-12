@@ -20,11 +20,11 @@
     "start": "node --experimental-specifier-resolution=node dist/src/server.js",
     "build-and-start": "pnpm run build && pnpm run start",
     "dev": "npm-watch build-and-start",
-    "generateDummyData": "node --experimental-specifier-resolution=node dist/src/generateDummyData",
-    "testMongo": "pnpm run build && node --experimental-specifier-resolution=node dist/src/testMongo",
-    "testChain": "pnpm run build && node --experimental-specifier-resolution=node dist/src/testChain",
+    "generateDummyNFTs": "pnpm run build && node --experimental-specifier-resolution=node dist/src/scripts/generateNFTs",
+    "startBot": "pnpm run build && node --experimental-specifier-resolution=node dist/src/scripts/bidderBot",
     "startIndexerJob": "pnpm run build && node --experimental-specifier-resolution=node dist/src/indexer/indexerJob",
-    "codegen": "graphql-codegen"
+    "codegen": "graphql-codegen",
+    "testDB": "pnpm run build && node --experimental-specifier-resolution=node dist/src/scripts/test"
   },
   "dependencies": {
     "dotenv": "^16.3.1",

@@ -1,0 +1,46 @@
+query UserAuctions($address: String!) {
+	auctions(creator: $address) {
+		auctionType
+		ended
+		startTime
+		id
+		nft {
+			name
+			imgUrl
+			idx
+			collection {
+				address
+				floorPrice
+				name
+			}
+		}
+		winningBid {
+			amount
+			bidder
+			timestamp
+		}
+		auctionData {
+			... on EnglishAuction {
+				bidCount
+				endTime
+			}
+			... on DutchAuction {
+				decayRate
+				minPrice
+				startPrice
+			}
+			... on BlindFirstPriceAuction {
+				endTime
+				revealTime
+				revealedBidCount
+				sealedBidCount
+			}
+			... on BlindSecondPriceAuction {
+				endTime
+				revealTime
+				revealedBidCount
+				sealedBidCount
+			}
+		}
+	}
+}

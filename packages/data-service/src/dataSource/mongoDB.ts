@@ -11,7 +11,6 @@ export class MongoDB implements DataSource {
     dotenv.config();
     this.client = new mongoDB.MongoClient(process.env.DB_CONN_STRING!);
     this.db = this.client.db(process.env.DB_NAME);
-    this.connectToDatabase();
   }
 
   public async getNFT(collectionAddress: string, index: number) {
@@ -190,11 +189,10 @@ export class MongoDB implements DataSource {
   }
   public async getValue(key: string): Promise<any> {
     const result = await this.db
-      .collection<{ _id: string }>("kv")
+      .collection<{ _id: string; value: any }>("kv")
       .findOne({ _id: key });
     if (result === null) return null;
-    const { _id, ...value } = result;
-    return value;
+    return { ...result.value };
   }
 
   public async createNFT(
@@ -220,21 +218,17 @@ export class MongoDB implements DataSource {
     idx: number,
     data: Partial<NftPart>
   ): Promise<void> {
-    await this.db
-      .collection<{
-        _id: { collectionAddress: string; index: number };
-      }>("nfts")
-      .updateOne(
-        {
-          _id: {
-            collectionAddress,
-            index: idx,
-          },
+    await this.db.collection("nfts").updateOne(
+      {
+        _id: {
+          collectionAddress,
+          index: idx,
         },
-        {
-          $set: data,
-        }
-      );
+      },
+      {
+        $set: data,
+      }
+    );
   }
 
   public async createCollection(
@@ -249,13 +243,17 @@ export class MongoDB implements DataSource {
       });
   }
 
-  public async updateCollection(
+  /**
+   * @param address
+   * @param data only for number type properties
+   */
+  public async incrementCollectionMetrics(
     address: string,
     data: Partial<CollectionPart>
   ): Promise<void> {
     await this.db
       .collection("collectionDetails")
-      .updateOne({ "_id.address": address }, { $set: data });
+      .updateOne({ "_id.address": address }, { $inc: data });
   }
 
   public async createAuction(id: string, data: AuctionPart): Promise<void> {
@@ -289,8 +287,13 @@ export class MongoDB implements DataSource {
     });
   }
 
-  private async connectToDatabase() {
+  public async connect(dropPrevious = false) {
     await this.client.connect();
     console.log(`Successfully connected to database: ${this.db.databaseName}`);
+    if (dropPrevious) {
+      await this.db.dropDatabase();
+      console.log("Dropped previous database");
+    }
+    return this;
   }
 }

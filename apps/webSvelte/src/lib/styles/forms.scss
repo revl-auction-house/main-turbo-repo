@@ -1,0 +1,105 @@
+@tailwind components;
+
+@layer components {
+	/* FORM RESET */
+	.form-reset {
+		all: unset;
+		input {
+			all: unset;
+			&[type='radio'] {
+				@apply hidden;
+			}
+			&[type='checkbox'] {
+				@apply hidden;
+			}
+			&[type='time'],
+			&[type='date-time'],
+			&[type='datetime-local'],
+			&[type='date'] {
+				@apply flex items-center min-w-0;
+			}
+
+			&::-webkit-datetime-edit {
+				@apply rounded-lg;
+			}
+			&::-webkit-datetime-edit-fields-wrapper {
+				@apply p-0;
+			}
+			&::-webkit-datetime-edit-text {
+				all: unset;
+			}
+			&::-webkit-datetime-edit-month-field,
+			&::-webkit-datetime-edit-day-field,
+			&::-webkit-datetime-edit-year-field,
+			&::-webkit-datetime-edit-hour-field,
+			&::-webkit-datetime-edit-minute-field {
+				all: unset;
+			}
+
+			&::-webkit-inner-spin-button {
+				@apply hidden;
+			}
+			::-webkit-outer-spin-button,
+			::-webkit-inner-spin-button {
+				-webkit-appearance: none;
+				margin: 0;
+			}
+
+			&::-webkit-calendar-picker-indicator {
+				@apply block;
+			}
+		}
+	}
+	/* LAYOUT */
+	.form-root {
+		color-scheme: dark;
+		contain: paint;
+		@apply relative grid;
+	}
+
+	.form-input-container {
+		@apply flex flex-row gap-1 p-2 mb-2;
+		> input {
+			@apply flex-1 min-w-0 h-6;
+		}
+		&:has(input:user-invalid, input:out-of-range) {
+			@apply ring-accent;
+		}
+	}
+
+	/* TYPOGRAPHY */
+	.form-label {
+		@apply text-xl font-semibold;
+	}
+}
+
+/* APPEARANCE */
+.filled {
+	@apply rounded-lg bg-white text-black;
+	&.primary {
+		@apply colored-primary text-white;
+	}
+	&.secondary {
+		@apply colored-secondary text-white;
+	}
+	&.accent {
+		@apply colored-accent text-white;
+	}
+	&:hover {
+		@apply brightness-110;
+	}
+}
+
+.outlined {
+	@apply rounded-lg ring-2 ring-inset ring-neutral-darkest;
+	&:hover {
+		@apply ring-neutral-darkest bg-neutral-darkest/20;
+	}
+	&:has(*:focus) {
+		@apply ring-neutral-lighter  bg-neutral-darkest/40;
+	}
+}
+
+.bold {
+	@apply font-bold text-lg p-2;
+}

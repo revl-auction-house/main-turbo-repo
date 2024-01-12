@@ -6,6 +6,10 @@ import { NftPart, CollectionPart, AuctionPart, BidPart } from "./types";
 const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
 
+/**
+ * - uses a local file for persistance storage
+ * ! concurrent writes not supported.
+ */
 export class LocalDataSource implements DataSource {
   private readonly filename: string;
   private dirty = false;
@@ -35,8 +39,13 @@ export class LocalDataSource implements DataSource {
     bids: [],
   };
 
-  constructor(filename = ".local_DB") {
+  constructor(readInverval = -1, filename = ".local_DB") {
     this.filename = filename;
+    if (readInverval > 0) {
+      setInterval(() => {
+        this.loaded = false;
+      }, readInverval);
+    }
   }
   public async getCollection(address: string) {
     await this.readFile();
@@ -185,7 +194,7 @@ export class LocalDataSource implements DataSource {
     await this.writeData();
   }
 
-  async updateCollection(
+  async incrementCollectionMetrics(
     address: string,
     data: Partial<CollectionPart>
   ): Promise<void> {
@@ -193,9 +202,18 @@ export class LocalDataSource implements DataSource {
     if (!this.data.collections[address]) {
       Promise.reject("Collection not found");
     }
+    // increment the number properties of by amount specified
+    const newData: Partial<CollectionPart> = {};
+    type Metrics = keyof CollectionPart;
+    for (const key in data) {
+      if (typeof data[key as Metrics] === "number") {
+        // @ts-ignore
+        newData[key] = (this.data.collections[address][key] || 0) + data[key];
+      }
+    }
     this.data.collections[address] = {
       ...this.data.collections[address],
-      ...data,
+      ...newData,
     };
     this.dirty = true;
     await this.writeData();
@@ -251,6 +269,7 @@ export class LocalDataSource implements DataSource {
   private async readFile() {
     if (this.loaded) return;
     try {
+      // console.log("Reading data from file");
       const dataString = await readFile(this.filename, "utf-8");
       this.data = JSON.parse(dataString);
       this.loaded = true;
