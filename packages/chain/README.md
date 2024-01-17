@@ -1,16 +1,9 @@
-# Protokit: Starter kit
+Contains Runtimes for English Auctions, Dutch Auctions, and even **Sealed Bid Auctions** (aka Blind Auctions) with a PrivateToken Module which can be used to hide transfer amounts and place sealed Bids.
 
-Starter kit for developing privacy enabled application chains. (zkChains)
 
-The default example contains a simple zkChain with one runtime module - `src/Balances.ts`.
-Integration tests for the Balances module can be found in `src/Balances.test.ts`.
 
-**Quick start:**
+### PrivateToken runtime.
 
-```zsh
-npx degit proto-kit/starter-kit#develop my-chain
-cd my-chain
-npm install
-npm run test:watch
-```
+One can deposit normal tokens, wait for other transactions like tornado cash to increase anonymity. Then, withdraw to a private token system, where the user balances are hidden, but unlike Zcash transfer addresses are visible and the client Wallets only needs to store the private key no other data is necessary. Also, its account based so can be easily used with other runtimes/zkApps (for instance the BlindAuctions)
 
+Check this diagram for details [Link](https://www.tldraw.com/s/v2_c_eY_wik38jtjTM9CCJEOFb?viewport=-622%2C2805%2C4334%2C2251&page=page%3ABJuSPrIoJ9Xqmd4QazqKn)
