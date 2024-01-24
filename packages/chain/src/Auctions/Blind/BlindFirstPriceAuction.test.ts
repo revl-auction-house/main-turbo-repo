@@ -29,19 +29,32 @@ import {
 import { Pickles } from "o1js/dist/node/snarky";
 import { dummyBase64Proof } from "o1js/dist/node/lib/proof_system";
 import { RevealBidProof, SealedBidProof, calcBidHash } from "./Proofs";
-import { ModuleQuery } from "@proto-kit/sequencer";
+import {
+  BlockProducerModule,
+  InMemoryDatabase,
+  LocalTaskQueue,
+  LocalTaskWorkerModule,
+  ManualBlockTrigger,
+  ModuleQuery,
+  NoopBaseLayer,
+  PrivateMempool,
+  UnprovenProducerModule,
+} from "@proto-kit/sequencer";
 import { GlobalCounter } from "../../GlobalCounter";
 
 log.setLevel("ERROR");
 
 describe("BlindFirstPriceAuction", () => {
-  let appChain: TestingAppChain<{
-    BlindFirstPriceAuctionModule: typeof BlindFirstPriceAuctionModule;
-    NFT: typeof NFT;
-    GlobalCounter: typeof GlobalCounter;
-    Balances: typeof Balances;
-    PrivateToken: typeof PrivateToken;
-  }>;
+  let appChain: TestingAppChain<
+    {
+      BlindFirstPriceAuctionModule: typeof BlindFirstPriceAuctionModule;
+      NFT: typeof NFT;
+      GlobalCounter: typeof GlobalCounter;
+      Balances: typeof Balances;
+      PrivateToken: typeof PrivateToken;
+    },
+    {}
+  >;
   let alicePrivateKey: PrivateKey;
   let alice: PublicKey;
   let bobPrivateKey: PrivateKey;
@@ -58,6 +71,7 @@ describe("BlindFirstPriceAuction", () => {
   let dummy: any;
 
   beforeAll(async () => {
+    //@ts-ignore
     appChain = TestingAppChain.fromRuntime({
       modules: {
         BlindFirstPriceAuctionModule,
@@ -66,7 +80,9 @@ describe("BlindFirstPriceAuction", () => {
         Balances,
         PrivateToken,
       },
-      config: {
+    });
+    appChain.configure({
+      Runtime: {
         BlindFirstPriceAuctionModule: {},
         NFT: {},
         GlobalCounter: {},
@@ -139,7 +155,10 @@ describe("BlindFirstPriceAuction", () => {
       await tx.sign();
       await tx.send();
       let block = await appChain.produceBlock();
-      expect(block?.txs[0].status, block?.txs[0].statusMessage).toBe(true);
+      expect(
+        block?.transactions[0].status.toBoolean(),
+        block?.transactions[0].statusMessage
+      ).toBe(true);
       const nft0Key = NFTKey.from(minter, UInt32.from(0));
       let auctionId: UInt64 = UInt64.from(1);
       // minter starts an Auction
@@ -153,7 +172,10 @@ describe("BlindFirstPriceAuction", () => {
       await tx.sign();
       await tx.send();
       block = await appChain.produceBlock();
-      expect(block?.txs[0].status, block?.txs[0].statusMessage).toBe(true);
+      expect(
+        block?.transactions[0].status.toBoolean(),
+        block?.transactions[0].statusMessage
+      ).toBe(true);
 
       let nft0 = await nftQuery.nftRecords.get(nft0Key);
       expect(nft0?.owner).toStrictEqual(minter); // minter should still be owner
@@ -184,7 +206,10 @@ describe("BlindFirstPriceAuction", () => {
         await tx.sign();
         await tx.send();
         block = await appChain.produceBlock();
-        expect(block?.txs[0].status, block?.txs[0].statusMessage).toBe(true);
+        expect(
+          block?.transactions[0].status.toBoolean(),
+          block?.transactions[0].statusMessage
+        ).toBe(true);
       }
 
       const bobSalt = Field.random();
@@ -203,7 +228,10 @@ describe("BlindFirstPriceAuction", () => {
         await tx.sign();
         await tx.send();
         block = await appChain.produceBlock();
-        expect(block?.txs[0].status, block?.txs[0].statusMessage).toBe(true);
+        expect(
+          block?.transactions[0].status.toBoolean(),
+          block?.transactions[0].statusMessage
+        ).toBe(true);
       }
 
       aliceEncBalance = await privateTokenQuery.ledger.get(alice);
@@ -226,7 +254,10 @@ describe("BlindFirstPriceAuction", () => {
         await tx.sign();
         await tx.send();
         block = await appChain.produceBlock();
-        expect(block?.txs[0].status, block?.txs[0].statusMessage).toBe(true);
+        expect(
+          block?.transactions[0].status.toBoolean(),
+          block?.transactions[0].statusMessage
+        ).toBe(true);
       }
       {
         const revealProof = await createRevealBidProof(
@@ -242,7 +273,10 @@ describe("BlindFirstPriceAuction", () => {
         await tx.sign();
         await tx.send();
         block = await appChain.produceBlock();
-        expect(block?.txs[0].status, block?.txs[0].statusMessage).toBe(true);
+        expect(
+          block?.transactions[0].status.toBoolean(),
+          block?.transactions[0].statusMessage
+        ).toBe(true);
       }
 
       aliceEncBalance = await privateTokenQuery.ledger.get(alice);
@@ -258,7 +292,10 @@ describe("BlindFirstPriceAuction", () => {
       await tx.sign();
       await tx.send();
       block = await appChain.produceBlock();
-      expect(block?.txs[0].status, block?.txs[0].statusMessage).toBe(true);
+      expect(
+        block?.transactions[0].status.toBoolean(),
+        block?.transactions[0].statusMessage
+      ).toBe(true);
 
       let minterBalance = await balanceQuery.balances.get(minter);
       expect(minterBalance?.toBigInt()).toBe(500n); // minter gets 500
@@ -354,7 +391,10 @@ describe("BlindFirstPriceAuction", () => {
     await tx.sign();
     await tx.send();
     let block = await appChain.produceBlock();
-    expect(block?.txs[0].status, block?.txs[0].statusMessage).toBe(true);
+    expect(
+      block?.transactions[0].status.toBoolean(),
+      block?.transactions[0].statusMessage
+    ).toBe(true);
     const claimNonce =
       0 | Number((await privateTokenQuery.nonces.get(publicKey))?.toBigInt());
 
@@ -381,14 +421,20 @@ describe("BlindFirstPriceAuction", () => {
     await tx.sign();
     await tx.send();
     block = await appChain.produceBlock();
-    expect(block?.txs[0].status, block?.txs[0].statusMessage).toBe(true);
+    expect(
+      block?.transactions[0].status.toBoolean(),
+      block?.transactions[0].statusMessage
+    ).toBe(true);
     // step 3: call addClaim to update ledger balance
     tx = await addClaimTxn(pvtKey, claimNonce, claimNonce == 0);
     await tx.sign();
     await tx.send();
 
     block = await appChain.produceBlock();
-    expect(block?.txs[0].status, block?.txs[0].statusMessage).toBe(true);
+    expect(
+      block?.transactions[0].status.toBoolean(),
+      block?.transactions[0].statusMessage
+    ).toBe(true);
   }
 
   async function addClaimTxn(
@@ -435,7 +481,7 @@ describe("BlindFirstPriceAuction", () => {
         owner: ownerPrivateKey.toPublicKey(),
         currentBalance,
         resultingBalance,
-        amount: claimBalance,
+        amount: claimBalance.toEncryptedBalance(),
       },
       maxProofsVerified: 2,
     });

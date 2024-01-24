@@ -11,11 +11,12 @@ describe("NFT", () => {
       modules: {
         NFT,
       },
-      config: {
+    });
+    appChain.configure({
+      Runtime: {
         NFT: {},
       },
     });
-
     await appChain.start();
 
     const alicePrivateKey = PrivateKey.random();
@@ -44,7 +45,10 @@ describe("NFT", () => {
     await tx1.sign();
     await tx1.send();
     let block = await appChain.produceBlock();
-    expect(block?.txs[0].status, block?.txs[0].statusMessage).toBe(true);
+    expect(
+      block?.transactions[0].status.toBoolean(),
+      block?.transactions[0].statusMessage
+    ).toBe(true);
 
     const tx2 = await appChain.transaction(minter, () => {
       nft.mint(alice, nftMetadata); // mints to Alice
@@ -63,7 +67,10 @@ describe("NFT", () => {
     await tx3.send();
 
     block = await appChain.produceBlock();
-    expect(block?.txs[0].status, block?.txs[0].statusMessage).toBe(true);
+    expect(
+      block?.transactions[0].status.toBoolean(),
+      block?.transactions[0].statusMessage
+    ).toBe(true);
 
     const nft1key = NFTKey.from(minter, UInt32.from(0));
     const nft2key = NFTKey.from(minter, UInt32.from(1));

@@ -1,10 +1,9 @@
 import { ClientAppChain } from "@proto-kit/sdk";
-import { runtime, runtimecConfig } from "./runtime";
+import { runtime, runtimeConfig } from "./runtime";
 
 const appChain = ClientAppChain.fromRuntime(runtime);
-
 appChain.configure({
-  Runtime: runtimecConfig,
+  ...appChain.config,
+  Runtime: runtimeConfig,
 });
-
 export const client = appChain;

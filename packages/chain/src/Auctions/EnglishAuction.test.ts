@@ -1,6 +1,16 @@
 import "reflect-metadata";
 import { InMemorySigner, TestingAppChain } from "@proto-kit/sdk";
-import { ModuleQuery } from "@proto-kit/sequencer";
+import {
+  BlockProducerModule,
+  InMemoryDatabase,
+  LocalTaskQueue,
+  LocalTaskWorkerModule,
+  ManualBlockTrigger,
+  ModuleQuery,
+  NoopBaseLayer,
+  PrivateMempool,
+  UnprovenProducerModule,
+} from "@proto-kit/sequencer";
 import {
   Poseidon,
   PrivateKey,
@@ -18,12 +28,15 @@ import { GlobalCounter } from "../GlobalCounter";
 log.setLevel("ERROR");
 
 describe("EnglishAuction", () => {
-  let appChain: TestingAppChain<{
-    EnglishAuctionModule: typeof EnglishAuctionModule;
-    NFT: typeof NFT;
-    GlobalCounter: typeof GlobalCounter;
-    Balances: typeof Balances;
-  }>;
+  let appChain: TestingAppChain<
+    {
+      EnglishAuctionModule: typeof EnglishAuctionModule;
+      NFT: typeof NFT;
+      GlobalCounter: typeof GlobalCounter;
+      Balances: typeof Balances;
+    },
+    {}
+  >;
   let alicePrivateKey: PrivateKey;
   let alice: PublicKey;
   let bobPrivateKey: PrivateKey;
@@ -37,6 +50,7 @@ describe("EnglishAuction", () => {
   let inMemorySigner: InMemorySigner; //TODO remove later
 
   beforeAll(async () => {
+    //@ts-ignore
     appChain = TestingAppChain.fromRuntime({
       modules: {
         EnglishAuctionModule,
@@ -44,7 +58,9 @@ describe("EnglishAuction", () => {
         GlobalCounter,
         Balances,
       },
-      config: {
+    });
+    appChain.configurePartial({
+      Runtime: {
         EnglishAuctionModule: {},
         NFT: {},
         GlobalCounter: {},
@@ -101,7 +117,10 @@ describe("EnglishAuction", () => {
     await tx.sign();
     await tx.send();
     let block = await appChain.produceBlock();
-    expect(block?.txs[0].status, block?.txs[0].statusMessage).toBe(true);
+    expect(
+      block?.transactions[0].status.toBoolean(),
+      block?.transactions[0].statusMessage
+    ).toBe(true);
 
     const nft0Key = NFTKey.from(minter, UInt32.from(0));
     let nft0 = await appChain.query.runtime.NFT.nftRecords.get(nft0Key);
@@ -116,7 +135,10 @@ describe("EnglishAuction", () => {
     await tx.sign();
     await tx.send();
     block = await appChain.produceBlock();
-    expect(block?.txs[0].status, block?.txs[0].statusMessage).toBe(true);
+    expect(
+      block?.transactions[0].status.toBoolean(),
+      block?.transactions[0].statusMessage
+    ).toBe(true);
 
     nft0 = await appChain.query.runtime.NFT.nftRecords.get(nft0Key);
     expect(nft0?.owner).toStrictEqual(minter); // minter should still be owner
@@ -131,7 +153,10 @@ describe("EnglishAuction", () => {
     await tx.sign();
     await tx.send();
     block = await appChain.produceBlock();
-    expect(block?.txs[0].status, block?.txs[0].statusMessage).toBe(true);
+    expect(
+      block?.transactions[0].status.toBoolean(),
+      block?.transactions[0].statusMessage
+    ).toBe(true);
 
     let aliceBalance = await balanceQuery.balances.get(alice);
     expect(aliceBalance?.toBigInt()).toBe(500n);
@@ -147,7 +172,10 @@ describe("EnglishAuction", () => {
     await tx.sign();
     await tx.send();
     block = await appChain.produceBlock();
-    expect(block?.txs[0].status, block?.txs[0].statusMessage).toBe(true);
+    expect(
+      block?.transactions[0].status.toBoolean(),
+      block?.transactions[0].statusMessage
+    ).toBe(true);
 
     minterBalance = await balanceQuery.balances.get(minter);
     expect(minterBalance?.toBigInt()).toBe(500n);
@@ -177,7 +205,10 @@ describe("EnglishAuction", () => {
     await tx.sign();
     await tx.send();
     let block = await appChain.produceBlock();
-    expect(block?.txs[0].status, block?.txs[0].statusMessage).toBe(true);
+    expect(
+      block?.transactions[0].status.toBoolean(),
+      block?.transactions[0].statusMessage
+    ).toBe(true);
 
     const nft0Key = NFTKey.from(minter, UInt32.from(0));
     let nft0 = await appChain.query.runtime.NFT.nftRecords.get(nft0Key);
@@ -191,7 +222,10 @@ describe("EnglishAuction", () => {
     await tx.sign();
     await tx.send();
     block = await appChain.produceBlock();
-    expect(block?.txs[0].status, block?.txs[0].statusMessage).toBe(false);
-    expect(block?.txs[0].statusMessage).toBe("Not owner of NFT");
+    expect(
+      block?.transactions[0].status.toBoolean(),
+      block?.transactions[0].statusMessage
+    ).toBe(false);
+    expect(block?.transactions[0].statusMessage).toBe("Not owner of NFT");
   });
 });

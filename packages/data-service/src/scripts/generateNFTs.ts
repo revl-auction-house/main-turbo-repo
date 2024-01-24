@@ -1,4 +1,4 @@
-import { localHostClient as client } from "chain";
+import { client } from "chain";
 import { PrivateKey, Poseidon, Encoding } from "O1js";
 import { DataSource, LocalDataSource, MongoDB } from "../dataSource";
 import axios from "axios";
@@ -6,13 +6,12 @@ import * as dotenv from "dotenv";
 
 dotenv.config();
 console.log(`Using ${process.env.DATA_STORAGE} for data storage`);
-const dataSource: DataSource =
-  process.env.DATA_STORAGE === "mongo"
-    ? await new MongoDB().connect(true)
-    : new LocalDataSource();
+// const dataSource: DataSource =
+//   process.env.DATA_STORAGE === "mongo"
+//     ? await new MongoDB().connect(true)
+//     : new LocalDataSource();
 await client.start();
-
-const inMemorySigner = client.resolve("Signer") as any;
+// const inMemorySigner = client.resolve("Signer") as any;
 const nfts = client.runtime.resolve("NFT");
 
 const ipfsGateway = "https://ipfs.io/ipfs/";
@@ -60,10 +59,10 @@ for (const collection of collectionSRCs) {
       Encoding.stringToFields(JSON.stringify(nftJson))
     );
     // step 1: upload metadata to ipfs/DB
-    dataSource.setValue(nftDataHash.toString(), nftJson);
+    // dataSource.setValue(nftDataHash.toString(), nftJson);
     // mint onchain
     const minterKey = PrivateKey.fromBase58(collection.minterPvKey);
-    inMemorySigner.config.signer = minterKey;
+    // inMemorySigner.config.signer = minterKey;
     let minterNonce = 0;
     let tx = await client.transaction(
       minterKey.toPublicKey(),
@@ -79,10 +78,11 @@ for (const collection of collectionSRCs) {
       { nonce: minterNonce++ }
     );
     // console.log("txn hash: ", tx.transaction?.hash().toString());
-    await tx.sign();
+    tx.transaction = tx.transaction?.sign(minterKey);
+    // await tx.sign();
     await tx.send();
     // wait for next block
-    await new Promise((r) => setTimeout(r, 9000));
+    await new Promise((r) => setTimeout(r, 1000));
     console.log("minted NFT: ", collection.name, id);
     id++;
   }

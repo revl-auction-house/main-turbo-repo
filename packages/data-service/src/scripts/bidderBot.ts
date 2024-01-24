@@ -3,7 +3,7 @@
  * Listens for other bids and Outbids other bids if possible
  */
 import { localHostClient as client } from "chain";
-import { PrivateKey, UInt64 } from "O1js";
+import { PrivateKey, UInt64 } from "o1js";
 import { DataSource, LocalDataSource, MongoDB } from "../dataSource";
 import { getMethodId } from "../indexer/helpers";
 import * as dotenv from "dotenv";
