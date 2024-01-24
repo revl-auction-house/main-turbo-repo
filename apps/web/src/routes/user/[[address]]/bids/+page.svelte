@@ -12,6 +12,11 @@
 	onMount(() => {
 		console.log('UserBids', $UserBids.data);
 		bids = $UserBids.data?.userBids || [];
+
+		// TODO is this overkill?
+		setInterval(() => {
+			UserBids.fetch();
+		}, 1000);
 	});
 	let filter = 'ongoing';
 </script>

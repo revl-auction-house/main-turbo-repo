@@ -5,6 +5,14 @@ import { GlobalCounter } from "./GlobalCounter";
 import { NFT } from "./NFT";
 import { PrivateToken } from "./PrivateToken/PrivateToken";
 
+export const runtimecConfig = {
+  Balances: {},
+  NFT: {},
+  // PrivateToken: {},
+  GlobalCounter: {},
+  EnglishAuctionModule: {},
+  // DutchAuctionModule: {},
+};
 export const runtime = {
   modules: {
     Balances,
@@ -14,12 +22,5 @@ export const runtime = {
     EnglishAuctionModule,
     // DutchAuctionModule,
   },
-  config: {
-    Balances: {},
-    NFT: {},
-    // PrivateToken: {},
-    GlobalCounter: {},
-    EnglishAuctionModule: {},
-    // DutchAuctionModule: {},
-  },
+  config: runtimecConfig,
 };

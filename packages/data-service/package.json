@@ -35,7 +35,6 @@
   },
   "peerDependencies": {
     "@proto-kit/protocol": "latest",
-    "o1js": "0.13.1",
     "tsyringe": "^4.7.0"
   },
   "devDependencies": {

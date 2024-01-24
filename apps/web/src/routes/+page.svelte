@@ -10,6 +10,11 @@
 	let auctions: BannerAuctions$result['auctions'] = [];
 	onMount(() => {
 		auctions = $BannerAuctions.data?.auctions || [];
+
+		// TODO is this overkill?
+		setInterval(() => {
+			BannerAuctions.fetch();
+		}, 1000);
 	});
 </script>
 

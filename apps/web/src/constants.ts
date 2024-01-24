@@ -1,4 +1,4 @@
-export const CHAIN_START_TIME = 1704664506140;
+export const CHAIN_START_TIME = 1705495897307;
 
 /**
  * 5s in ms
