@@ -48,6 +48,53 @@ export class EncryptedBalance extends Struct({
   }
 }
 
+// TODO remove for next protokit upgrade
+export class EncryptedBalance1 extends Struct({
+  publicKey1: Group,
+  cipherText1: [Field, Field],
+}) {
+  public static from(amount: UInt64, publicKey: PublicKey) {
+    return this.fromEncryptedBalance(
+      new EncryptedBalance(Encryption.encrypt(amount.toFields(), publicKey))
+    );
+  }
+
+  public static fromEncryptedBalance(balance: EncryptedBalance) {
+    return new EncryptedBalance1({
+      publicKey1: balance.publicKey,
+      cipherText1: balance.cipherText,
+    });
+  }
+  public toEncryptedBalance() {
+    return new EncryptedBalance({
+      publicKey: this.publicKey1,
+      cipherText: this.cipherText1,
+    });
+  }
+  // TODO remove later
+  static empty() {
+    return new EncryptedBalance1({
+      publicKey1: Group.zero,
+      cipherText1: [Field(0), Field(0)],
+    });
+  }
+
+  public equals(other: EncryptedBalance): Bool {
+    return this.publicKey1
+      .equals(other.publicKey)
+      .and(this.cipherText1[0].equals(other.cipherText[0]))
+      .and(this.cipherText1[1].equals(other.cipherText[1]));
+  }
+
+  public decrypt(privateKey: PrivateKey): UInt64 {
+    const encryptedBalance = {
+      publicKey: this.publicKey1,
+      cipherText: [...this.cipherText1],
+    }; // this is required to deep-copy
+    return UInt64.fromFields(Encryption.decrypt(encryptedBalance, privateKey));
+  }
+}
+
 // currentBalance == resultingBalance + amount
 export class TransferProofOutput extends Struct({
   owner: PublicKey,

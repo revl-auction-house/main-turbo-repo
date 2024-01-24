@@ -11,11 +11,12 @@ describe("Balances", () => {
       modules: {
         Balances,
       },
-      config: {
+    });
+    appChain.configure({
+      Runtime: {
         Balances: {},
       },
     });
-
     await appChain.start();
 
     const alicePrivateKey = PrivateKey.random();
@@ -36,7 +37,7 @@ describe("Balances", () => {
     let aliceBalance =
       await appChain.query.runtime.Balances.balances.get(alice);
 
-    expect(block1?.txs[0].status).toBe(true);
+    expect(block1?.transactions[0].status.toBoolean()).toBe(true);
     expect(aliceBalance?.toBigInt()).toBe(1000n);
 
     // alice transfers 100 to someone
@@ -46,7 +47,10 @@ describe("Balances", () => {
     await tx2.sign();
     await tx2.send();
     let block = await appChain.produceBlock();
-    expect(block?.txs[0].status, block?.txs[0].statusMessage).toBe(true);
+    expect(
+      block?.transactions[0].status.toBoolean(),
+      block?.transactions[0].statusMessage
+    ).toBe(true);
 
     aliceBalance = await appChain.query.runtime.Balances.balances.get(alice);
     expect(aliceBalance?.toBigInt()).toBe(900n);

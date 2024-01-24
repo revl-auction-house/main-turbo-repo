@@ -11,19 +11,32 @@ import {
 import { NFTKey, NFT } from "../NFT";
 import { DutchAuction, DutchAuctionModule } from "./DutchAuction";
 import { log } from "@proto-kit/common";
-import { ModuleQuery } from "@proto-kit/sequencer";
+import {
+  BlockProducerModule,
+  InMemoryDatabase,
+  LocalTaskQueue,
+  LocalTaskWorkerModule,
+  ManualBlockTrigger,
+  ModuleQuery,
+  NoopBaseLayer,
+  PrivateMempool,
+  UnprovenProducerModule,
+} from "@proto-kit/sequencer";
 import { Balances } from "../Balances";
 import { GlobalCounter } from "../GlobalCounter";
 
 log.setLevel("ERROR");
 
 describe("DutchAuctions", () => {
-  let appChain: TestingAppChain<{
-    DutchAuctionModule: typeof DutchAuctionModule;
-    NFT: typeof NFT;
-    GlobalCounter: typeof GlobalCounter;
-    Balances: typeof Balances;
-  }>;
+  let appChain: TestingAppChain<
+    {
+      DutchAuctionModule: typeof DutchAuctionModule;
+      NFT: typeof NFT;
+      GlobalCounter: typeof GlobalCounter;
+      Balances: typeof Balances;
+    },
+    {}
+  >;
   let alicePrivateKey: PrivateKey;
   let alice: PublicKey;
   let bobPrivateKey: PrivateKey;
@@ -36,6 +49,7 @@ describe("DutchAuctions", () => {
   let inMemorySigner: InMemorySigner; //TODO remove later
 
   beforeAll(async () => {
+    //@ts-ignore
     appChain = TestingAppChain.fromRuntime({
       modules: {
         DutchAuctionModule,
@@ -43,7 +57,9 @@ describe("DutchAuctions", () => {
         GlobalCounter,
         Balances,
       },
-      config: {
+    });
+    appChain.configure({
+      Runtime: {
         DutchAuctionModule: {},
         NFT: {},
         GlobalCounter: {},

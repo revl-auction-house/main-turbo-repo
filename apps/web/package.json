@@ -48,6 +48,7 @@
 	"peerDependencies": {
 		"@proto-kit/module": "latest",
 		"@proto-kit/sdk": "latest",
-		"@proto-kit/sequencer": "latest"
+		"@proto-kit/sequencer": "latest",
+		"o1js": "0.13.1"
 	}
 }
