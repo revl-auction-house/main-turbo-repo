@@ -26,7 +26,10 @@
 		startPrice - decayRate * Math.floor(elaspedTime / CHAIN_BLOCK_TIME),
 		minPrice
 	);
-	$: timeLeftForMinPrice = Math.max(0, (startPrice - minPrice) / (decayRate / hour) - elaspedTime);
+	$: timeLeftForMinPrice = Math.max(
+		0,
+		((startPrice - minPrice) / decayRate) * CHAIN_BLOCK_TIME - elaspedTime
+	);
 	$: balance = 100; //TODO
 
 	$: details = [
@@ -37,7 +40,7 @@
 		},
 		{
 			name: 'Current Price',
-			value: currentPrice.toPrecision(6),
+			value: currentPrice.toPrecision(4),
 			width: '8ch'
 		},
 		// {

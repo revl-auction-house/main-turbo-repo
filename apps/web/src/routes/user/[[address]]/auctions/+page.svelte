@@ -14,6 +14,10 @@
 		endedAuctions: Auction[] = [];
 	onMount(() => {
 		// TODO make this reactive, use UserAuctions.fetch()
+		setInterval(() => {
+			UserAuctions.fetch();
+		}, 1000);
+
 		auctions = $UserAuctions.data?.auctions || [];
 		liveAuctions = auctions.filter((auction) => auction.ended === false);
 		endedAuctions = auctions.filter((auction) => auction.ended === true);

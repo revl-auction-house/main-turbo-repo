@@ -14,6 +14,9 @@
 	onMount(() => {
 		console.log('UserNfts', $UserNfts.data);
 		nfts = $UserNfts.data?.nfts || [];
+		setInterval(() => {
+			UserNfts.fetch();
+		}, 1000);
 	});
 </script>
 
