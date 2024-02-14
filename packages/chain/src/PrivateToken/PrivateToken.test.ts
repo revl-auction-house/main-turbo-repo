@@ -151,7 +151,7 @@ describe("Private Token", () => {
       expect(aliceClaimBalance?.decrypt(alicePrivateKey).toBigInt()).toBe(100n);
 
       // alice addClaims
-      tx = await addClaimTxn(alicePrivateKey, 0, true);
+      tx = await addClaimTxn(alicePrivateKey, 0);
       await tx.sign();
       await tx.send();
       block = await appChain.produceBlock();
@@ -230,7 +230,7 @@ describe("Private Token", () => {
         )?.toBigInt()
       ).toBe(150n);
       // alice add's claim
-      tx = await addClaimTxn(alicePrivateKey, 1, false);
+      tx = await addClaimTxn(alicePrivateKey, 1);
       await tx.sign();
       await tx.send();
       block = await appChain.produceBlock();
@@ -299,8 +299,7 @@ describe("Private Token", () => {
 
   async function addClaimTxn(
     ownerPrivateKey: PrivateKey,
-    claimIndex: number,
-    firstClaim = false
+    claimIndex: number
   ): Promise<AppChainTransaction> {
     // set signer
     appChain.setSigner(alicePrivateKey);
@@ -347,8 +346,7 @@ describe("Private Token", () => {
     });
     // create transaction
     return appChain.transaction(ownerPrivateKey.toPublicKey(), () => {
-      if (firstClaim) privateToken.addFirstClaim(claimKey, claimProof);
-      else privateToken.addClaim(claimKey, claimProof);
+      privateToken.addClaim(claimKey, claimProof);
     });
   }
 

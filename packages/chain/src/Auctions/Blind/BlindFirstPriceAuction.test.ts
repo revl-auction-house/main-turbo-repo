@@ -426,7 +426,7 @@ describe("BlindFirstPriceAuction", () => {
       block?.transactions[0].statusMessage
     ).toBe(true);
     // step 3: call addClaim to update ledger balance
-    tx = await addClaimTxn(pvtKey, claimNonce, claimNonce == 0);
+    tx = await addClaimTxn(pvtKey, claimNonce);
     await tx.sign();
     await tx.send();
 
@@ -439,8 +439,7 @@ describe("BlindFirstPriceAuction", () => {
 
   async function addClaimTxn(
     ownerPrivateKey: PrivateKey,
-    claimIndex: number,
-    firstClaim = false
+    claimIndex: number
   ): Promise<AppChainTransaction> {
     // set signer
     appChain.setSigner(alicePrivateKey);
@@ -487,8 +486,7 @@ describe("BlindFirstPriceAuction", () => {
     });
     // create transaction
     return appChain.transaction(ownerPrivateKey.toPublicKey(), () => {
-      if (firstClaim) privateToken.addFirstClaim(claimKey, claimProof);
-      else privateToken.addClaim(claimKey, claimProof);
+      privateToken.addClaim(claimKey, claimProof);
     });
   }
 });

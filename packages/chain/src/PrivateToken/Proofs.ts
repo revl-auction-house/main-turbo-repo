@@ -1,3 +1,4 @@
+import { ToFieldable } from "@proto-kit/common";
 import {
   Bool,
   Encryption,
@@ -15,10 +16,13 @@ import {
 
 // publicKey acts like salt,
 // `Encryption.encrypt(..)` randomly generates the publicKey & is required during decryption
-export class EncryptedBalance extends Struct({
-  publicKey: Group,
-  cipherText: [Field, Field],
-}) {
+export class EncryptedBalance
+  extends Struct({
+    publicKey: Group,
+    cipherText: [Field, Field],
+  })
+  implements ToFieldable
+{
   public static from(amount: UInt64, publicKey: PublicKey) {
     return new EncryptedBalance(
       Encryption.encrypt(amount.toFields(), publicKey)
@@ -37,6 +41,10 @@ export class EncryptedBalance extends Struct({
       .equals(other.publicKey)
       .and(this.cipherText[0].equals(other.cipherText[0]))
       .and(this.cipherText[1].equals(other.cipherText[1]));
+  }
+
+  public toFields(): Field[] {
+    return this.cipherText.concat(this.publicKey.toFields());
   }
 
   public decrypt(privateKey: PrivateKey): UInt64 {
@@ -197,6 +205,7 @@ export function generateDepositProofOutput(
   const depositHash = Poseidon.hash([...amount.toFields(), r]);
   const nullifierHash = Poseidon.hash([r]);
   const [root, key] = merkelWitness.computeRootAndKey(depositHash);
+  // TODO check key == [deposit.getPath(), depositHash]
   const encryptedAmount = EncryptedBalance.from(amount, to);
   return new DepositProofOutput({
     rootHash: root,

@@ -104,68 +104,45 @@ export class PrivateToken extends RuntimeModule<unknown> {
     );
   }
 
-  @runtimeMethod()
-  public addClaim(claimKey: ClaimKey, claimProof: ClaimProof) {
-    claimProof.verify();
-    const claimProofOutput = claimProof.publicOutput;
-    // claimProof shows they can decrypt the claim
-    assert(claimKey.recipient.equals(claimProofOutput.owner)); // only intended receipent can add
-
-    /**
-     * Check that the claimProof's innitial balance matches
-     * with the known/stored balance on chain.
-     */
-    const currentBalance = this.ledger.get(claimProofOutput.owner).value;
-    assert(
-      claimProofOutput.currentBalance.equals(currentBalance),
-      "Proven encrypted balance does not match current known encrypted balance"
-    );
-    /**
-     * Update the encrypted balance stored in the ledger using
-     * the calculated values from the proof
-     */
-    this.ledger.set(claimProofOutput.owner, claimProofOutput.resultingBalance);
-    /**
-     * the Claim spend should have the same balance as in the claimProof
-     */
-    const claim = this.claims.get(claimKey).value;
-    assert(
-      claim.equals(claimProofOutput.amount),
-      "claim amount does not match claimProof amount"
-    );
-    // update the claim to prevent double spent
-    // TODO use .delete
-    this.claims.set(claimKey, EncryptedBalance1.empty());
-  }
   /**
-   * When your current balance is 0
+   * Adds the Claim amount to ledger balance.
+   * resultingBalance = currentBalance + amount
    * @param claimKey
    * @param claimProof
    */
   @runtimeMethod()
-  public addFirstClaim(claimKey: ClaimKey, claimProof: ClaimProof) {
+  public addClaim(claimKey: ClaimKey, claimProof: ClaimProof) {
     claimProof.verify();
     const claimProofOutput = claimProof.publicOutput;
     // only intended receipent can add
     assert(claimKey.recipient.equals(claimProofOutput.owner), "wrong owner");
-    // check stored balance should be undefined.
-    assert(
-      this.ledger.get(claimProofOutput.owner).isSome.not(),
-      "Not first time"
-    );
-    /**
-     * Update the encrypted balance in the ledger directly
-     * with claim amount as account starts with Zero
-     */
-    this.ledger.set(claimProofOutput.owner, claimProofOutput.amount);
-    /**
-     * the Claim spend should have the same balance as in the claimProof
-     */
+
     const claim = this.claims.get(claimKey).value;
+    //  the Claim spend should have the same balance as in the claimProof
     assert(
       claim.equals(claimProofOutput.amount),
       "claim amount does not match claimProof amount"
     );
+    const currentBalance = this.ledger.get(claimProofOutput.owner);
+    // if "first time" finalBalance = amount
+    // else finalBalance = currentBalance + amount
+    const finalBalance = Provable.if(
+      currentBalance.isSome,
+      claimProofOutput.resultingBalance,
+      claimProofOutput.amount
+    );
+    // if not "first time" then check if the proof used the correct currentBalance.
+    assert(
+      Provable.if(
+        currentBalance.isSome,
+        currentBalance.value.equals(claimProofOutput.currentBalance),
+        Bool(true)
+      ),
+      "currentBalance missmatch"
+    );
+
+    // Update the encrypted balance of the ledger
+    this.ledger.set(claimProofOutput.owner, finalBalance);
     // update the claim to prevent double spent
     // TODO use .delete
     this.claims.set(claimKey, EncryptedBalance1.empty());
