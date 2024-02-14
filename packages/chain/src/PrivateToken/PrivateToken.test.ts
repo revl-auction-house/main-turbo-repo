@@ -145,21 +145,6 @@ describe("Private Token", () => {
         block?.transactions[0].statusMessage
       ).toBe(true);
 
-      let aliceClaimBalance = await privateTokenQuery.claims.get(
-        ClaimKey.from(alice, UInt64.from(0))
-      );
-      expect(aliceClaimBalance?.decrypt(alicePrivateKey).toBigInt()).toBe(100n);
-
-      // alice addClaims
-      tx = await addClaimTxn(alicePrivateKey, 0);
-      await tx.sign();
-      await tx.send();
-      block = await appChain.produceBlock();
-      expect(
-        block?.transactions[0].status.toBoolean(),
-        block?.transactions[0].statusMessage
-      ).toBe(true);
-
       let aliceBalance = (await privateTokenQuery.ledger.get(
         alice
       )) as EncryptedBalance;
@@ -192,13 +177,38 @@ describe("Private Token", () => {
       expect(aliceBalance.decrypt(alicePrivateKey).toBigInt()).toBe(90n);
       expect(bobClaimBalance?.decrypt(bobPrivateKey).toBigInt()).toBe(10n);
 
+      // bod adds his claim to ledger
+      tx = await addClaimTxn(bobPrivateKey, 0);
+      await tx.sign();
+      await tx.send();
+      block = await appChain.produceBlock();
+      expect(
+        block?.transactions[0].status.toBoolean(),
+        block?.transactions[0].statusMessage
+      ).toBe(true);
+
+      let bobBalance = (await privateTokenQuery.ledger.get(
+        bob
+      )) as EncryptedBalance;
+      expect(bobBalance.decrypt(bobPrivateKey).toBigInt()).toBe(10n);
+      bobClaimBalance = await privateTokenQuery.claims.get(
+        ClaimKey.from(bob, UInt64.from(0))
+      );
+      expect(bobClaimBalance?.cipherText1[0].toBigInt()).toBe(0n);
+
       // alice deposits another 50
+      const r1 = Field.random();
       const depositHashProof2 = new DepositHashProof({
         proof: dummy,
         publicInput: UInt64.from(50),
-        publicOutput: generateDepositHash(UInt64.from(100), r),
+        publicOutput: generateDepositHash(UInt64.from(50), r1),
         maxProofsVerified: 2,
       });
+      appChain.setSigner(alicePrivateKey);
+      // TODO remove later when `setSigner` is working
+      const inMemorySigner = appChain.resolveOrFail("Signer", InMemorySigner);
+      inMemorySigner.config.signer = alicePrivateKey;
+
       tx = await appChain.transaction(alice, () => {
         privateToken.deposit(depositHashProof2);
       });
@@ -213,7 +223,7 @@ describe("Private Token", () => {
       tx = await addDepositTxn(
         alicePrivateKey,
         UInt64.from(50),
-        r,
+        r1,
         dummyWitness
       );
       await tx.sign();
@@ -230,14 +240,6 @@ describe("Private Token", () => {
         )?.toBigInt()
       ).toBe(150n);
       // alice add's claim
-      tx = await addClaimTxn(alicePrivateKey, 1);
-      await tx.sign();
-      await tx.send();
-      block = await appChain.produceBlock();
-      expect(
-        block?.transactions[0].status.toBoolean(),
-        block?.transactions[0].statusMessage
-      ).toBe(true);
 
       aliceBalance = (await privateTokenQuery.ledger.get(
         alice
@@ -357,7 +359,7 @@ describe("Private Token", () => {
     merkelWitness: MerkleMapWitness
   ): Promise<AppChainTransaction> {
     // set signer
-    appChain.setSigner(alicePrivateKey);
+    appChain.setSigner(ownerPrivateKey);
     // TODO remove later when `setSigner` is working
     const inMemorySigner = appChain.resolveOrFail("Signer", InMemorySigner);
     inMemorySigner.config.signer = ownerPrivateKey;
@@ -365,6 +367,20 @@ describe("Private Token", () => {
     const depositHash = Poseidon.hash([...amount.toFields(), r]);
     const nullifierHash = Poseidon.hash([r]);
     const [root, key] = merkelWitness.computeRootAndKey(depositHash);
+
+    let currentBalance = (await privateTokenQuery.ledger.get(
+      ownerPrivateKey.toPublicKey()
+    )) as EncryptedBalance;
+    if (currentBalance == undefined) {
+      currentBalance = EncryptedBalance.from(
+        UInt64.from(0),
+        ownerPrivateKey.toPublicKey()
+      );
+    }
+    const resultingBalance = EncryptedBalance.from(
+      currentBalance.decrypt(ownerPrivateKey).add(amount),
+      ownerPrivateKey.toPublicKey()
+    );
 
     // create dummy proof
     const [, dummy] = Pickles.proofOfBase64(await dummyBase64Proof(), 2);
@@ -375,6 +391,8 @@ describe("Private Token", () => {
         rootHash: root,
         nullifierHash: nullifierHash,
         to: ownerPrivateKey.toPublicKey(),
+        currentBalance: currentBalance,
+        resultingBalance: resultingBalance,
         amount: EncryptedBalance.from(amount, ownerPrivateKey.toPublicKey()),
       },
       maxProofsVerified: 2,

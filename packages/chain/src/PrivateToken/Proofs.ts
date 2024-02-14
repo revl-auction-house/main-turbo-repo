@@ -187,18 +187,22 @@ export class ClaimProof extends Experimental.ZkProgram.Proof(
 ) {}
 
 /**
- * Proves inclusion of depositHash in deposits
+ * Proves inclusion of depositHash in deposits,
+ * resultingBalance = currentBalance + amount
  */
 export class DepositProofOutput extends Struct({
   rootHash: Field,
   nullifierHash: Field,
   to: PublicKey,
-  amount: EncryptedBalance, // encrypted with 'to' address
+  resultingBalance: EncryptedBalance, // encrypted with 'to' address
+  currentBalance: EncryptedBalance, // encrypted with 'to' address
+  amount: EncryptedBalance,
 }) {}
 // depositHash = H(amount, r); nullifier = H(r); r is randomly choosen
 export function generateDepositProofOutput(
-  to: PublicKey,
+  ownerPrivateKey: PrivateKey,
   amount: UInt64,
+  currentEncryptedBalance: EncryptedBalance,
   r: Field,
   merkelWitness: MerkleMapWitness
 ): DepositProofOutput {
@@ -206,11 +210,21 @@ export function generateDepositProofOutput(
   const nullifierHash = Poseidon.hash([r]);
   const [root, key] = merkelWitness.computeRootAndKey(depositHash);
   // TODO check key == [deposit.getPath(), depositHash]
-  const encryptedAmount = EncryptedBalance.from(amount, to);
+  const owner = ownerPrivateKey.toPublicKey();
+
+  const currentBal = currentEncryptedBalance.decrypt(ownerPrivateKey);
+  const resultingEncryptedBalance = EncryptedBalance.from(
+    currentBal.add(amount),
+    owner
+  );
+  const encryptedAmount = EncryptedBalance.from(amount, owner);
+
   return new DepositProofOutput({
     rootHash: root,
     nullifierHash: nullifierHash,
-    to: to,
+    to: owner,
+    resultingBalance: resultingEncryptedBalance,
+    currentBalance: currentEncryptedBalance,
     amount: encryptedAmount,
   });
 }
@@ -218,7 +232,13 @@ export const depositProofProgram = Experimental.ZkProgram({
   publicOutput: DepositProofOutput,
   methods: {
     generate: {
-      privateInputs: [PublicKey, UInt64, Field, MerkleMapWitness],
+      privateInputs: [
+        PrivateKey,
+        UInt64,
+        EncryptedBalance,
+        Field,
+        MerkleMapWitness,
+      ],
       method: generateDepositProofOutput,
     },
   },

@@ -184,14 +184,23 @@ export class PrivateToken extends RuntimeModule<unknown> {
     // proofOutput.rootHash exists in historical hashes
 
     const to = proofOutput.to;
-    const claimKey = ClaimKey.from(to, this.nonces.get(to).value);
-    // update nounce
-    this.nonces.set(to, this.nonces.get(to).value.add(1));
-    // store the claim so it can be claimed later
-    this.claims.set(
-      claimKey,
-      EncryptedBalance1.fromEncryptedBalance(proofOutput.amount)
+    const currentBalance = this.ledger.get(to);
+    // check if the proof used the correct currentBalance.
+    assert(
+      Provable.if(
+        currentBalance.isSome,
+        currentBalance.value.equals(proofOutput.currentBalance),
+        Bool(true)
+      ),
+      "currentBalance missmatch"
     );
+    // Update the encrypted balance of the ledger
+    const finalBalance = Provable.if(
+      currentBalance.isSome,
+      proofOutput.resultingBalance,
+      proofOutput.amount
+    );
+    this.ledger.set(to, finalBalance);
   }
 
   /**
