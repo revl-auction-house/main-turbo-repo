@@ -17,12 +17,11 @@ import {
 } from "o1js";
 import {
   EncryptedBalance,
-  ClaimProof,
   DepositProof,
-  TransferProof,
   DepositHashProof,
-  WithdrawProof,
   EncryptedBalance1,
+  EncryptedSum,
+  TransferProof,
 } from "./Proofs";
 import { inject } from "tsyringe";
 import { Balances } from "../Balances";
@@ -65,33 +64,30 @@ export class PrivateToken extends RuntimeModule<unknown> {
     // this.depositNounce.set(Field(0));
   }
 
+  /**
+   * currentBalance (C) = amount (A) + resultingBalance (B)
+   */
   @runtimeMethod()
   public transfer(transferProof: TransferProof) {
     const transferProofOutput = transferProof.publicOutput;
     transferProof.verify();
+    const sender = this.transaction.sender;
     /**
      * Check that the transferProof's innitial balance matches
      * with the known/stored balance on chain.
      */
-    const currentBalance = this.ledger.get(transferProofOutput.owner).value;
+    const currentBalance = this.ledger.get(sender).value;
     assert(
       transferProofOutput.currentBalance.equals(currentBalance),
       "Proven encrypted balance does not match current known encrypted balance"
     );
     /**
      * Update the encrypted balance stored in the ledger using
-     * the calculated values from the proof
+     * the value from the proof
      */
-    this.ledger.set(
-      transferProofOutput.owner,
-      transferProofOutput.resultingBalance
-    );
+    this.ledger.set(sender, transferProofOutput.resultingBalance);
     /**
-     * At this point we have authorized the sender knows their balance,
-     * and also that it is sufficient to make this transfer.
-     *
-     * We can create a claim that will increase the recipient's balance
-     * when eventually claimed
+     * create claim for the recipient
      */
     const to = transferProofOutput.to;
     const claimKey = ClaimKey.from(to, this.nonces.get(to).value);
@@ -106,43 +102,44 @@ export class PrivateToken extends RuntimeModule<unknown> {
 
   /**
    * Adds the Claim amount to ledger balance.
-   * resultingBalance = currentBalance + amount
+   * resultingBalance (C) = amount (A) + currentBalance (B)
    * @param claimKey
    * @param claimProof
    */
   @runtimeMethod()
-  public addClaim(claimKey: ClaimKey, claimProof: ClaimProof) {
-    claimProof.verify();
-    const claimProofOutput = claimProof.publicOutput;
+  public addClaim(claimKey: ClaimKey, encProof: EncryptedSum) {
+    encProof.verify();
+    const encryptedSum = encProof.publicOutput;
+    const sender = this.transaction.sender;
     // only intended receipent can add
-    assert(claimKey.recipient.equals(claimProofOutput.owner), "wrong owner");
+    assert(claimKey.recipient.equals(sender), "wrong owner");
 
     const claim = this.claims.get(claimKey).value;
     //  the Claim spend should have the same balance as in the claimProof
     assert(
-      claim.equals(claimProofOutput.amount),
+      claim.equals(encryptedSum.encA),
       "claim amount does not match claimProof amount"
     );
-    const currentBalance = this.ledger.get(claimProofOutput.owner);
+    const currentBalance = this.ledger.get(sender);
     // if "first time" finalBalance = amount
     // else finalBalance = currentBalance + amount
     const finalBalance = Provable.if(
       currentBalance.isSome,
-      claimProofOutput.resultingBalance,
-      claimProofOutput.amount
+      encryptedSum.encC,
+      encryptedSum.encA
     );
     // if not "first time" then check if the proof used the correct currentBalance.
     assert(
       Provable.if(
         currentBalance.isSome,
-        currentBalance.value.equals(claimProofOutput.currentBalance),
+        currentBalance.value.equals(encryptedSum.encB),
         Bool(true)
       ),
       "currentBalance missmatch"
     );
 
     // Update the encrypted balance of the ledger
-    this.ledger.set(claimProofOutput.owner, finalBalance);
+    this.ledger.set(sender, finalBalance);
     // update the claim to prevent double spent
     // TODO use .delete
     this.claims.set(claimKey, EncryptedBalance1.empty());
@@ -204,25 +201,25 @@ export class PrivateToken extends RuntimeModule<unknown> {
   }
 
   /**
-   * Transter to `this.WITHDRAW_ADDRESS` to get tokens back
+   * currentBalance(C) = amount(A) + resultingBalance(B)
    */
   @runtimeMethod()
-  public withdraw(withdrawProof: WithdrawProof) {
-    const withdrawProofOutput = withdrawProof.publicOutput;
-    withdrawProof.verify();
-    // Check that the withdrawProof's innitial balance matches with on chain amount
-    const currentBalance = this.ledger.get(withdrawProofOutput.owner).value;
+  public withdraw(encProof: EncryptedSum) {
+    encProof.verify();
+    const encryptedSum = encProof.publicOutput;
+    const sender = this.transaction.sender;
+    const currentBalance = this.ledger.get(sender);
+    assert(currentBalance.isSome, "have no balance");
+    // Check that the proof's innitial balance matches with on chain amount
     assert(
-      withdrawProofOutput.currentBalance.equals(currentBalance),
-      "Proven encrypted balance does not match current known encrypted balance"
+      encryptedSum.encC.equals(currentBalance.value),
+      "proofs encrypted balance does not match currently known encrypted balance"
     );
+    assert(encryptedSum.AisRevealed, "A is not revealed");
     // Update the encrypted balance stored in the ledger
-    this.ledger.set(
-      withdrawProofOutput.owner,
-      withdrawProofOutput.resultingBalance
-    );
+    this.ledger.set(sender, encryptedSum.encB);
     // return the user Tokens
-    this.unlockBalance(withdrawProofOutput.owner, withdrawProofOutput.amount);
+    this.unlockBalance(sender, encryptedSum.A);
   }
   /**
    * to process withdrawals or to return locked funds by other runtimes

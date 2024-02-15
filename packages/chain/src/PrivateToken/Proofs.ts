@@ -8,7 +8,7 @@ import {
   MerkleMapWitness,
   Poseidon,
   PrivateKey,
-  Proof,
+  Provable,
   PublicKey,
   Struct,
   UInt64,
@@ -103,9 +103,46 @@ export class EncryptedBalance1 extends Struct({
   }
 }
 
+// a + b = c
+export class EncryptedSumOutput extends Struct({
+  encA: EncryptedBalance,
+  encB: EncryptedBalance,
+  encC: EncryptedBalance,
+  AisRevealed: Bool,
+  A: UInt64,
+}) {}
+export const EncryptedSumProgram = Experimental.ZkProgram({
+  publicOutput: EncryptedSumOutput,
+  methods: {
+    generate: {
+      privateInputs: [PrivateKey, EncryptedBalance, EncryptedBalance, Bool],
+      method: (
+        ownerKey: PrivateKey,
+        encA: EncryptedBalance,
+        encB: EncryptedBalance,
+        revealA: Bool
+      ) => {
+        const a = encA.decrypt(ownerKey);
+        const b = encB.decrypt(ownerKey);
+        const c = a.add(b);
+        const encC = EncryptedBalance.from(c, ownerKey.toPublicKey());
+        return new EncryptedSumOutput({
+          encA,
+          encB,
+          encC,
+          AisRevealed: revealA,
+          A: Provable.if(revealA, a, UInt64.zero),
+        });
+      },
+    },
+  },
+});
+export class EncryptedSum extends Experimental.ZkProgram.Proof(
+  EncryptedSumProgram
+) {}
+
 // currentBalance == resultingBalance + amount
 export class TransferProofOutput extends Struct({
-  owner: PublicKey,
   to: PublicKey,
   currentBalance: EncryptedBalance,
   resultingBalance: EncryptedBalance,
@@ -128,7 +165,6 @@ export function generateTransferProofOutput(
   );
 
   return new TransferProofOutput({
-    owner: ownerPrivateKey.toPublicKey(),
     to: to,
     currentBalance: currentEncryptedBalance,
     resultingBalance: encryptedResultingBalance,
@@ -148,43 +184,43 @@ export class TransferProof extends Experimental.ZkProgram.Proof(
   transferProofProgram
 ) {}
 
-// currentBalance + claimAmount == resultingBalance
-export class ClaimProofOutput extends Struct({
-  owner: PublicKey,
-  currentBalance: EncryptedBalance,
-  resultingBalance: EncryptedBalance,
-  amount: EncryptedBalance, // encrypted with 'owner' address
-}) {}
-export function generateClaimProofOutput(
-  ownerPrivateKey: PrivateKey,
-  currentEncryptedBalance: EncryptedBalance,
-  encryptedAmount: EncryptedBalance
-): ClaimProofOutput {
-  const currentBal = currentEncryptedBalance.decrypt(ownerPrivateKey);
-  const amount = encryptedAmount.decrypt(ownerPrivateKey);
-  const encryptedResultingBalance = EncryptedBalance.from(
-    currentBal.add(amount),
-    ownerPrivateKey.toPublicKey()
-  );
-  return new ClaimProofOutput({
-    owner: ownerPrivateKey.toPublicKey(),
-    currentBalance: currentEncryptedBalance,
-    resultingBalance: encryptedResultingBalance,
-    amount: encryptedAmount,
-  });
-}
-export const claimProofProgram = Experimental.ZkProgram({
-  publicOutput: ClaimProofOutput,
-  methods: {
-    generate: {
-      privateInputs: [PrivateKey, EncryptedBalance, EncryptedBalance],
-      method: generateClaimProofOutput,
-    },
-  },
-});
-export class ClaimProof extends Experimental.ZkProgram.Proof(
-  claimProofProgram
-) {}
+// // currentBalance + claimAmount == resultingBalance
+// export class ClaimProofOutput extends Struct({
+//   owner: PublicKey,
+//   currentBalance: EncryptedBalance,
+//   resultingBalance: EncryptedBalance,
+//   amount: EncryptedBalance, // encrypted with 'owner' address
+// }) {}
+// export function generateClaimProofOutput(
+//   ownerPrivateKey: PrivateKey,
+//   currentEncryptedBalance: EncryptedBalance,
+//   encryptedAmount: EncryptedBalance
+// ): ClaimProofOutput {
+//   const currentBal = currentEncryptedBalance.decrypt(ownerPrivateKey);
+//   const amount = encryptedAmount.decrypt(ownerPrivateKey);
+//   const encryptedResultingBalance = EncryptedBalance.from(
+//     currentBal.add(amount),
+//     ownerPrivateKey.toPublicKey()
+//   );
+//   return new ClaimProofOutput({
+//     owner: ownerPrivateKey.toPublicKey(),
+//     currentBalance: currentEncryptedBalance,
+//     resultingBalance: encryptedResultingBalance,
+//     amount: encryptedAmount,
+//   });
+// }
+// export const claimProofProgram = Experimental.ZkProgram({
+//   publicOutput: ClaimProofOutput,
+//   methods: {
+//     generate: {
+//       privateInputs: [PrivateKey, EncryptedBalance, EncryptedBalance],
+//       method: generateClaimProofOutput,
+//     },
+//   },
+// });
+// export class ClaimProof extends Experimental.ZkProgram.Proof(
+//   claimProofProgram
+// ) {}
 
 /**
  * Proves inclusion of depositHash in deposits,
@@ -269,42 +305,42 @@ export class DepositHashProof extends Experimental.ZkProgram.Proof(
 ) {}
 
 // currentBalance(enc) == resultingBalance(enc) + amount(plain text)
-export class WithdrawProofOutput extends Struct({
-  owner: PublicKey,
-  currentBalance: EncryptedBalance,
-  resultingBalance: EncryptedBalance,
-  amount: UInt64,
-}) {}
-export function generateWithdrawProofOutput(
-  ownerPrivateKey: PrivateKey,
-  currentEncryptedBalance: EncryptedBalance,
-  amount: UInt64
-): WithdrawProofOutput {
-  const currentBal = currentEncryptedBalance.decrypt(ownerPrivateKey);
-  currentBal.assertGreaterThanOrEqual(amount, "Not enough Balance");
-  const resultingBalance = currentBal.sub(amount);
+// export class WithdrawProofOutput extends Struct({
+//   owner: PublicKey,
+//   currentBalance: EncryptedBalance,
+//   resultingBalance: EncryptedBalance,
+//   amount: UInt64,
+// }) {}
+// export function generateWithdrawProofOutput(
+//   ownerPrivateKey: PrivateKey,
+//   currentEncryptedBalance: EncryptedBalance,
+//   amount: UInt64
+// ): WithdrawProofOutput {
+//   const currentBal = currentEncryptedBalance.decrypt(ownerPrivateKey);
+//   currentBal.assertGreaterThanOrEqual(amount, "Not enough Balance");
+//   const resultingBalance = currentBal.sub(amount);
 
-  const encryptedResultingBalance = EncryptedBalance.from(
-    resultingBalance,
-    ownerPrivateKey.toPublicKey()
-  );
+//   const encryptedResultingBalance = EncryptedBalance.from(
+//     resultingBalance,
+//     ownerPrivateKey.toPublicKey()
+//   );
 
-  return new WithdrawProofOutput({
-    owner: ownerPrivateKey.toPublicKey(),
-    currentBalance: currentEncryptedBalance,
-    resultingBalance: encryptedResultingBalance,
-    amount: amount,
-  });
-}
-export const withdrawProofProgram = Experimental.ZkProgram({
-  publicOutput: WithdrawProofOutput,
-  methods: {
-    generate: {
-      privateInputs: [PrivateKey, EncryptedBalance, UInt64],
-      method: generateWithdrawProofOutput,
-    },
-  },
-});
-export class WithdrawProof extends Experimental.ZkProgram.Proof(
-  withdrawProofProgram
-) {}
+//   return new WithdrawProofOutput({
+//     owner: ownerPrivateKey.toPublicKey(),
+//     currentBalance: currentEncryptedBalance,
+//     resultingBalance: encryptedResultingBalance,
+//     amount: amount,
+//   });
+// }
+// export const withdrawProofProgram = Experimental.ZkProgram({
+//   publicOutput: WithdrawProofOutput,
+//   methods: {
+//     generate: {
+//       privateInputs: [PrivateKey, EncryptedBalance, UInt64],
+//       method: generateWithdrawProofOutput,
+//     },
+//   },
+// });
+// export class WithdrawProof extends Experimental.ZkProgram.Proof(
+//   withdrawProofProgram
+// ) {}
