@@ -1,9 +1,5 @@
 import "reflect-metadata";
-import {
-  AppChainTransaction,
-  InMemorySigner,
-  TestingAppChain,
-} from "@proto-kit/sdk";
+import { AppChainTransaction, TestingAppChain } from "@proto-kit/sdk";
 import {
   Poseidon,
   PrivateKey,
@@ -67,7 +63,6 @@ describe("BlindFirstPriceAuction", () => {
   let auctionQuery: ModuleQuery<BlindFirstPriceAuctionModule>;
   let privateToken: PrivateToken;
   let privateTokenQuery: ModuleQuery<PrivateToken>;
-  let inMemorySigner: InMemorySigner; //TODO remove later
   let dummy: any;
 
   beforeAll(async () => {
@@ -90,9 +85,8 @@ describe("BlindFirstPriceAuction", () => {
         PrivateToken: {},
       },
     });
+
     await appChain.start();
-    // TODO remove later
-    inMemorySigner = appChain.resolveOrFail("Signer", InMemorySigner);
 
     [, dummy] = Pickles.proofOfBase64(await dummyBase64Proof(), 2);
 
@@ -115,7 +109,6 @@ describe("BlindFirstPriceAuction", () => {
 
     // Alice, Bob mints 1000 tokens
     appChain.setSigner(alicePrivateKey);
-    inMemorySigner.config.signer = alicePrivateKey;
     let tx = await appChain.transaction(alice, () => {
       balances.addBalance(alice, UInt64.from(1000));
     });
@@ -148,7 +141,7 @@ describe("BlindFirstPriceAuction", () => {
       );
       const minterPrivateKey = PrivateKey.random();
       const minter = minterPrivateKey.toPublicKey();
-      inMemorySigner.config.signer = minterPrivateKey; // appChain.setSigner(minterPrivateKey);
+      appChain.setSigner(minterPrivateKey);
       let tx = await appChain.transaction(minter, () => {
         nfts.mint(minter, nftMetadata); // mints to himself
       });
@@ -193,7 +186,7 @@ describe("BlindFirstPriceAuction", () => {
       const aliceSalt = Field.random();
       {
         // Alice places a sealed bid with 500
-        inMemorySigner.config.signer = alicePrivateKey; // appChain.setSigner(alicePrivateKey);
+        appChain.setSigner(alicePrivateKey);
         const sealedBidProof = await createSealedBidProof(
           alicePrivateKey,
           auctionId,
@@ -215,7 +208,7 @@ describe("BlindFirstPriceAuction", () => {
       const bobSalt = Field.random();
       {
         // Bob places a sealed bid with 400
-        inMemorySigner.config.signer = bobPrivateKey; // appChain.setSigner(bobPrivateKey);
+        appChain.setSigner(bobPrivateKey);
         const sealedBidProof = await createSealedBidProof(
           bobPrivateKey,
           auctionId,
@@ -247,7 +240,7 @@ describe("BlindFirstPriceAuction", () => {
           UInt64.from(400),
           bobSalt
         );
-        inMemorySigner.config.signer = bobPrivateKey; // appChain.setSigner(bobPrivateKey);
+        appChain.setSigner(bobPrivateKey);
         tx = await appChain.transaction(bob, async () => {
           blindAuctions.revealBid(revealProof);
         });
@@ -266,7 +259,7 @@ describe("BlindFirstPriceAuction", () => {
           UInt64.from(500),
           aliceSalt
         );
-        inMemorySigner.config.signer = alicePrivateKey; // appChain.setSigner(alicePrivateKey);
+        appChain.setSigner(alicePrivateKey);
         tx = await appChain.transaction(alice, async () => {
           blindAuctions.revealBid(revealProof);
         });
@@ -285,7 +278,7 @@ describe("BlindFirstPriceAuction", () => {
       expect(bobTokenBalance?.toBigInt()).toBe(400n); // Bob should get 400 back but in normal token form
 
       // auction settlement, anyone can call
-      inMemorySigner.config.signer = alicePrivateKey;
+      appChain.setSigner(alicePrivateKey);
       tx = await appChain.transaction(alice, () => {
         blindAuctions.settle(auctionId);
       });
@@ -315,9 +308,6 @@ describe("BlindFirstPriceAuction", () => {
   ): Promise<SealedBidProof> {
     // set signer
     appChain.setSigner(bidderPvtKey);
-    // TODO remove later when `setSigner` is working
-    const inMemorySigner = appChain.resolveOrFail("Signer", InMemorySigner);
-    inMemorySigner.config.signer = bidderPvtKey;
 
     // get bidder's balance
     const currentBalance = (await privateTokenQuery.ledger.get(
@@ -374,9 +364,6 @@ describe("BlindFirstPriceAuction", () => {
   async function convertTokenToPrivate(pvtKey: PrivateKey, amount: UInt64) {
     const r = Field.random();
     const publicKey = pvtKey.toPublicKey();
-    // TODO remove later when `setSigner` is working
-    const inMemorySigner = appChain.resolveOrFail("Signer", InMemorySigner);
-    inMemorySigner.config.signer = pvtKey;
 
     // step 1: deposit Tokens and save depositHash
     const depositHashProof = new DepositHashProof({
@@ -385,6 +372,7 @@ describe("BlindFirstPriceAuction", () => {
       publicOutput: generateDepositHash(amount, r),
       maxProofsVerified: 2,
     });
+    appChain.setSigner(pvtKey);
     let tx = await appChain.transaction(publicKey, () => {
       privateToken.deposit(depositHashProof);
     });
@@ -398,12 +386,24 @@ describe("BlindFirstPriceAuction", () => {
     const claimNonce =
       0 | Number((await privateTokenQuery.nonces.get(publicKey))?.toBigInt());
 
-    // step 2: call addDeposit to get the private tokens in a `claim`
+    // step 2: call addDeposit
     const dummyMerkelMap = new MerkleMap(); // TODO remove later when using appChain state
     const dummyWitness = dummyMerkelMap.getWitness(Field(0));
     const [root, key] = dummyWitness.computeRootAndKey(
       generateDepositHash(amount, r)
     );
+    let currentBalance = (await privateTokenQuery.ledger.get(
+      publicKey
+    )) as EncryptedBalance;
+    if (currentBalance == undefined) {
+      currentBalance = EncryptedBalance.from(UInt64.from(0), publicKey);
+    }
+
+    const resultingBalance = EncryptedBalance.from(
+      currentBalance.decrypt(pvtKey).add(amount),
+      publicKey
+    );
+
     const depositProof = new DepositProof({
       proof: dummy,
       publicInput: undefined,
@@ -411,6 +411,8 @@ describe("BlindFirstPriceAuction", () => {
         rootHash: root,
         nullifierHash: Poseidon.hash([r]),
         to: publicKey,
+        currentBalance: currentBalance,
+        resultingBalance: resultingBalance,
         amount: EncryptedBalance.from(amount, publicKey),
       },
       maxProofsVerified: 2,
@@ -425,68 +427,5 @@ describe("BlindFirstPriceAuction", () => {
       block?.transactions[0].status.toBoolean(),
       block?.transactions[0].statusMessage
     ).toBe(true);
-    // step 3: call addClaim to update ledger balance
-    tx = await addClaimTxn(pvtKey, claimNonce);
-    await tx.sign();
-    await tx.send();
-
-    block = await appChain.produceBlock();
-    expect(
-      block?.transactions[0].status.toBoolean(),
-      block?.transactions[0].statusMessage
-    ).toBe(true);
-  }
-
-  async function addClaimTxn(
-    ownerPrivateKey: PrivateKey,
-    claimIndex: number
-  ): Promise<AppChainTransaction> {
-    // set signer
-    appChain.setSigner(alicePrivateKey);
-    // TODO remove later when `setSigner` is working
-    const inMemorySigner = appChain.resolveOrFail("Signer", InMemorySigner);
-    inMemorySigner.config.signer = ownerPrivateKey;
-
-    let currentBalance = (await privateTokenQuery.ledger.get(
-      ownerPrivateKey.toPublicKey()
-    )) as EncryptedBalance;
-    if (currentBalance == undefined) {
-      currentBalance = EncryptedBalance.from(
-        UInt64.from(0),
-        ownerPrivateKey.toPublicKey()
-      );
-    }
-
-    const claimKey = ClaimKey.from(
-      ownerPrivateKey.toPublicKey(),
-      UInt64.from(claimIndex)
-    );
-    const claimBalance = await privateTokenQuery.claims.get(claimKey);
-    if (claimBalance === undefined) {
-      throw Error("have no claim balance at: " + claimKey.index.toBigInt());
-    }
-
-    // create dummy proof
-    const resultingBalance = EncryptedBalance.from(
-      currentBalance
-        .decrypt(ownerPrivateKey)
-        .add(claimBalance.decrypt(ownerPrivateKey)),
-      ownerPrivateKey.toPublicKey()
-    );
-    const claimProof = new ClaimProof({
-      proof: dummy,
-      publicInput: undefined,
-      publicOutput: {
-        owner: ownerPrivateKey.toPublicKey(),
-        currentBalance,
-        resultingBalance,
-        amount: claimBalance.toEncryptedBalance(),
-      },
-      maxProofsVerified: 2,
-    });
-    // create transaction
-    return appChain.transaction(ownerPrivateKey.toPublicKey(), () => {
-      privateToken.addClaim(claimKey, claimProof);
-    });
   }
 });

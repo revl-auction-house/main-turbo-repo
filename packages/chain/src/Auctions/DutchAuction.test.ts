@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import { InMemorySigner, TestingAppChain } from "@proto-kit/sdk";
+import { TestingAppChain } from "@proto-kit/sdk";
 import {
   Poseidon,
   PrivateKey,
@@ -46,7 +46,6 @@ describe("DutchAuctions", () => {
   let nfts: NFT;
   let nftQuery: ModuleQuery<NFT>;
   let auction: DutchAuctionModule;
-  let inMemorySigner: InMemorySigner; //TODO remove later
 
   beforeAll(async () => {
     //@ts-ignore
@@ -67,8 +66,6 @@ describe("DutchAuctions", () => {
       },
     });
     await appChain.start();
-    // TODO remove later
-    inMemorySigner = appChain.resolveOrFail("Signer", InMemorySigner);
 
     alicePrivateKey = PrivateKey.random();
     alice = alicePrivateKey.toPublicKey();
@@ -86,7 +83,6 @@ describe("DutchAuctions", () => {
 
     // Alice mints 1000 tokens
     appChain.setSigner(alicePrivateKey);
-    inMemorySigner.config.signer = alicePrivateKey;
     let tx = await appChain.transaction(alice, () => {
       balances.addBalance(alice, UInt64.from(1000));
     });
@@ -105,7 +101,7 @@ describe("DutchAuctions", () => {
         })
       )
     );
-    inMemorySigner.config.signer = bobPrivateKey; // appChain.setSigner(bobPrivateKey);
+    appChain.setSigner(bobPrivateKey);
     let tx = await appChain.transaction(bob, () => {
       nfts.mint(bob, nftMetadata); // mints to himself
     });
@@ -134,7 +130,6 @@ describe("DutchAuctions", () => {
     expect(auction0?.ended.toBoolean()).toBe(false);
 
     // alice bids after 1 blocks
-    inMemorySigner.config.signer = alicePrivateKey; // appChain.setSigner(alicePrivateKey);
     appChain.setSigner(alicePrivateKey);
     tx = await appChain.transaction(alice, () => {
       auction.bid(UInt64.from(0));

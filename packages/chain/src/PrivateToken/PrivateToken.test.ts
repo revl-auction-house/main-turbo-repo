@@ -1,9 +1,5 @@
 import "reflect-metadata";
-import {
-  AppChainTransaction,
-  TestingAppChain,
-  InMemorySigner,
-} from "@proto-kit/sdk";
+import { AppChainTransaction, TestingAppChain } from "@proto-kit/sdk";
 import { ModuleQuery } from "@proto-kit/sequencer";
 import {
   Field,
@@ -80,8 +76,6 @@ describe("Private Token", () => {
 
     // Alice mints 1000 tokens
     appChain.setSigner(alicePrivateKey);
-    const inMemorySigner = appChain.resolveOrFail("Signer", InMemorySigner);
-    inMemorySigner.config.signer = alicePrivateKey;
 
     let tx = await appChain.transaction(alice, () => {
       balances.addBalance(alice, UInt64.from(1000));
@@ -205,9 +199,6 @@ describe("Private Token", () => {
         maxProofsVerified: 2,
       });
       appChain.setSigner(alicePrivateKey);
-      // TODO remove later when `setSigner` is working
-      const inMemorySigner = appChain.resolveOrFail("Signer", InMemorySigner);
-      inMemorySigner.config.signer = alicePrivateKey;
 
       tx = await appChain.transaction(alice, () => {
         privateToken.deposit(depositHashProof2);
@@ -262,10 +253,7 @@ describe("Private Token", () => {
     amount: UInt64
   ): Promise<AppChainTransaction> {
     // set signer
-    appChain.setSigner(alicePrivateKey);
-    // TODO remove later when `setSigner` is working
-    const inMemorySigner = appChain.resolveOrFail("Signer", InMemorySigner);
-    inMemorySigner.config.signer = fromPrivateKey;
+    appChain.setSigner(fromPrivateKey);
 
     // get from's balance
     const currentBalance = (await privateTokenQuery.ledger.get(
@@ -304,10 +292,7 @@ describe("Private Token", () => {
     claimIndex: number
   ): Promise<AppChainTransaction> {
     // set signer
-    appChain.setSigner(alicePrivateKey);
-    // TODO remove later when `setSigner` is working
-    const inMemorySigner = appChain.resolveOrFail("Signer", InMemorySigner);
-    inMemorySigner.config.signer = ownerPrivateKey;
+    appChain.setSigner(ownerPrivateKey);
 
     let currentBalance = (await privateTokenQuery.ledger.get(
       ownerPrivateKey.toPublicKey()
@@ -360,9 +345,6 @@ describe("Private Token", () => {
   ): Promise<AppChainTransaction> {
     // set signer
     appChain.setSigner(ownerPrivateKey);
-    // TODO remove later when `setSigner` is working
-    const inMemorySigner = appChain.resolveOrFail("Signer", InMemorySigner);
-    inMemorySigner.config.signer = ownerPrivateKey;
 
     const depositHash = Poseidon.hash([...amount.toFields(), r]);
     const nullifierHash = Poseidon.hash([r]);
