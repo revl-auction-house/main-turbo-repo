@@ -107,9 +107,9 @@ export class PrivateToken extends RuntimeModule<unknown> {
    * @param claimProof
    */
   @runtimeMethod()
-  public addClaim(claimKey: ClaimKey, encProof: EncryptedSum) {
-    encProof.verify();
-    const encryptedSum = encProof.publicOutput;
+  public addClaim(claimKey: ClaimKey, encryptedSumProof: EncryptedSum) {
+    encryptedSumProof.verify();
+    const encryptedSum = encryptedSumProof.publicOutput;
     const sender = this.transaction.sender;
     // only intended receipent can add
     assert(claimKey.recipient.equals(sender), "wrong owner");

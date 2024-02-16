@@ -2,6 +2,7 @@ import "reflect-metadata";
 import { AppChainTransaction, TestingAppChain } from "@proto-kit/sdk";
 import { ModuleQuery } from "@proto-kit/sequencer";
 import {
+  Bool,
   Field,
   MerkleMap,
   MerkleMapWitness,
@@ -15,12 +16,12 @@ import { ClaimKey, PrivateToken } from "./PrivateToken";
 
 import {
   EncryptedBalance,
-  ClaimProof,
   DepositProof,
-  TransferProof,
+  EncryptedSum,
   DepositHashProof,
   generateDepositHash,
   EncryptedBalance1,
+  TransferProof,
 } from "./Proofs";
 import { Balances } from "../Balances";
 import { Pickles } from "o1js/dist/node/snarky";
@@ -120,6 +121,9 @@ describe("Private Token", () => {
           await balanceQuery.balances.get(privateToken.DEPOSIT_ADDRESS)
         )?.toBigInt()
       ).toBe(100n);
+      expect((await privateTokenQuery.depositNounce.get())?.toBigInt()).toBe(
+        1n
+      );
 
       // Alice adds deposited amount to encrypted balance
       const dummyMerkelMap = new MerkleMap(); // TODO remove later when using appChain state
@@ -210,7 +214,10 @@ describe("Private Token", () => {
         block?.transactions[0].status.toBoolean(),
         block?.transactions[0].statusMessage
       ).toBe(true);
-      // adds deposited amount to encrypted balance
+      expect((await privateTokenQuery.depositNounce.get())?.toBigInt()).toBe(
+        2n
+      );
+      // Alice adds deposited amount to ledger balance
       tx = await addDepositTxn(
         alicePrivateKey,
         UInt64.from(50),
@@ -230,7 +237,6 @@ describe("Private Token", () => {
           await balanceQuery.balances.get(privateToken.DEPOSIT_ADDRESS)
         )?.toBigInt()
       ).toBe(150n);
-      // alice add's claim
 
       aliceBalance = (await privateTokenQuery.ledger.get(
         alice
@@ -273,7 +279,6 @@ describe("Private Token", () => {
       proof: dummy,
       publicInput: undefined,
       publicOutput: {
-        owner: fromPrivateKey.toPublicKey(),
         to,
         currentBalance,
         resultingBalance,
@@ -320,20 +325,21 @@ describe("Private Token", () => {
         .add(claimBalance.decrypt(ownerPrivateKey)),
       ownerPrivateKey.toPublicKey()
     );
-    const claimProof = new ClaimProof({
+    const encryptedSumProof = new EncryptedSum({
       proof: dummy,
       publicInput: undefined,
       publicOutput: {
-        owner: ownerPrivateKey.toPublicKey(),
-        currentBalance,
-        resultingBalance,
-        amount: claimBalance.toEncryptedBalance(),
+        encA: claimBalance.toEncryptedBalance(),
+        encB: currentBalance,
+        encC: resultingBalance,
+        AisRevealed: Bool(false),
+        A: UInt64.zero,
       },
       maxProofsVerified: 2,
     });
     // create transaction
     return appChain.transaction(ownerPrivateKey.toPublicKey(), () => {
-      privateToken.addClaim(claimKey, claimProof);
+      privateToken.addClaim(claimKey, encryptedSumProof);
     });
   }
 

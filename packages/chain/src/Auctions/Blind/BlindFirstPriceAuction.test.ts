@@ -16,7 +16,6 @@ import { log } from "@proto-kit/common";
 import { Balances } from "../../Balances";
 import { ClaimKey, PrivateToken } from "../../PrivateToken/PrivateToken";
 import {
-  ClaimProof,
   DepositHashProof,
   DepositProof,
   EncryptedBalance,
