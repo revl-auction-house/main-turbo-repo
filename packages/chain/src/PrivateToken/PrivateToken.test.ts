@@ -89,10 +89,9 @@ describe("Private Token", () => {
   it(
     "should demonstrate how deposit, transfer, claim works",
     async () => {
-      const r = Field.random(); // only alice knows
-
-      appChain.setSigner(alicePrivateKey);
       // alice deposits 100
+      appChain.setSigner(alicePrivateKey);
+      const r = Field.random(); // only alice knows
       const [, dummy] = Pickles.proofOfBase64(await dummyBase64Proof(), 2);
       const depositHashProof = new DepositHashProof({
         proof: dummy,
@@ -256,6 +255,98 @@ describe("Private Token", () => {
     },
     1000 * 60
   );
+
+  /**
+   * deposit 100 each from alice & bob address -> privateWallet
+   */
+  it("should demonstrate how deposit from multiple sources works to hide the balance", async () => {
+    // alice deposits 100
+    const r = Field.random(); // only alice knows
+    const [, dummy] = Pickles.proofOfBase64(await dummyBase64Proof(), 2);
+    const depositHashProof = new DepositHashProof({
+      proof: dummy,
+      publicInput: UInt64.from(100),
+      publicOutput: generateDepositHash(UInt64.from(100), r),
+      maxProofsVerified: 2,
+    });
+    appChain.setSigner(alicePrivateKey);
+    let tx = await appChain.transaction(alice, () => {
+      privateToken.deposit(depositHashProof);
+    });
+    await tx.sign();
+    await tx.send();
+    await appChain.produceBlock();
+    expect((await balanceQuery.balances.get(alice))?.toBigInt()).toBe(900n);
+
+    const privateWalletKey = PrivateKey.random();
+    const privateWallet = privateWalletKey.toPublicKey();
+
+    // addDeposit to privateWallet
+    const dummyMerkelMap = new MerkleMap(); // TODO remove later when using appChain state
+    const dummyWitness = dummyMerkelMap.getWitness(Field(0));
+    tx = await addDepositTxn(
+      privateWalletKey,
+      UInt64.from(100),
+      r,
+      dummyWitness
+    );
+    await tx.sign();
+    await tx.send();
+    await appChain.produceBlock();
+    let privateWalletBalance = (await privateTokenQuery.ledger.get(
+      privateWallet
+    )) as EncryptedBalance;
+    expect(privateWalletBalance.decrypt(privateWalletKey).toBigInt()).toBe(
+      100n
+    );
+
+    // bob deposits 100 to privateWallet
+    const r1 = Field.random();
+    const depositHashProof1 = new DepositHashProof({
+      proof: dummy,
+      publicInput: UInt64.from(100),
+      publicOutput: generateDepositHash(UInt64.from(100), r1),
+      maxProofsVerified: 2,
+    });
+    appChain.setSigner(bobPrivateKey);
+    tx = await appChain.transaction(bob, () => {
+      privateToken.deposit(depositHashProof1);
+    });
+    await tx.sign();
+    await tx.send();
+    await appChain.produceBlock();
+    // addDeposit to privateWallet
+    tx = await addDepositTxn(
+      privateWalletKey,
+      UInt64.from(100),
+      r1,
+      dummyWitness
+    );
+    await tx.sign();
+    await tx.send();
+    await appChain.produceBlock();
+    privateWalletBalance = (await privateTokenQuery.ledger.get(
+      privateWallet
+    )) as EncryptedBalance;
+    expect(privateWalletBalance.decrypt(privateWalletKey).toBigInt()).toBe(
+      200n
+    );
+    // withdraw 50 from privateWallet
+    tx = await withdrawTxn(privateWalletKey, UInt64.from(50));
+    await tx.sign();
+    await tx.send();
+    await appChain.produceBlock();
+    privateWalletBalance = (await privateTokenQuery.ledger.get(
+      privateWallet
+    )) as EncryptedBalance;
+    expect(privateWalletBalance.decrypt(privateWalletKey).toBigInt()).toBe(
+      150n
+    );
+    // the 50 will return to privateWallet's normal balance
+    expect((await balanceQuery.balances.get(privateWallet))?.toBigInt()).toBe(
+      50n
+    );
+  });
 
   // Helpers
   async function transferFromTxn(
@@ -423,7 +514,8 @@ describe("Private Token", () => {
       },
       maxProofsVerified: 2,
     });
-    return appChain.transaction(alice, () => {
+    appChain.setSigner(ownerPrivateKey);
+    return appChain.transaction(ownerPrivateKey.toPublicKey(), () => {
       privateToken.withdraw(encryptedSumProof);
     });
   }
