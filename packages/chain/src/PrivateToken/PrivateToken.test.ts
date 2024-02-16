@@ -110,11 +110,6 @@ describe("Private Token", () => {
         block?.transactions[0].status.toBoolean(),
         block?.transactions[0].statusMessage
       ).toBe(true);
-
-      // console.log(
-      //   "alice bal after:",
-      //   (await balanceQuery.balances.get(alice))?.toBigInt()
-      // );
       expect((await balanceQuery.balances.get(alice))?.toBigInt()).toBe(900n);
       expect(
         (
@@ -146,10 +141,6 @@ describe("Private Token", () => {
       let aliceBalance = (await privateTokenQuery.ledger.get(
         alice
       )) as EncryptedBalance;
-      // console.log(
-      //   "aliceBalance",
-      //   aliceBalance.decrypt(alicePrivateKey).toBigInt()
-      // );
       expect(aliceBalance.decrypt(alicePrivateKey).toBigInt()).toBe(100n);
 
       // alice sends some to bob
@@ -168,10 +159,6 @@ describe("Private Token", () => {
       let bobClaimBalance = await privateTokenQuery.claims.get(
         ClaimKey.from(bob, UInt64.from(0))
       );
-      // console.log(
-      //   "bobClaimBalance",
-      //   bobClaimBalance.decrypt(bobPrivateKey).toBigInt()
-      // );
       expect(aliceBalance.decrypt(alicePrivateKey).toBigInt()).toBe(90n);
       expect(bobClaimBalance?.decrypt(bobPrivateKey).toBigInt()).toBe(10n);
 
@@ -241,13 +228,31 @@ describe("Private Token", () => {
       aliceBalance = (await privateTokenQuery.ledger.get(
         alice
       )) as EncryptedBalance;
-      // console.log(
-      //   "aliceBalance",
-      //   aliceBalance.decrypt(alicePrivateKey).toBigInt()
-      // );
       expect(aliceBalance.decrypt(alicePrivateKey).toBigInt()).toBe(140n);
 
-      // TODO test withdraw
+      // Alice withdraws 100
+      appChain.setSigner(alicePrivateKey);
+      tx = await withdrawTxn(alicePrivateKey, UInt64.from(100));
+      await tx.sign();
+      await tx.send();
+      block = await appChain.produceBlock();
+      expect(
+        block?.transactions[0].status.toBoolean(),
+        block?.transactions[0].statusMessage
+      ).toBe(true);
+      // alice's balance should decrease by 100
+      aliceBalance = (await privateTokenQuery.ledger.get(
+        alice
+      )) as EncryptedBalance;
+      expect(aliceBalance.decrypt(alicePrivateKey).toBigInt()).toBe(40n);
+      // alice's token balance should increase by 100 (850 -> 950)
+      expect((await balanceQuery.balances.get(alice))?.toBigInt()).toBe(950n);
+
+      expect(
+        (
+          await balanceQuery.balances.get(privateToken.DEPOSIT_ADDRESS)
+        )?.toBigInt()
+      ).toBe(50n);
     },
     1000 * 60
   );
@@ -388,6 +393,38 @@ describe("Private Token", () => {
     // create transaction
     return appChain.transaction(ownerPrivateKey.toPublicKey(), () => {
       privateToken.addDeposit(depositProof);
+    });
+  }
+
+  async function withdrawTxn(
+    ownerPrivateKey: PrivateKey,
+    amount: UInt64
+  ): Promise<AppChainTransaction> {
+    let currentBalance = (await privateTokenQuery.ledger.get(
+      ownerPrivateKey.toPublicKey()
+    )) as EncryptedBalance;
+    if (currentBalance == undefined) {
+      throw Error("have no balance");
+    }
+    const resultingBalance = EncryptedBalance.from(
+      currentBalance.decrypt(ownerPrivateKey).sub(amount),
+      ownerPrivateKey.toPublicKey()
+    );
+    const [, dummy] = Pickles.proofOfBase64(await dummyBase64Proof(), 2);
+    const encryptedSumProof = new EncryptedSum({
+      proof: dummy,
+      publicInput: undefined,
+      publicOutput: {
+        encA: EncryptedBalance.from(amount, ownerPrivateKey.toPublicKey()),
+        encB: resultingBalance,
+        encC: currentBalance,
+        AisRevealed: Bool(true),
+        A: amount,
+      },
+      maxProofsVerified: 2,
+    });
+    return appChain.transaction(alice, () => {
+      privateToken.withdraw(encryptedSumProof);
     });
   }
 });
