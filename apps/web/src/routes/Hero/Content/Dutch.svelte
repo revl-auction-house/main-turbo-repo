@@ -6,10 +6,10 @@
 	import MinaToken from '$lib/icons/MinaToken.svelte';
 	import Form from '$lib/components/forms/Form.svelte';
 	import AuctionCard from '$lib/components/AuctionCard/AuctionCard.svelte';
-	import type { BannerAuctions$result } from '$houdini';
+	import type { HomePage$result } from '$houdini';
 	import { CHAIN_BLOCK_TIME, CHAIN_START_TIME } from '../../../constants';
 
-	export let auction: BannerAuctions$result['auctions'][number];
+	export let auction: HomePage$result['auctions'][number];
 
 	let decayRate: number,
 		startPrice: number,

@@ -39,7 +39,7 @@ async function start(interval = 5000) {
       // process block
       for (const tx of data.block.txs) {
         if (tx.status) {
-          const blockHeight = Number(data.network.block.height) || 0;
+          const blockHeight = Number(data.network.staged.block.height) || 0;
           txnProcessor.processTransaction(tx.tx.methodId, tx.tx, blockHeight);
         }
       }
@@ -53,8 +53,8 @@ async function start(interval = 5000) {
         }
       }
     }
-  } catch {
-    console.log("retrying");
+  } catch (error) {
+    console.log("error: ", error);
   }
   // retry after 5s
   setTimeout(() => {
@@ -106,8 +106,10 @@ async function fetchBlock(
                 }
               }
               network {
-                block {
-                  height
+                staged {
+                  block {
+                    height
+                  }
                 }
               }
             }

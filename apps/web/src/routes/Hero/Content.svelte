@@ -5,11 +5,11 @@
 	import English from './Content/English.svelte';
 	import Dutch from './Content/Dutch.svelte';
 	import Blindv2 from './Content/Blind2.svelte';
-	import type { BannerAuctions$result } from '$houdini';
+	import type { HomePage$result } from '$houdini';
 	import { ArrowUpRightIcon } from 'lucide-svelte';
 	import { press } from '$lib/actions/interaction';
 
-	export let auction: BannerAuctions$result['auctions'][number];
+	export let auction: HomePage$result['auctions'][number];
 
 	let name: string, id: number, typename: string, collectionName: string, collectionAddress: string;
 	$: if (auction) {

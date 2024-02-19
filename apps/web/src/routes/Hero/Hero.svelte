@@ -7,9 +7,9 @@
 	import { ArrowLeft, ArrowRight } from 'lucide-svelte';
 	import Content from './Content.svelte';
 	import Background from './Background.svelte';
-	import type { BannerAuctions$result } from '$houdini';
+	import type { HomePage$result } from '$houdini';
 
-	export let auctions: BannerAuctions$result['auctions'];
+	export let auctions: HomePage$result['auctions'];
 	let swiper: Swiper;
 	const initializer = (el: HTMLElement) => {
 		const [sm, md, lg, xl, xxl] = Object.values(themeConfig.screens).map((bp) => parseInt(bp));
@@ -61,7 +61,7 @@
 	};
 	let selectedIndex = 0;
 	let images: string[];
-	let bgImgUrl: string, selectedAuction: BannerAuctions$result['auctions'][number];
+	let bgImgUrl: string, selectedAuction: HomePage$result['auctions'][number];
 	$: if (auctions) {
 		images = auctions.map((auction) => auction.nft.imgUrl || '');
 		//get low res background image

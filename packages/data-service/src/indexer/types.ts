@@ -21,8 +21,10 @@ export type ComputedBlockJSON = {
 export type BlockQueryResponse = {
   data: {
     network: {
-      block: {
-        height: string;
+      staged: {
+        block: {
+          height: string;
+        };
       };
     };
     block: ComputedBlockJSON;

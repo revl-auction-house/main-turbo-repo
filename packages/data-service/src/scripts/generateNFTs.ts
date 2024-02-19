@@ -6,10 +6,10 @@ import * as dotenv from "dotenv";
 
 dotenv.config();
 console.log(`Using ${process.env.DATA_STORAGE} for data storage`);
-// const dataSource: DataSource =
-//   process.env.DATA_STORAGE === "mongo"
-//     ? await new MongoDB().connect(true)
-//     : new LocalDataSource();
+const dataSource: DataSource =
+  process.env.DATA_STORAGE === "mongo"
+    ? await new MongoDB().connect(true)
+    : new LocalDataSource();
 await client.start();
 // const inMemorySigner = client.resolve("Signer") as any;
 const nfts = client.runtime.resolve("NFT");
@@ -59,7 +59,7 @@ for (const collection of collectionSRCs) {
       Encoding.stringToFields(JSON.stringify(nftJson))
     );
     // step 1: upload metadata to ipfs/DB
-    // dataSource.setValue(nftDataHash.toString(), nftJson);
+    dataSource.setValue(nftDataHash.toString(), nftJson);
     // mint onchain
     const minterKey = PrivateKey.fromBase58(collection.minterPvKey);
     // inMemorySigner.config.signer = minterKey;
@@ -82,7 +82,7 @@ for (const collection of collectionSRCs) {
     // await tx.sign();
     await tx.send();
     // wait for next block
-    await new Promise((r) => setTimeout(r, 1000));
+    await new Promise((r) => setTimeout(r, 5000));
     console.log("minted NFT: ", collection.name, id);
     id++;
   }

@@ -3,17 +3,17 @@
 	import Footer from './Footer.svelte';
 	import Hero from './Hero/Hero.svelte';
 	import type { PageData } from './$houdini';
-	import type { BannerAuctions$result } from '$houdini';
+	import type { HomePage$result } from '$houdini';
 
 	export let data: PageData;
-	$: ({ BannerAuctions } = data);
-	let auctions: BannerAuctions$result['auctions'] = [];
+	$: ({ HomePage } = data);
+	let auctions: HomePage$result['auctions'] = [];
 	onMount(() => {
-		auctions = $BannerAuctions.data?.auctions || [];
+		auctions = $HomePage.data?.auctions || [];
 
 		// TODO is this overkill?
 		setInterval(() => {
-			BannerAuctions.fetch();
+			HomePage.fetch();
 		}, 1000);
 	});
 </script>

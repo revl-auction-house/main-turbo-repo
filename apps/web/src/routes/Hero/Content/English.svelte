@@ -7,13 +7,13 @@
 	import MinaToken from '$lib/icons/MinaToken.svelte';
 	import Form from '$lib/components/forms/Form.svelte';
 	import AuctionCard from '$lib/components/AuctionCard/AuctionCard.svelte';
-	import type { BannerAuctions$result } from '$houdini';
+	import type { HomePage$result } from '$houdini';
 	import { CHAIN_BLOCK_TIME, CHAIN_START_TIME } from '../../../constants';
 	import { wallet } from '$lib/stores/wallet.store';
 	import { onMount } from 'svelte';
 	import { get } from 'svelte/store';
 
-	export let auction: BannerAuctions$result['auctions'][number];
+	export let auction: HomePage$result['auctions'][number];
 
 	let bidCount: number,
 		maxBid: number,

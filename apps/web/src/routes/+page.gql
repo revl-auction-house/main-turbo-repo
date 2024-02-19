@@ -1,5 +1,5 @@
-# TODO use banner auctions
-query BannerAuctions {
+query HomePage {
+	# TODO use banner auctions
 	auctions(onlyLive: true, count: 10) {
 		auctionType
 		ended
@@ -41,6 +41,24 @@ query BannerAuctions {
 				revealTime
 				revealedBidCount
 				sealedBidCount
+			}
+		}
+	}
+
+	topBids(count: 10) {
+		amount
+		bidder
+		timestamp
+		auction {
+			id
+			auctionType
+			nft {
+				idx
+				imgUrl
+				name
+				collection {
+					address
+				}
 			}
 		}
 	}
