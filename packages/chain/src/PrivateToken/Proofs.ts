@@ -47,6 +47,16 @@ export class EncryptedBalance
     return this.cipherText.concat(this.publicKey.toFields());
   }
 
+  public static fromFields(fields: Field[]) {
+    if (fields.length !== 4) {
+      throw new Error("Invalid input");
+    }
+    return new EncryptedBalance({
+      publicKey: Group.fromFields(fields.slice(2, 4)),
+      cipherText: [fields[0], fields[1]],
+    });
+  }
+
   public decrypt(privateKey: PrivateKey): UInt64 {
     const encryptedBalance = {
       publicKey: this.publicKey,
