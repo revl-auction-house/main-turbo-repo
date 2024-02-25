@@ -6,6 +6,7 @@
 	import MinaToken from '$lib/icons/MinaToken.svelte';
 	import { wallet } from '$lib/stores/wallet.store';
 	import { ArrowBigLeft, ArrowBigRight, DotIcon, Heading5Icon } from 'lucide-svelte';
+	import { Field } from 'o1js';
 	import { onMount } from 'svelte';
 	import toast from 'svelte-french-toast';
 	import { get } from 'svelte/store';
@@ -13,14 +14,39 @@
 	let publicBal: bigint | undefined;
 	let privateBal: bigint | undefined;
 	let mintTokens: () => void;
+	let depositToPrivate: () => void;
+	let claimDeposit: () => void;
+	let withdrawFromPrivate: () => void;
+
 	onMount(async () => {
 		const { userBalance, load, mint } = await import('$lib/stores/balance.store');
+		const {
+			privateBalance,
+			load: loadPrivate,
+			deposit,
+			addDeposit
+		} = await import('$lib/stores/privateBalance.store');
+
 		load();
 		publicBal = get(userBalance); // TODO divide by 10eDECIMALS, ALso this is not reactive
 		userBalance.subscribe((bal) => {
 			publicBal = bal; //this makes its reactive now :)
 		});
 		mintTokens = mint;
+		// private tokens
+		loadPrivate();
+		privateBal = get(privateBalance);
+		privateBalance.subscribe((bal) => {
+			privateBal = bal;
+		});
+		const r = Field.random();
+		depositToPrivate = () => {
+			deposit('100', r);
+		};
+		claimDeposit = () => {
+			console.log('claiming deposit');
+			addDeposit('100', r);
+		};
 	});
 
 	//modals
@@ -33,10 +59,6 @@
 	let showWithdrawModal = false;
 	const withdraw = () => {
 		showWithdrawModal = true;
-	};
-
-	const claim = () => {
-		toast.error('Not implemented yet');
 	};
 	let withdrawAmt: number;
 
@@ -103,7 +125,7 @@
 					<h6>*wait longer for increased privacy</h6>
 				</h5>
 
-				<button use:press on:click={claim} class="hover:colored-primary self-end">
+				<button use:press on:click={claimDeposit} class="hover:colored-primary self-end">
 					<span> CLAIM </span>
 				</button>
 			</div>
@@ -144,7 +166,14 @@
 					<DotIcon slot="trailing" />
 				</NumberField>
 				<h3>
-					<button use:press class="w-full filled primary p-2" type="submit"> Deposit </button>
+					<button
+						use:press
+						on:click={depositToPrivate}
+						class="w-full filled primary p-2"
+						type="submit"
+					>
+						Deposit
+					</button>
 				</h3>
 			</div>
 		</Form>
