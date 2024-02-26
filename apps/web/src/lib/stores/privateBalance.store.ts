@@ -11,7 +11,7 @@ import {
 	generateDepositHash
 } from 'chain';
 import { wallet, addTransaction } from './wallet.store';
-import { getDepositHashProof } from '../../worker/workerClient';
+import { getDepositHashProof, getDepositProof } from '../../worker/workerClient';
 
 export const privateBalance: Writable<bigint | undefined> = writable();
 const privateWalletKey = persisted('privateWalletKey', { pvKey: '' });
@@ -94,9 +94,9 @@ export async function addDeposit(amount: string, r: Field) {
 	const sender = privateKey.toPublicKey();
 	// TODO get witness
 	// TODO query for multiple to hide the actual index
-	const path = privateToken.deposits.getPath(UInt64.from(1)); // TODO get the correct index
-	console.log('claimDeposit | path: ', path.toBigInt());
-	console.log('claimDeposit | sender: ', sender.toBase58());
+	const path = privateToken.deposits.getPath(UInt64.from(0)); // TODO get the correct index
+	console.log('addDeposit | path: ', path.toBigInt());
+	console.log('addDeposit | sender: ', sender.toBase58());
 
 	// TODO generate proof using web worker
 	// console.log('compiling depositProofProgram');
@@ -115,25 +115,12 @@ export async function addDeposit(amount: string, r: Field) {
 	if (ledgerEBalance === undefined) {
 		ledgerEBalance = EncryptedBalance.from(UInt64.zero, sender);
 	}
-	const amt = UInt64.from(amount);
-	const resultingBalance = EncryptedBalance.from(
-		ledgerEBalance.decrypt(privateKey).add(amt),
-		sender
-	);
-	// TODO move to worker
-	const depositProof = new DepositProof({
-		proof: {},
-		publicInput: undefined,
-		publicOutput: {
-			rootHash: Field.random(),
-			nullifierHash: Poseidon.hash([r]),
-			to: sender,
-			currentBalance: ledgerEBalance,
-			resultingBalance: resultingBalance,
-			amount: EncryptedBalance.from(amt, sender)
-		},
-		maxProofsVerified: 2
-	});
+	// const amt = UInt64.from(amount);
+	// const resultingBalance = EncryptedBalance.from(
+	// 	ledgerEBalance.decrypt(privateKey).add(amt),
+	// 	sender
+	// );
+	const depositProof = await getDepositProof(privateKey, amount, ledgerEBalance, r, witness);
 	const tx = await client.transaction(sender, () => {
 		privateToken.addDeposit(depositProof);
 	});

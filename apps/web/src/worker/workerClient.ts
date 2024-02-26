@@ -3,7 +3,7 @@ import * as Comlink from 'comlink';
 import Worker from './worker?worker';
 import type { API } from './worker';
 import type { Field, MerkleMapWitness, PrivateKey } from 'o1js';
-import { DepositHashProof, EncryptedBalance } from 'chain';
+import { DepositHashProof, DepositProof, EncryptedBalance } from 'chain';
 
 const worker = new Worker();
 const proxy = Comlink.wrap<API>(worker);
@@ -27,7 +27,7 @@ export async function getDepositHashProof(
 }
 
 // depositProofProgram
-export async function depositProofProgramCompile(
+export async function getDepositProof(
 	ownerPrivateKey: PrivateKey,
 	amount: string | Field,
 	currentEncryptedBalance: EncryptedBalance,
@@ -35,11 +35,12 @@ export async function depositProofProgramCompile(
 	merkelWitness: MerkleMapWitness
 ) {
 	await workerReady();
-	await proxy.getDepositProof(
+	const jsonProof = await proxy.getDepositProof(
 		ownerPrivateKey.toBase58(),
 		amount.toString(),
 		currentEncryptedBalance.toFields().map((f) => f.toString()),
 		r.toString(),
 		merkelWitness.toJSON()
 	);
+	return DepositProof.fromJSON(jsonProof);
 }
