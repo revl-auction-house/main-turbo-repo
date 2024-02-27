@@ -1,7 +1,7 @@
 import { writable, type Writable, get } from 'svelte/store';
 import { persisted } from 'svelte-persisted-store';
 import { clientStore } from './chainClient.store';
-import { Field, Poseidon, PrivateKey, PublicKey, UInt64 } from 'o1js';
+import { Field, MerkleMap, Poseidon, PrivateKey, PublicKey, UInt64 } from 'o1js';
 import {
 	ClaimKey,
 	DepositHashProof,
@@ -120,7 +120,9 @@ export async function addDeposit(amount: string, r: Field) {
 	// 	ledgerEBalance.decrypt(privateKey).add(amt),
 	// 	sender
 	// );
-	const depositProof = await getDepositProof(privateKey, amount, ledgerEBalance, r, witness);
+	const dummyMerkelMap = new MerkleMap(); // TODO remove later when using appChain state
+	const dummyWitness = dummyMerkelMap.getWitness(Field(0));
+	const depositProof = await getDepositProof(privateKey, amount, ledgerEBalance, r, dummyWitness);
 	const tx = await client.transaction(sender, () => {
 		privateToken.addDeposit(depositProof);
 	});

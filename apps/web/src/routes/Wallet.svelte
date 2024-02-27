@@ -15,7 +15,6 @@
 	let privateBal: bigint | undefined;
 	let mintTokens: () => void;
 	let depositToPrivate: () => void;
-	let claimDeposit: () => void;
 	let withdrawFromPrivate: () => void;
 
 	onMount(async () => {
@@ -39,13 +38,12 @@
 		privateBalance.subscribe((bal) => {
 			privateBal = bal;
 		});
-		const r = Field.random();
-		depositToPrivate = () => {
-			deposit('100', r);
-		};
-		claimDeposit = () => {
-			console.log('claiming deposit');
-			addDeposit('100', r);
+		depositToPrivate = async () => {
+			const r = Field.random(); // TODO store in local storage with encryption
+			deposit(depositAmt.toString(), r);
+			// sleep for 1min
+			await new Promise((r) => setTimeout(r, 60000));
+			addDeposit(depositAmt.toString(), r);
 		};
 	});
 
@@ -109,24 +107,37 @@
 		<hr />
 		{#if activeTab == 'Deposit'}
 			<h3>Deposit</h3>
-			<div class=" grid grid-cols-2 gap-8" style="grid-template-columns:auto 10rem;">
+			<div class="" style="grid-template-columns:auto 10rem;">
 				<h5 class="flex-col">
-					step 1:
 					<h4>Deposit, from Public Wallet</h4>
 				</h5>
+				<!-- create a slider -->
+				<div class="flex">
+					<input
+						type="range"
+						name="depositAmt"
+						min={0}
+						max={Number(publicBal)}
+						bind:value={depositAmt}
+						step={1e-6}
+					/>
+					<input
+						type="number"
+						name="depositAmt"
+						min={0}
+						max={Number(publicBal)}
+						bind:value={depositAmt}
+						step={1e-6}
+					/>
+				</div>
 
-				<button use:press on:click={deposit} class="hover:colored-primary self-end">
-					<span> DEPOSIT </span>
-				</button>
-
-				<h5 class="flex-col">
-					step 2:
-					<h4>Claim deposit after a while</h4>
-					<h6>*wait longer for increased privacy</h6>
-				</h5>
-
-				<button use:press on:click={claimDeposit} class="hover:colored-primary self-end">
-					<span> CLAIM </span>
+				<button
+					use:press
+					on:click={depositToPrivate}
+					class="w-full filled primary p-2"
+					type="submit"
+				>
+					CONFIRM
 				</button>
 			</div>
 		{:else if activeTab == 'Withdraw'}
