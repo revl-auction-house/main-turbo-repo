@@ -5,6 +5,7 @@ import { Balances } from "./Balances";
 import { GlobalCounter } from "./GlobalCounter";
 import { NFT } from "./NFT";
 import { PrivateToken } from "./PrivateToken/PrivateToken";
+import { LastStateRootBlockHook } from "@proto-kit/protocol";
 
 export const runtimeConfig = {
   Balances: {},
@@ -12,6 +13,7 @@ export const runtimeConfig = {
   PrivateToken: {},
   GlobalCounter: {},
   EnglishAuctionModule: {},
+  LastStateRoot: {},
   // DutchAuctionModule: {},
   // BlindFirstPriceAuctionModule: {},
 };

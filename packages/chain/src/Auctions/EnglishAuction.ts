@@ -47,12 +47,15 @@ export class EnglishAuctionModule extends AuctionModule<EnglishAuction> {
     // TODO is duration > buffer required
     const auction = new EnglishAuction({
       nftKey,
-      creator: this.transaction.sender,
+      creator: this.transaction.sender.value,
       winner: PublicKey.empty(),
       ended: Bool(false),
       startTime: this.network.block.height,
       endTime: this.network.block.height.add(duration),
-      maxBid: new Bids({ bidder: this.transaction.sender, price: UInt64.zero }),
+      maxBid: new Bids({
+        bidder: this.transaction.sender.value,
+        price: UInt64.zero,
+      }),
     });
     return this.createAuction(auction);
   }
@@ -62,7 +65,7 @@ export class EnglishAuctionModule extends AuctionModule<EnglishAuction> {
     assert(this.records.get(auctionId).isSome, "no auctions exists");
     const auction = this.records.get(auctionId).value;
     const currentBid = new Bids({
-      bidder: this.transaction.sender,
+      bidder: this.transaction.sender.value,
       price: bid,
     });
     assert(
@@ -76,7 +79,7 @@ export class EnglishAuctionModule extends AuctionModule<EnglishAuction> {
       "Auction has ended"
     );
     // lock bidders amount
-    this.balance.transferFrom(this.transaction.sender, this.ADDRESS, bid);
+    this.balance.transferFrom(this.transaction.sender.value, this.ADDRESS, bid);
     // we return the earlier bidders locked amount
     this.balance.transferFrom(
       this.ADDRESS,

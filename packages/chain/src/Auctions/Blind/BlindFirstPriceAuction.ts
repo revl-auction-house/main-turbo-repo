@@ -58,13 +58,16 @@ export class BlindFirstPriceAuctionModule extends AuctionModule<BlindFirstPriceA
   ): UInt64 {
     const auction = new BlindFirstPriceAuction({
       nftKey,
-      creator: this.transaction.sender,
+      creator: this.transaction.sender.value,
       winner: PublicKey.empty(),
       ended: Bool(false),
       startTime: this.network.block.height,
       revealTime: this.network.block.height.add(biddingWindow),
       endTime: this.network.block.height.add(biddingWindow).add(revealWindow),
-      maxBid: new Bids({ bidder: this.transaction.sender, price: UInt64.zero }),
+      maxBid: new Bids({
+        bidder: this.transaction.sender.value,
+        price: UInt64.zero,
+      }),
     });
     return this.createAuction(auction);
   }

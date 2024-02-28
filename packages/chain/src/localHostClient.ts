@@ -23,6 +23,9 @@ import { runtime, runtimeConfig } from "./runtime";
 const appChain = ClientAppChain.fromRuntime(runtime);
 appChain.configure({
   Runtime: runtimeConfig,
+  Protocol: {
+    LastStateRoot: {},
+  },
 });
 // appChain.registerValue({ Signer: new InMemorySigner() });
 

@@ -23,15 +23,15 @@
     "dev": "npm-watch build-and-start"
   },
   "peerDependencies": {
-    "@proto-kit/api": "latest",
-    "@proto-kit/cli": "latest",
-    "@proto-kit/common": "latest",
-    "@proto-kit/module": "latest",
-    "@proto-kit/protocol": "latest",
-    "@proto-kit/sdk": "latest",
-    "@proto-kit/sequencer": "latest",
-    "o1js": "0.13.1",
-    "tsyringe": "^4.7.0"
+    "@proto-kit/api": "../../../../protoKit/framework/packages/api",
+    "@proto-kit/cli": "../../../../protoKit/framework/packages/cli",
+    "@proto-kit/common": "../../../../protoKit/framework/packages/common",
+    "@proto-kit/module": "../../../../protoKit/framework/packages/module",
+    "@proto-kit/protocol": "../../../../protoKit/framework/packages/protocol",
+    "@proto-kit/sdk": "../../../../protoKit/framework/packages/sdk",
+    "@proto-kit/sequencer": "../../../../protoKit/framework/packages/sequencer",
+    "o1js": "../../../../protoKit/framework/node_modules/o1js",
+    "tsyringe": "../../../../protoKit/framework/node_modules/tsyringe"
   },
   "devDependencies": {
     "@jest/globals": "^29.6.1",

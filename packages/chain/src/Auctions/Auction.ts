@@ -41,7 +41,7 @@ export abstract class AuctionModule<
     //   this.nft.records.get(nftKey).isSome.toBoolean()
     // );
     assert(this.nft.nftRecords.get(nftKey).isSome, "nft does not exists");
-    this.nft.assertAddressOwner(nftKey, this.transaction.sender);
+    this.nft.assertAddressOwner(nftKey, this.transaction.sender.value);
     // check if the nft is unlocked
     this.nft.assertUnLocked(auction.nftKey);
 

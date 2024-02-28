@@ -71,7 +71,7 @@ export class PrivateToken extends RuntimeModule<unknown> {
   public transfer(transferProof: TransferProof) {
     const transferProofOutput = transferProof.publicOutput;
     transferProof.verify();
-    const sender = this.transaction.sender;
+    const sender = this.transaction.sender.value;
     /**
      * Check that the transferProof's innitial balance matches
      * with the known/stored balance on chain.
@@ -110,7 +110,7 @@ export class PrivateToken extends RuntimeModule<unknown> {
   public addClaim(claimKey: ClaimKey, encryptedSumProof: EncryptedSum) {
     encryptedSumProof.verify();
     const encryptedSum = encryptedSumProof.publicOutput;
-    const sender = this.transaction.sender;
+    const sender = this.transaction.sender.value;
     // only intended receipent can add
     assert(claimKey.recipient.equals(sender), "wrong owner");
 
@@ -156,7 +156,7 @@ export class PrivateToken extends RuntimeModule<unknown> {
     this.depositNounce.set(nounce.value.add(Field(1)));
     // transfer amount to dEPOSITADDRESS
     this.balance.transferFrom(
-      this.transaction.sender,
+      this.transaction.sender.value,
       this.DEPOSIT_ADDRESS,
       depositHashProof.publicInput // amount
     );
@@ -207,7 +207,7 @@ export class PrivateToken extends RuntimeModule<unknown> {
   public withdraw(encProof: EncryptedSum) {
     encProof.verify();
     const encryptedSum = encProof.publicOutput;
-    const sender = this.transaction.sender;
+    const sender = this.transaction.sender.value;
     const currentBalance = this.ledger.get(sender);
     assert(currentBalance.isSome, "have no balance");
     // Check that the proof's innitial balance matches with on chain amount

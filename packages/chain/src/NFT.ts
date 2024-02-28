@@ -32,7 +32,7 @@ export class NFT extends RuntimeModule<{}> {
 
   @runtimeMethod()
   public mint(to: PublicKey, metadata: Field) {
-    const minter = this.transaction.sender;
+    const minter = this.transaction.sender.value;
     const minterNonce = this.nonces.get(minter).value;
     const key = NFTKey.from(minter, minterNonce);
     this.nftRecords.set(
@@ -47,7 +47,7 @@ export class NFT extends RuntimeModule<{}> {
     assert(this.nftRecords.get(nftKey).isSome, "nft does not exists");
     const nft = this.nftRecords.get(nftKey).value;
     // check if sender is the current owner
-    assert(nft.owner.equals(this.transaction.sender), "Not owner of NFT");
+    assert(nft.owner.equals(this.transaction.sender.value), "Not owner of NFT");
     // check if the NFT is locked
     assert(nft.locked.not(), "NFT is locked and cannot be transferred");
     this.transfer(to, nftKey);

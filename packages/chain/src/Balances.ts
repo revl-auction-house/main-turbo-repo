@@ -31,7 +31,7 @@ export class Balances extends RuntimeModule<unknown> {
 
   @runtimeMethod()
   public transfer(to: PublicKey, amount: UInt64) {
-    this.transferFrom(this.transaction.sender, to, amount);
+    this.transferFrom(this.transaction.sender.value, to, amount);
   }
 
   public transferFrom(from: PublicKey, to: PublicKey, amount: UInt64) {

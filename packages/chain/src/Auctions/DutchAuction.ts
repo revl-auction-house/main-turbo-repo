@@ -44,7 +44,7 @@ export class DutchAuctionModule extends AuctionModule<DutchAuction> {
   ): UInt64 {
     const auction = new DutchAuction({
       nftKey,
-      creator: this.transaction.sender,
+      creator: this.transaction.sender.value,
       winner: PublicKey.empty(),
       ended: Bool(false),
       startPrice,
@@ -79,10 +79,10 @@ export class DutchAuctionModule extends AuctionModule<DutchAuction> {
     );
 
     this.balance.transferFrom(
-      this.transaction.sender,
+      this.transaction.sender.value,
       auction.creator,
       finalPrice
     );
-    this.endAuction(auctionId, this.transaction.sender);
+    this.endAuction(auctionId, this.transaction.sender.value);
   }
 }
