@@ -5,5 +5,8 @@ const appChain = ClientAppChain.fromRuntime(runtime);
 appChain.configure({
   ...appChain.config,
   Runtime: runtimeConfig,
+  Protocol: {
+    LastStateRoot: {},
+  },
 });
 export const client = appChain;

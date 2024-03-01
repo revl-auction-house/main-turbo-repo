@@ -10,12 +10,17 @@
 	import { onMount } from 'svelte';
 	import toast from 'svelte-french-toast';
 	import { get } from 'svelte/store';
+	import { PRIVATE_TOKEN_MIXTIME, PRIVATE_TOKEN_MIXTIME_DELTA } from '../constants';
+	import { currentTime } from '$lib/stores/time.store';
 
 	let publicBal: bigint | undefined;
 	let privateBal: bigint | undefined;
 	let mintTokens: () => void;
 	let depositToPrivate: () => void;
 	let withdrawFromPrivate: () => void;
+	let depositProgress: number;
+	let timeRemaining: number;
+	let depositProgressText: string | undefined;
 
 	onMount(async () => {
 		const { userBalance, load, mint } = await import('$lib/stores/balance.store');
@@ -40,34 +45,51 @@
 		});
 		depositToPrivate = async () => {
 			const r = Field.random(); // TODO store in local storage with encryption
-			deposit(depositAmt.toString(), r);
-			// sleep for 1min
-			await new Promise((r) => setTimeout(r, 60000));
-			addDeposit(depositAmt.toString(), r);
+			depositProgressText = 'submitting transaction';
+			const totalTime =
+				PRIVATE_TOKEN_MIXTIME * 1000 + (2 * Math.random() - 1) * PRIVATE_TOKEN_MIXTIME_DELTA * 1000;
+			const endTime = $currentTime + totalTime;
+			let addDepositCalled = false;
+			const unsub = currentTime.subscribe((x) => {
+				depositProgress = 100 - ((endTime - x) / totalTime) * 100;
+				timeRemaining = Math.round((endTime - x) / 1000);
+				if (x >= endTime - 10 * 1000 && !addDepositCalled) {
+					addDepositCalled = true;
+					// call addDeposit
+					addDeposit(depositAmt.toString(), r, () => {
+						depositProgressText = 'deposit completed';
+					});
+					// setTimeout(() => {
+					// 	depositProgressText = 'deposit completed';
+					// }, 3000);
+				}
+				if (x >= endTime) {
+					unsub();
+					depositProgressText = undefined;
+				}
+			});
+
+			await deposit(depositAmt.toString(), r, () => {
+				depositProgressText = 'anonymizing deposit';
+			});
+			// await new Promise((r) => setTimeout(r, 5000));
+			// setTimeout(() => {
+			// 	depositProgressText = 'anonymizing deposit';
+			// }, 0);
 		};
 	});
 
-	//modals
-	let showDepositModal = false;
-	const deposit = () => {
-		showDepositModal = true;
-	};
 	let depositAmt: number;
-
-	let showWithdrawModal = false;
-	const withdraw = () => {
-		showWithdrawModal = true;
-	};
 	let withdrawAmt: number;
 
 	//tabs
-	let activeTab = 'Deposit';
+	let activeTab = '';
 	let openTab = (tab: string) => {
 		activeTab = tab;
 	};
 </script>
 
-<div class="p-4">
+<div class="typography flex flex-col gap-4 p-4">
 	<div class="grid layout">
 		<div class="balance">
 			L2 Public Balance
@@ -76,20 +98,18 @@
 		<div class="transfer">
 			<button
 				use:press
-				on:click={() => {
-					openTab('Deposit');
-				}}
-				class="hover:colored-primary"
+				on:click={() => openTab('Deposit')}
+				class:active={activeTab == 'Deposit'}
+				class="tab-button hover:brightness-125"
 			>
 				<span> DEPOSIT </span>
 				<ArrowBigRight class="w-8 h-8 stroke-white fill-white flex-none" />
 			</button>
 			<button
 				use:press
-				on:click={() => {
-					openTab('Withdraw');
-				}}
-				class="hover:colored-primary"
+				on:click={() => openTab('Withdraw')}
+				class:active={activeTab == 'Withdraw'}
+				class="tab-button hover:brightness-125"
 			>
 				<ArrowBigLeft class="w-8 h-8 stroke-white fill-white flex-none" />
 				<span> WITHDRAW </span>
@@ -100,125 +120,61 @@
 			<span>{privateBal || '****'}</span>
 		</div>
 	</div>
-	<div class="mint-action">
-		<button use:press on:click={mintTokens}> Mint Free Test Tokens</button>
-	</div>
-	<div class="typography p-4 flex flex-col gap-4">
-		<hr />
-		{#if activeTab == 'Deposit'}
-			<h3>Deposit</h3>
-			<div class="" style="grid-template-columns:auto 10rem;">
-				<h5 class="flex-col">
-					<h4>Deposit, from Public Wallet</h4>
-				</h5>
-				<!-- create a slider -->
-				<div class="flex">
-					<input
-						type="range"
-						name="depositAmt"
-						min={0}
-						max={Number(publicBal)}
-						bind:value={depositAmt}
-						step={1e-6}
-					/>
-					<input
-						type="number"
-						name="depositAmt"
-						min={0}
-						max={Number(publicBal)}
-						bind:value={depositAmt}
-						step={1e-6}
-					/>
-				</div>
 
-				<button
-					use:press
-					on:click={depositToPrivate}
-					class="w-full filled primary p-2"
-					type="submit"
-				>
-					CONFIRM
+	<hr />
+	{#if activeTab == 'Deposit'}
+		<Form>
+			<NumberField
+				label="Deposit Amount"
+				name="depositAmt"
+				showSlider
+				min={0}
+				max={Number(publicBal) || 0}
+				bind:value={depositAmt}
+				step={1e-6}
+			>
+				<DotIcon slot="trailing" />
+			</NumberField>
+			{#if depositProgressText == undefined}
+				<button use:press on:click={depositToPrivate} class="w-full filled p-2"> Deposit </button>
+			{:else}
+				<button class="w-full relative filled pointer-events-none p-2 overflow-hidden">
+					<div
+						class="absolute inset-0 bg-primary/60 border-2 border-l-0 border-primary"
+						style="width: {depositProgress}%"
+					/>
+					<div class="z-50">
+						{depositProgressText}
+					</div>
+					<div class="absolute w-full p-4 text-right">
+						{timeRemaining + 's'}
+					</div>
 				</button>
-			</div>
-		{:else if activeTab == 'Withdraw'}
-			<h3>Withdraw</h3>
-			<div class=" grid grid-cols-2 gap-8" style="grid-template-columns:auto 10rem;">
-				<h5 class="flex-col">
-					step 1:
-					<h4>Withdraw, to Public Wallet</h4>
-				</h5>
-
-				<button use:press on:click={withdraw} class="hover:colored-primary self-end">
-					<span> WITHDRAW </span>
-				</button>
-			</div>
-		{/if}
-	</div>
+			{/if}
+		</Form>
+	{:else if activeTab == 'Withdraw'}
+		<Form>
+			<NumberField
+				label="Withdraw Amount"
+				name="withdrawAmt"
+				showSlider
+				min={0}
+				max={Number(privateBal) || 0}
+				bind:value={withdrawAmt}
+				step={1e-6}
+			>
+				<DotIcon slot="trailing" />
+			</NumberField>
+			<button use:press on:click={withdrawFromPrivate} class="w-full filled primary p-2">
+				Withdraw
+			</button>
+		</Form>
+	{:else}
+		<div class="mint-action">
+			<button use:press on:click={mintTokens}> Mint Free Test Tokens</button>
+		</div>
+	{/if}
 </div>
-
-<Dialog
-	showModal={showDepositModal}
-	on:close={() => {
-		showDepositModal = false;
-	}}
->
-	<div slot="header" class="typography"><h2>deposit</h2></div>
-	<div class="m-2">
-		<Form>
-			<div class="card typography min-w-[400px] max-w-[600px]">
-				<NumberField
-					label="Deposit Amount"
-					name="depositAmt"
-					min={0}
-					max={Number(publicBal)}
-					bind:value={depositAmt}
-					step={1e-6}
-				>
-					<DotIcon slot="trailing" />
-				</NumberField>
-				<h3>
-					<button
-						use:press
-						on:click={depositToPrivate}
-						class="w-full filled primary p-2"
-						type="submit"
-					>
-						Deposit
-					</button>
-				</h3>
-			</div>
-		</Form>
-	</div>
-</Dialog>
-
-<!-- withdraw dialog -->
-<Dialog
-	showModal={showWithdrawModal}
-	on:close={() => {
-		showWithdrawModal = false;
-	}}
->
-	<div slot="header" class="typography"><h2>withdraw</h2></div>
-	<div class="m-2">
-		<Form>
-			<div class="card typography min-w-[400px] max-w-[600px]">
-				<NumberField
-					label="Witdraw Amount"
-					name="withdrawAmt"
-					min={0}
-					max={Number(publicBal)}
-					bind:value={withdrawAmt}
-					step={1e-6}
-				>
-					<DotIcon slot="trailing" />
-				</NumberField>
-				<h3>
-					<button use:press class="w-full filled primary p-2" type="submit"> Withdraw </button>
-				</h3>
-			</div>
-		</Form>
-	</div>
-</Dialog>
 
 <style lang="scss">
 	.layout {
@@ -232,7 +188,7 @@
 		> .balance {
 			@apply flex flex-col justify-center items-center 
 			text-sm w-40 p-4 rounded-lg
-			bg-background-darker shadow-lg;
+			bg-background shadow-lg;
 			span {
 				@apply text-4xl p-4;
 			}
@@ -248,6 +204,11 @@
 		@apply w-full bg-background-lighter shadow-lg p-2 rounded-lg flex justify-center items-center;
 		span {
 			@apply flex-1;
+		}
+	}
+	.tab-button {
+		&.active {
+			@apply colored-primary;
 		}
 	}
 </style>

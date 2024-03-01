@@ -61,7 +61,7 @@ export function exportKey() {
 
 // runtime funcs deposit, addDeposit, addFirstClaim, addClaim, transfer*, withdraw
 
-export async function deposit(amount: string, r: Field) {
+export async function deposit(amount: string, r: Field, onSuccess = () => {}) {
 	if (get(clientStore).loading) return;
 	const address = get(wallet);
 	if (address === undefined) return;
@@ -78,13 +78,18 @@ export async function deposit(amount: string, r: Field) {
 	});
 	await tx.sign();
 	await tx.send();
-	tx.transaction && addTransaction(tx.transaction?.hash().toString());
+	tx.transaction &&
+		addTransaction(
+			tx.transaction?.hash().toString(),
+			'Successfully transfered from Public balance',
+			onSuccess
+		);
 }
 
 /**
  * should be called some time after deposit to increase anonymity & privacy
  */
-export async function addDeposit(amount: string, r: Field) {
+export async function addDeposit(amount: string, r: Field, onSuccess = () => {}) {
 	if (get(clientStore).loading) return;
 	if (get(privateWalletKey).pvKey === '') return;
 
@@ -98,13 +103,6 @@ export async function addDeposit(amount: string, r: Field) {
 	console.log('addDeposit | path: ', path.toBigInt());
 	console.log('addDeposit | sender: ', sender.toBase58());
 
-	// TODO generate proof using web worker
-	// console.log('compiling depositProofProgram');
-	// console.time('depositProofProgram');
-	// const { verificationKey } = await depositProofProgram.compile();
-	// console.timeEnd('depositProofProgram');
-	// console.log('verificationKey', verificationKey.substring(1, 5));
-
 	// TODO get merkelWitness for storage proof
 	// const depositProof = depositProofProgram.generate(); // TODO generate proof using web worker
 
@@ -115,11 +113,6 @@ export async function addDeposit(amount: string, r: Field) {
 	if (ledgerEBalance === undefined) {
 		ledgerEBalance = EncryptedBalance.from(UInt64.zero, sender);
 	}
-	// const amt = UInt64.from(amount);
-	// const resultingBalance = EncryptedBalance.from(
-	// 	ledgerEBalance.decrypt(privateKey).add(amt),
-	// 	sender
-	// );
 	const dummyMerkelMap = new MerkleMap(); // TODO remove later when using appChain state
 	const dummyWitness = dummyMerkelMap.getWitness(Field(0));
 	const depositProof = await getDepositProof(privateKey, amount, ledgerEBalance, r, dummyWitness);
@@ -129,7 +122,12 @@ export async function addDeposit(amount: string, r: Field) {
 	tx.transaction = tx.transaction?.sign(privateKey); // sign using a different wallet other than auro
 	// await tx.sign();
 	await tx.send();
-	tx.transaction && addTransaction(tx.transaction?.hash().toString());
+	tx.transaction &&
+		addTransaction(
+			tx.transaction?.hash().toString(),
+			'Successfully deposited to private balance',
+			onSuccess
+		);
 }
 
 export async function withdraw() {

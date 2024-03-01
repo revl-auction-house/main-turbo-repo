@@ -42,15 +42,16 @@
 		"comlink": "^4.4.1",
 		"graphql": "^16.8.1",
 		"lucide-svelte": "^0.294.0",
+		"nouislider": "^15.7.1",
 		"reflect-metadata": "^0.1.13",
 		"svelte-french-toast": "^1.2.0",
 		"svelte-persisted-store": "^0.8.1",
 		"swiper": "^11.0.5"
 	},
 	"peerDependencies": {
-		"@proto-kit/module": "latest",
-		"@proto-kit/sdk": "latest",
-		"@proto-kit/sequencer": "latest",
-		"o1js": "0.13.1"
+		"@proto-kit/module": "../../../../protoKit/framework/packages/module",
+		"@proto-kit/sdk": "../../../../protoKit/framework/packages/sdk",
+		"@proto-kit/sequencer": "../../../../protoKit/framework/packages/sequencer",
+		"o1js": "../../../../protoKit/framework/node_modules/o1js"
 	}
 }

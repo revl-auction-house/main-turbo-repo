@@ -6,6 +6,9 @@ const appChain = LocalhostAppChain.fromRuntime(runtime);
 appChain.configure({
   ...appChain.config,
   Runtime: runtimeConfig,
+  Protocol: {
+    LastStateRoot: {},
+  },
 });
 
 export default appChain as any;

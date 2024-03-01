@@ -44,6 +44,7 @@ const collectionSRCs = [
 
 for (const collection of collectionSRCs) {
   let id = collection.index[0];
+  let minterNonce = 0;
   while (id <= collection.index[1]) {
     let nftJson = await getJson(
       collection.baseUrl.replace("{id}", id.toString())
@@ -63,20 +64,21 @@ for (const collection of collectionSRCs) {
     // mint onchain
     const minterKey = PrivateKey.fromBase58(collection.minterPvKey);
     // inMemorySigner.config.signer = minterKey;
-    let minterNonce = 0;
-    let tx = await client.transaction(
-      minterKey.toPublicKey(),
-      () => {
-        nfts.mint(
-          // randomly choose an receiver address
-          PrivateKey.fromBase58(
-            minters[Math.floor(Math.random() * minters.length)]
-          ).toPublicKey(),
-          nftDataHash
-        );
-      },
-      { nonce: minterNonce++ }
+    console.log(
+      "pub key",
+      PrivateKey.fromBase58(minters[Math.floor(Math.random() * minters.length)])
+        .toPublicKey()
+        .toBase58()
     );
+    let tx = await client.transaction(minterKey.toPublicKey(), () => {
+      nfts.mint(
+        // randomly choose an receiver address
+        PrivateKey.fromBase58(
+          minters[Math.floor(Math.random() * minters.length)]
+        ).toPublicKey(),
+        nftDataHash
+      );
+    });
     // console.log("txn hash: ", tx.transaction?.hash().toString());
     tx.transaction = tx.transaction?.sign(minterKey);
     // await tx.sign();

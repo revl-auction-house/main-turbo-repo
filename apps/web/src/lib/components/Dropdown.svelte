@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { scale } from 'svelte/transition';
+	import { fade, scale } from 'svelte/transition';
 	import { expoOut } from 'svelte/easing';
 	import '$lib/styles/card.scss';
 	export let dropdownStyle = '';
@@ -30,6 +30,10 @@
 	</button>
 	{#if open}
 		<div
+			transition:fade={{ duration: 300, easing: expoOut }}
+			class="fixed inset-0 w-full h-full bg-black bg-opacity-50"
+		/>
+		<div
 			class="dropdown"
 			style={dropdownStyle}
 			bind:this={dropDown}
@@ -50,7 +54,7 @@
 		right: 0;
 		min-width: 100%;
 		@apply z-50 ring-inset ring-1 ring-primary/30
-        bg-background rounded-xl shadow-primary/30 shadow-lg;
+        bg-card rounded-xl shadow-primary/30 shadow-lg;
 		&::backdrop {
 			@apply bg-background-darker/90;
 			animation: fade 0.2s ease-out;
