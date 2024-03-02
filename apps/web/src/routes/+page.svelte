@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import Footer from './Footer.svelte';
 	import Hero from './Hero/Hero.svelte';
 	import type { PageData } from './$houdini';
@@ -8,13 +8,17 @@
 	export let data: PageData;
 	$: ({ HomePage } = data);
 	let auctions: HomePage$result['auctions'] = [];
+	let interval: NodeJS.Timeout;
 	onMount(() => {
 		auctions = $HomePage.data?.auctions || [];
 
 		// TODO is this overkill?
-		setInterval(() => {
+		interval = setInterval(() => {
 			HomePage.fetch();
 		}, 1000);
+	});
+	onDestroy(() => {
+		clearInterval(interval);
 	});
 </script>
 

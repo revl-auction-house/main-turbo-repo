@@ -2,21 +2,27 @@
 	import { press } from '$lib/actions/interaction';
 	import { inViewClass } from '$lib/actions/observers';
 	import NftCard from '$lib/components/NFTCard/NFTCard.svelte';
-	import type { PageData } from './$houdini';
-	import type { UserNfts$result } from '$houdini';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import AuctionForm from '$lib/components/AuctionForm/AuctionForm.svelte';
 	import Footer from '../../../Footer.svelte';
+	import type { PageData } from './$houdini';
+	import type { UserNfts$result } from '$houdini';
 
 	export let data: PageData;
 	$: ({ UserNfts } = data);
 	let nfts: UserNfts$result['nfts'] = [];
+	let interval: NodeJS.Timeout;
+
 	onMount(() => {
 		console.log('UserNfts', $UserNfts.data);
 		nfts = $UserNfts.data?.nfts || [];
-		setInterval(() => {
+		interval = setInterval(() => {
 			UserNfts.fetch();
 		}, 1000);
+	});
+
+	onDestroy(() => {
+		clearInterval(interval);
 	});
 </script>
 

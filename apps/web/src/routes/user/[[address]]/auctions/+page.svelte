@@ -2,7 +2,7 @@
 	import { press } from '$lib/actions/interaction';
 	import { inViewClass } from '$lib/actions/observers';
 	import AuctionCard from '$lib/components/AuctionCard/AuctionCard.svelte';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import type { PageData } from './$houdini';
 	import type { UserAuctions$result } from '$houdini';
 
@@ -12,9 +12,11 @@
 	let auctions: Auction[] = [],
 		liveAuctions: Auction[] = [],
 		endedAuctions: Auction[] = [];
+	let interval: NodeJS.Timeout;
+
 	onMount(() => {
 		// TODO make this reactive, use UserAuctions.fetch()
-		setInterval(() => {
+		interval = setInterval(() => {
 			UserAuctions.fetch();
 		}, 1000);
 
@@ -22,6 +24,9 @@
 		liveAuctions = auctions.filter((auction) => auction.ended === false);
 		endedAuctions = auctions.filter((auction) => auction.ended === true);
 		// TODO show finalizing when auction ends
+	});
+	onDestroy(() => {
+		clearInterval(interval);
 	});
 	let filter = 'live';
 </script>

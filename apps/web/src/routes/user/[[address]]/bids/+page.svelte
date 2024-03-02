@@ -4,19 +4,24 @@
 	import BidCard from '$lib/components/BidCard/BidCard.svelte';
 	import type { UserBids$result } from '$houdini';
 	import type { PageData } from './$houdini';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 
 	export let data: PageData;
 	$: ({ UserBids } = data);
 	let bids: UserBids$result['userBids'] = [];
+	let interval: NodeJS.Timeout;
+
 	onMount(() => {
 		console.log('UserBids', $UserBids.data);
 		bids = $UserBids.data?.userBids || [];
 
 		// TODO is this overkill?
-		setInterval(() => {
+		interval = setInterval(() => {
 			UserBids.fetch();
 		}, 1000);
+	});
+	onDestroy(() => {
+		clearInterval(interval);
 	});
 	let filter = 'ongoing';
 </script>
