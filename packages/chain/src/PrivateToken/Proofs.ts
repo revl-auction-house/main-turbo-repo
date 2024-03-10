@@ -44,7 +44,14 @@ export class EncryptedBalance
   }
 
   public toFields(): Field[] {
-    return this.cipherText.concat(this.publicKey.toFields());
+    return EncryptedBalance.toFields(this);
+  }
+
+  public static toFields(value: {
+    publicKey: Group;
+    cipherText: Field[];
+  }): Field[] {
+    return value.cipherText.concat(value.publicKey.toFields());
   }
 
   public static fromFields(fields: Field[]) {

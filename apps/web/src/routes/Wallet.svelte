@@ -40,7 +40,10 @@
 		// private tokens
 		loadPrivate();
 		privateBal = get(privateBalance);
+		console.log('privateBal1', privateBal);
 		privateBalance.subscribe((bal) => {
+			console.log('privateBal2', bal);
+
 			privateBal = bal;
 		});
 		depositToPrivate = async () => {
@@ -71,11 +74,27 @@
 
 			await deposit(depositAmt.toString(), r, () => {
 				depositProgressText = 'anonymizing deposit';
+				const totalTime =
+					PRIVATE_TOKEN_MIXTIME * 1000 +
+					(2 * Math.random() - 1) * PRIVATE_TOKEN_MIXTIME_DELTA * 1000;
+				const endTime = $currentTime + totalTime;
+				let addDepositCalled = false;
+				const unsub = currentTime.subscribe((x) => {
+					depositProgress = 100 - ((endTime - x) / totalTime) * 100;
+					timeRemaining = Math.round((endTime - x) / 1000);
+					if (x >= endTime - 10 * 1000 && !addDepositCalled) {
+						addDepositCalled = true;
+						// call addDeposit
+						addDeposit(depositAmt.toString(), r, () => {
+							depositProgressText = 'deposit completed';
+						});
+					}
+					if (x >= endTime) {
+						unsub();
+						depositProgressText = undefined;
+					}
+				});
 			});
-			// await new Promise((r) => setTimeout(r, 5000));
-			// setTimeout(() => {
-			// 	depositProgressText = 'anonymizing deposit';
-			// }, 0);
 		};
 	});
 

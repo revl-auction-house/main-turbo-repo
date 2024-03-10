@@ -1,16 +1,11 @@
 import { writable, type Writable, get } from 'svelte/store';
 import { persisted } from 'svelte-persisted-store';
 import { clientStore } from './chainClient.store';
-import { Field, MerkleMap, Poseidon, PrivateKey, PublicKey, UInt64 } from 'o1js';
-import {
-	ClaimKey,
-	DepositHashProof,
-	DepositProof,
-	EncryptedBalance,
-	EncryptedSum,
-	generateDepositHash
-} from 'chain';
+import { Field, MerkleMap, PrivateKey, PublicKey, UInt64 } from 'o1js';
+import { ClaimKey, EncryptedBalance, generateDepositHash } from 'chain';
+
 import { wallet, addTransaction } from './wallet.store';
+import { load as loadPublic } from './balance.store';
 import { getDepositHashProof, getDepositProof } from '../../worker/workerClient';
 
 export const privateBalance: Writable<bigint | undefined> = writable();
@@ -37,7 +32,10 @@ export async function load() {
 		// need to add the unclaimed claims to calculate total balance
 		let claims = 0n;
 		const totalClaims = await privateToken.nonces.get(publicKey);
-		if (totalClaims === undefined) return ledgerBalance.toString();
+		if (totalClaims === undefined) {
+			privateBalance.set(ledgerBalance);
+			return ledgerBalance.toString();
+		}
 		console.log('totalClaims', totalClaims);
 		for (let i = 0; i < totalClaims.toBigInt(); i++) {
 			// TODO local caching to skip claimed claims
@@ -82,7 +80,10 @@ export async function deposit(amount: string, r: Field, onSuccess = () => {}) {
 		addTransaction(
 			tx.transaction?.hash().toString(),
 			'Successfully transfered from Public balance',
-			onSuccess
+			() => {
+				loadPublic();
+				onSuccess();
+			}
 		);
 }
 
@@ -126,7 +127,10 @@ export async function addDeposit(amount: string, r: Field, onSuccess = () => {})
 		addTransaction(
 			tx.transaction?.hash().toString(),
 			'Successfully deposited to private balance',
-			onSuccess
+			() => {
+				load();
+				onSuccess();
+			}
 		);
 }
 
