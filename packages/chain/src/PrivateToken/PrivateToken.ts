@@ -19,7 +19,6 @@ import {
   EncryptedBalance,
   DepositProof,
   DepositHashProof,
-  EncryptedBalance1,
   EncryptedSum,
   TransferProof,
 } from "./Proofs";
@@ -47,9 +46,9 @@ export class PrivateToken extends RuntimeModule<unknown> {
     EncryptedBalance
   );
   // unspent claims, like unspent outputs?
-  @state() public claims = StateMap.from<ClaimKey, EncryptedBalance1>(
+  @state() public claims = StateMap.from<ClaimKey, EncryptedBalance>(
     ClaimKey,
-    EncryptedBalance1
+    EncryptedBalance
   );
   // a counter per user for each new claim
   @state() public nonces = StateMap.from<PublicKey, UInt64>(PublicKey, UInt64);
@@ -94,10 +93,7 @@ export class PrivateToken extends RuntimeModule<unknown> {
     // update nounce
     this.nonces.set(to, this.nonces.get(to).value.add(1));
     // store the claim so it can be claimed later
-    this.claims.set(
-      claimKey,
-      EncryptedBalance1.fromEncryptedBalance(transferProofOutput.amount)
-    );
+    this.claims.set(claimKey, transferProofOutput.amount);
   }
 
   /**
@@ -142,7 +138,7 @@ export class PrivateToken extends RuntimeModule<unknown> {
     this.ledger.set(sender, finalBalance);
     // update the claim to prevent double spent
     // TODO use .delete
-    this.claims.set(claimKey, EncryptedBalance1.empty());
+    this.claims.set(claimKey, EncryptedBalance.empty());
   }
   /**
    * deposit normal token to get private Token

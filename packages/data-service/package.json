@@ -34,9 +34,9 @@
     "mongodb": "^6.3.0"
   },
   "peerDependencies": {
-    "@proto-kit/protocol": "../../../../protoKit/framework/packages/protocol",
-    "o1js": "../../../../protoKit/framework/node_modules/o1js",
-    "tsyringe": "../../../../protoKit/framework/node_modules/tsyringe"
+    "@proto-kit/protocol": "latest",
+    "o1js": "*",
+    "tsyringe": "*"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "5.0.0",

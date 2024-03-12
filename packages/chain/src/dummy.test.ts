@@ -14,7 +14,7 @@ describe("dummy", () => {
       typeof value === "bigint" ? value.toString() + "n" : value
     );
     // @ts-ignore
-    console.log("dummy", j);
+    // console.log("dummy", j);
 
     // write j to a file dummy.json
     fs.writeFileSync("dummy.json", j);

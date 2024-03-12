@@ -14,7 +14,7 @@ export const runtimeConfig = {
   GlobalCounter: {},
   EnglishAuctionModule: {},
   LastStateRoot: {},
-  // DutchAuctionModule: {},
+  DutchAuctionModule: {},
   // BlindFirstPriceAuctionModule: {},
 };
 export const runtime = {
@@ -24,7 +24,7 @@ export const runtime = {
     PrivateToken,
     GlobalCounter,
     EnglishAuctionModule,
-    // DutchAuctionModule,
+    DutchAuctionModule,
     // BlindFirstPriceAuctionModule,
   },
 };

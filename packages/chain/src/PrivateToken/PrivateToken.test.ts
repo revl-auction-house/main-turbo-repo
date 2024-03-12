@@ -20,7 +20,6 @@ import {
   EncryptedSum,
   DepositHashProof,
   generateDepositHash,
-  EncryptedBalance1,
   TransferProof,
 } from "./Proofs";
 import { Balances } from "../Balances";
@@ -178,7 +177,7 @@ describe("Private Token", () => {
       bobClaimBalance = await privateTokenQuery.claims.get(
         ClaimKey.from(bob, UInt64.from(0))
       );
-      expect(bobClaimBalance?.cipherText1[0].toBigInt()).toBe(0n);
+      expect(bobClaimBalance?.cipherText[0].toBigInt()).toBe(0n);
 
       // alice deposits another 50
       const r1 = Field.random();
@@ -411,7 +410,7 @@ describe("Private Token", () => {
     );
     const claimBalance = (await privateTokenQuery.claims.get(
       claimKey
-    )) as EncryptedBalance1;
+    )) as EncryptedBalance;
 
     // create dummy proof
     const [, dummy] = Pickles.proofOfBase64(await dummyBase64Proof(), 2);
@@ -425,7 +424,7 @@ describe("Private Token", () => {
       proof: dummy,
       publicInput: undefined,
       publicOutput: {
-        encA: claimBalance.toEncryptedBalance(),
+        encA: claimBalance,
         encB: currentBalance,
         encC: resultingBalance,
         AisRevealed: Bool(false),

@@ -49,9 +49,9 @@
 		"swiper": "^11.0.5"
 	},
 	"peerDependencies": {
-		"@proto-kit/module": "../../../../protoKit/framework/packages/module",
-		"@proto-kit/sdk": "../../../../protoKit/framework/packages/sdk",
-		"@proto-kit/sequencer": "../../../../protoKit/framework/packages/sequencer",
-		"o1js": "../../../../protoKit/framework/node_modules/o1js"
+		"@proto-kit/module": "latest",
+		"@proto-kit/sdk": "0.1.1-develop.600",
+		"@proto-kit/sequencer": "latest",
+		"o1js": "*"
 	}
 }
