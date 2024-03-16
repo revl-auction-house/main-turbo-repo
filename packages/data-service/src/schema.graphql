@@ -87,6 +87,7 @@ type Query {
   topBids(skip: Int, count: Int): [Bid!]! # TODO use subscriptions
   userBids(address: String!, skip: Int, count: Int): [Bid!]!
   getValue(key: String!): String
+  search(query: String!): [Collection!]!
 }
 
 type Mutation {

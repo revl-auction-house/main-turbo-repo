@@ -47,6 +47,11 @@ export class LocalDataSource implements DataSource {
       }, readInverval);
     }
   }
+
+  public async search(query: String): Promise<CollectionPart[]> {
+    throw new Error("Method not implemented.");
+  }
+
   public async getCollection(address: string) {
     await this.readFile();
     if (!(address in this.data.collections)) return null;

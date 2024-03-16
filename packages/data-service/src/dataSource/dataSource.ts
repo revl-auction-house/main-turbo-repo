@@ -65,4 +65,6 @@ export interface DataSource {
   updateAuction(id: string, data: Partial<AuctionPart>): Promise<void>;
 
   createBid(auctionId: string, bidder: string, amount: string): Promise<void>;
+
+  search(query: string): Promise<CollectionPart[]>;
 }

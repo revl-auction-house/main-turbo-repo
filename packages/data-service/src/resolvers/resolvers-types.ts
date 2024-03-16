@@ -119,6 +119,7 @@ export type Query = {
   getValue?: Maybe<Scalars['String']['output']>;
   nft?: Maybe<Nft>;
   nfts: Array<Nft>;
+  search: Array<Collection>;
   topBids: Array<Bid>;
   userBids: Array<Bid>;
 };
@@ -164,6 +165,11 @@ export type QueryNftsArgs = {
   count?: InputMaybe<Scalars['Int']['input']>;
   owner?: InputMaybe<Scalars['String']['input']>;
   skip?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QuerySearchArgs = {
+  query: Scalars['String']['input'];
 };
 
 
@@ -386,6 +392,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getValue?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<QueryGetValueArgs, 'key'>>;
   nft?: Resolver<Maybe<ResolversTypes['NFT']>, ParentType, ContextType, RequireFields<QueryNftArgs, 'collection' | 'idx'>>;
   nfts?: Resolver<Array<ResolversTypes['NFT']>, ParentType, ContextType, Partial<QueryNftsArgs>>;
+  search?: Resolver<Array<ResolversTypes['Collection']>, ParentType, ContextType, RequireFields<QuerySearchArgs, 'query'>>;
   topBids?: Resolver<Array<ResolversTypes['Bid']>, ParentType, ContextType, Partial<QueryTopBidsArgs>>;
   userBids?: Resolver<Array<ResolversTypes['Bid']>, ParentType, ContextType, RequireFields<QueryUserBidsArgs, 'address'>>;
 };

@@ -287,6 +287,50 @@ export class MongoDB implements DataSource {
     });
   }
 
+  public async search(query: string, limit = 20): Promise<CollectionPart[]> {
+    let collections = await this.db
+      .collection("collectionDetails")
+      .aggregate([
+        {
+          $search: {
+            index: "collectionSearch",
+            autocomplete: {
+              query,
+              path: "name",
+            },
+          },
+        },
+        { $limit: limit },
+      ])
+      .toArray();
+    // use the other index if the first one doesn't return anything
+    if (collections.length === 0) {
+      collections = await this.db
+        .collection("collectionDetails")
+        .aggregate([
+          {
+            $search: {
+              index: "collectionSearch",
+              text: {
+                query,
+                path: {
+                  wildcard: "*",
+                },
+              },
+            },
+          },
+          { $limit: limit },
+        ])
+        .toArray();
+    }
+    return collections
+      .map((collection) => {
+        const { _id, ...data } = collection;
+        return { ...data, address: (_id as any).address } as CollectionPart;
+      })
+      .slice(0, limit);
+  }
+
   public async connect(dropPrevious = false) {
     await this.client.connect();
     console.log(`Successfully connected to database: ${this.db.databaseName}`);

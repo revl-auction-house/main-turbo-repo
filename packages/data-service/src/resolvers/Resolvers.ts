@@ -80,6 +80,9 @@ export const Query: QueryResolvers<{ dataSource: DataSource }> = {
   ): Promise<any[]> => {
     return dataSource.getTopBids(skip!, count!);
   },
+  search: async (_, { query }, { dataSource }): Promise<any[]> => {
+    return dataSource.search(query);
+  },
 };
 
 export const NFT: NftResolvers<{ dataSource: DataSource }> = {
