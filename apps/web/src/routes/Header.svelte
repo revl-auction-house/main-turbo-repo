@@ -14,6 +14,9 @@
 	import { onMount } from 'svelte';
 	import Dropdown from '$lib/components/Dropdown.svelte';
 	import { wallet } from '$lib/stores/wallet.store';
+	import { SearchQueryStore, graphql, type SearchQuery$result } from '$houdini';
+	import type { SearchQueryVariables } from './$houdini';
+	import { browser } from '$app/environment';
 
 	let links = [
 		{ name: 'My Auctions', url: 'auctions' },
@@ -21,10 +24,42 @@
 		{ name: 'My NFTS', url: 'nfts' }
 	];
 	let searchbar: HTMLInputElement;
+	let searchQuery: string;
+	let searchSuggestions: SearchQuery$result['search'];
 	let connectWallet: any;
 	onMount(async () => {
 		connectWallet = (await import('$lib/stores/wallet.store')).connectWallet;
 	});
+
+	export const _SearchQueryVariables: SearchQueryVariables = ({ props }) => {
+		return { query: props._SearchQueryVariables };
+	};
+	const searchStore: SearchQueryStore = graphql(`
+		query SearchQuery($query: String!) @load {
+			search(query: $query) {
+				name
+				description
+				address
+				liveAuctionCount
+			}
+		}
+	`);
+	const fetchSuggestions = (searchQuery: string) => {
+		if (!browser) return;
+		// get search suggestion
+		console.log($searchStore.data?.search.map((e) => e.name).join('; '));
+		searchStore
+			.fetch({
+				variables: {
+					query: searchQuery
+				}
+			})
+			.then((result) => {
+				console.log('search Result', result.data?.search.map((e) => e.name).join('; '));
+				searchSuggestions = result.data?.search || [];
+			});
+	};
+	$: fetchSuggestions(searchQuery);
 </script>
 
 <svelte:window
@@ -104,6 +139,7 @@
 		<form class="flex items-center gap-2 mt-1 p-1 border-t-0 rounded-b-2xl">
 			<input
 				bind:this={searchbar}
+				bind:value={searchQuery}
 				use:press
 				tabindex="-1"
 				type="text"

@@ -81,6 +81,7 @@ export const Query: QueryResolvers<{ dataSource: DataSource }> = {
     return dataSource.getTopBids(skip!, count!);
   },
   search: async (_, { query }, { dataSource }): Promise<any[]> => {
+    console.log("resolver | search: ", query);
     return dataSource.search(query);
   },
 };

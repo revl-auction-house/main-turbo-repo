@@ -1,6 +1,7 @@
 import { writable, type Writable, get } from 'svelte/store';
 // import type { PendingTransaction } from '@proto-kit/sequencer';
 import toast from 'svelte-french-toast';
+import { CHAIN_GRAPHQL_ENDPOINT } from '../../constants';
 export const wallet: Writable<string | undefined> = writable(undefined);
 export const pendingTransactions: Writable<
 	{
@@ -25,7 +26,7 @@ async function startPooling(poolingInterval = 1000) {
 
 	// fetch txn status
 	for (const txn of get(pendingTransactions)) {
-		const response = await fetch('http://localhost:8080/graphql', {
+		const response = await fetch(CHAIN_GRAPHQL_ENDPOINT, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
