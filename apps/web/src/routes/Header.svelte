@@ -4,73 +4,23 @@
 	import { page } from '$app/stores';
 	import { focus, press } from '$lib/actions/interaction';
 	import Logo from '$lib/icons/Logo.svelte';
-	import {
-		ArrowBigDownIcon,
-		ArrowDownIcon,
-		ArrowDownNarrowWide,
-		ChevronDown,
-		Search
-	} from 'lucide-svelte';
+	import { ArrowBigDownIcon, ArrowDownIcon, ArrowDownNarrowWide, ChevronDown } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import Dropdown from '$lib/components/Dropdown.svelte';
 	import { wallet } from '$lib/stores/wallet.store';
-	import { SearchQueryStore, graphql, type SearchQuery$result } from '$houdini';
-	import type { SearchQueryVariables } from './$houdini';
-	import { browser } from '$app/environment';
+	import Search from './Search.svelte';
 
 	let links = [
 		{ name: 'My Auctions', url: 'auctions' },
 		{ name: 'My Bids', url: 'bids' },
 		{ name: 'My NFTS', url: 'nfts' }
 	];
-	let searchbar: HTMLInputElement;
-	let searchQuery: string;
-	let searchSuggestions: SearchQuery$result['search'];
 	let connectWallet: any;
 	onMount(async () => {
 		connectWallet = (await import('$lib/stores/wallet.store')).connectWallet;
 	});
-
-	export const _SearchQueryVariables: SearchQueryVariables = ({ props }) => {
-		return { query: props._SearchQueryVariables };
-	};
-	const searchStore: SearchQueryStore = graphql(`
-		query SearchQuery($query: String!) @load {
-			search(query: $query) {
-				name
-				description
-				address
-				liveAuctionCount
-			}
-		}
-	`);
-	const fetchSuggestions = (searchQuery: string) => {
-		if (!browser) return;
-		// get search suggestion
-		console.log($searchStore.data?.search.map((e) => e.name).join('; '));
-		searchStore
-			.fetch({
-				variables: {
-					query: searchQuery
-				}
-			})
-			.then((result) => {
-				console.log('search Result', result.data?.search.map((e) => e.name).join('; '));
-				searchSuggestions = result.data?.search || [];
-			});
-	};
-	$: fetchSuggestions(searchQuery);
 </script>
 
-<svelte:window
-	on:keydown={(e) => {
-		//on ctrl+k focus on search
-		if (e.ctrlKey && e.key === 'k') {
-			e.preventDefault();
-			searchbar?.focus();
-		}
-	}}
-/>
 <header class="sticky top-0 left-0 right-0 z-50">
 	<nav class="bg-background-darker">
 		<div class="relative container p-2 mx-auto flex justify-between items-center">
@@ -136,31 +86,7 @@
 	</nav>
 	<search-bar class="relative -z-10 w-full flex gap-1">
 		<div class="bg-background-darker shadow-lg flex-1 rounded-br-2xl relative h-12 corner-right" />
-		<form class="flex items-center gap-2 mt-1 p-1 border-t-0 rounded-b-2xl">
-			<input
-				bind:this={searchbar}
-				bind:value={searchQuery}
-				use:press
-				tabindex="-1"
-				type="text"
-				class="colored-glass
-				rounded-xl shadow-lg transition-colors p-4 text-2xl
-				min-w-[600px] placeholder-neutral/80
-				"
-				placeholder="Search anything....."
-				title=""
-			/>
-			<button
-				use:press
-				tabindex="-1"
-				type="button"
-				class="colored-glass
-				rounded-xl shadow-lg transition-colors p-4 text-2xl
-				"
-			>
-				<Search class="w-8 h-8" />
-			</button>
-		</form>
+		<Search />
 		<div class="bg-background-darker shadow-lg flex-1 rounded-bl-2xl relative h-12 corner-left" />
 	</search-bar>
 </header>
