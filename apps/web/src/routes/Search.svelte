@@ -8,6 +8,8 @@
 	let searchbar: HTMLInputElement;
 	let searchQuery: string;
 	let searchSuggestions: SearchQuery$result['search'];
+	let lastTriggered: number = 0;
+	const searchDelay = 500;
 
 	// without this export ssr gives error. no idea why :(
 	export const _SearchQueryVariables: SearchQueryVariables = ({ props }) => {
@@ -25,9 +27,8 @@
 	`);
 	const fetchSuggestions = (searchQuery: string) => {
 		if (!browser) return;
-		if (searchQuery?.length == 0) {
-			searchSuggestions = [];
-		}
+		if (lastTriggered + searchDelay - 1 > Date.now()) return; // -1 just to be safe
+		if (searchQuery && searchQuery.length < 3) return;
 		// get search suggestion
 		searchStore
 			.fetch({
@@ -42,7 +43,17 @@
 				}
 			});
 	};
-	$: fetchSuggestions(searchQuery);
+	const handleSearchQuery = (searchQuery: string) => {
+		lastTriggered = Date.now();
+		if (searchQuery?.length == 0) {
+			searchSuggestions = [];
+		}
+		setTimeout(() => {
+			fetchSuggestions(searchQuery);
+		}, searchDelay);
+	};
+
+	$: handleSearchQuery(searchQuery);
 </script>
 
 <svelte:window
